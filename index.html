@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hestespillet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="page-header">
+        <p class="eyebrow">DIT EGET HESTEUNIVERS</p>
+        <h1>Hestespillet</h1>
+        <p class="intro">Lær dine heste at kende, én hest ad gangen.</p>
+    </header>
+
+    <main>
+        <!-- SPILLETS KALENDER -->
+        <section class="panel calendar-panel" aria-labelledby="calendarHeading">
+            <p class="eyebrow">SPILLETS TID</p>
+            <h2 id="calendarHeading">Kalender</h2>
+
+            <div class="calendar-display">
+                <p id="calendarYear">År 1</p>
+                <h3 id="calendarMonth">Januar</h3>
+                <p id="calendarSeason">Vinter</p>
+            </div>
+
+            <button id="nextMonthButton" type="button">
+                Næste måned
+            </button>
+
+            <p class="calendar-note">
+                Tiden går kun videre, når du trykker på knappen.
+            </p>
+        </section>
+
+        <!-- OPRET HEST -->
+        <section class="panel" id="createHorse">
+            <h2 id="formHeading">Opret ny hest</h2>
+
+            <label for="horseName">Navn</label>
+            <input
+                id="horseName"
+                type="text"
+                placeholder="Hestens navn"
+            >
+
+            <label for="horseBreed">Race</label>
+            <select id="horseBreed">
+                <option value="">Vælg race</option>
+                <option value="Araber">Araber</option>
+                <option value="Dansk Varmblod">Dansk Varmblod</option>
+                <option value="Islandsk hest">Islandsk hest</option>
+                <option value="Frieser">Frieser</option>
+                <option value="Fuldblod">Fuldblod</option>
+                <option value="Shetlandspony">Shetlandspony</option>
+            </select>
+
+            <label for="horseSex">Køn</label>
+            <select id="horseSex">
+                <option value="">Vælg køn</option>
+                <option value="Hoppe">Hoppe</option>
+                <option value="Hingst">Hingst</option>
+            </select>
+
+            <div class="button-row">
+                <button id="createHorseButton" type="button">
+                    Opret hest
+                </button>
+
+                <button
+                    id="cancelEditButton"
+                    class="secondary-button"
+                    type="button"
+                    hidden
+                >
+                    Annuller
+                </button>
+            </div>
+        </section>
+
+        <!-- HESTEOVERSIGT -->
+        <section class="horse-list-section" id="horseList">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">HESTESTALDEN</p>
+                    <h2>Vores heste</h2>
+                </div>
+
+                <span id="horseCount" class="count-label">
+                    0 heste
+                </span>
+            </div>
+
+            <div id="horseCards" class="horse-grid"></div>
+
+            <p id="emptyMessage" class="empty-message" hidden>
+                Her er lidt stille endnu. Opret din første hest ovenfor.
+            </p>
+        </section>
+
+        <!-- TESTINDSTILLINGER -->
+        <section class="settings-section">
+            <h2>Spilindstillinger</h2>
+            <p>Nulstilling er kun beregnet til test under udviklingen.</p>
+
+            <button
+                id="resetGameButton"
+                class="secondary-button"
+                type="button"
+            >
+                Nulstil spillet
+            </button>
+        </section>
+    </main>
+
+    <script src="index.js"></script>
+</body>
+</html>
