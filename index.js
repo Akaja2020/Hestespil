@@ -18,7 +18,9 @@ let economy = {
     balance: STARTING_BALANCE,
     lastIncome: 0,
     lastExpenses: 0,
-    lastNet: 0
+    lastNet: 0,
+    transactions: [],
+    nextTransactionId: 1
 };
 
 const MONTH_NAMES = [
@@ -72,7 +74,7 @@ function formatAge(horse) {
 // ========================================
 
 function formatMoney(amount) {
-    return amount.toLocaleString("da-DK") + " kr.";
+    return Number(amount).toLocaleString("da-DK") + " kr.";
 }
 
 
@@ -126,8 +128,9 @@ function loadHorses() {
                 };
             }
 
-            // Indlæs økonomien, hvis den allerede findes.
-            // Gamle gemte spil får startkapital én gang.
+            // Indlæs eksisterende økonomi og transaktioner.
+            // Gamle gemte spil beholder deres nuværende saldo.
+
             if (
                 data.economy &&
                 Number.isFinite(data.economy.balance)
@@ -136,8 +139,31 @@ function loadHorses() {
                     balance: data.economy.balance,
                     lastIncome: Number(data.economy.lastIncome) || 0,
                     lastExpenses: Number(data.economy.lastExpenses) || 0,
-                    lastNet: Number(data.economy.lastNet) || 0
+                    lastNet: Number(data.economy.lastNet) || 0,
+                    transactions: Array.isArray(
+                        data.economy.transactions
+                    )
+                        ? data.economy.transactions
+                        : [],
+                    nextTransactionId:
+                        Number.isInteger(
+                            data.economy.nextTransactionId
+                        ) &&
+                        data.economy.nextTransactionId > 0
+                            ? data.economy.nextTransactionId
+                            : 1
                 };
+
+                // Find næste ledige transaktions-ID.
+                economy.transactions.forEach(function(transaction) {
+                    if (
+                        Number.isInteger(transaction.id) &&
+                        transaction.id >= economy.nextTransactionId
+                    ) {
+                        economy.nextTransactionId =
+                            transaction.id + 1;
+                    }
+                });
             }
         }
 
@@ -172,15 +198,16 @@ function loadHorses() {
             }
         });
 
-        // Gem uden at fjerne eksisterende heste eller kalender.
         if (!saveHorses()) {
             throw new Error("Spillet kunne ikke gemmes.");
         }
 
     } catch (error) {
+        console.error("Fejl ved indlæsning af spillet:", error);
+
         alert(
             "Spillet kunne ikke indlæses eller gemmes. " +
-            "Undlad at nulstille spillet, og kontrollér lageret."
+            "Se konsollen for flere oplysninger."
         );
     }
 }
@@ -205,9 +232,52 @@ function saveHorses() {
         return true;
 
     } catch (error) {
+        console.error("Fejl ved gemning af spillet:", error);
         alert("Spillet kunne ikke gemmes i browserens lager.");
         return false;
     }
+}
+
+
+// ========================================
+// ØKONOMIENS TRANSAKTIONSSYSTEM
+// ========================================
+
+function registerTransaction(type, category, description, amount) {
+    if (type !== "income" && type !== "expense") {
+        throw new Error("Transaktionen har en ugyldig type.");
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        throw new Error("Transaktionen skal have et positivt beløb.");
+    }
+
+    const previousBalance = economy.balance;
+
+    const change = type === "income"
+        ? amount
+        : -amount;
+
+    economy.balance += change;
+
+    const transaction = {
+        id: economy.nextTransactionId,
+        year: gameCalendar.year,
+        month: gameCalendar.month,
+        type: type,
+        category: category,
+        description: description,
+        amount: amount,
+        balanceAfter: economy.balance
+    };
+
+    economy.nextTransactionId++;
+    economy.transactions.push(transaction);
+
+    return {
+        transaction: transaction,
+        previousBalance: previousBalance
+    };
 }
 
 
@@ -266,7 +336,11 @@ document
             month: gameCalendar.month
         };
 
-        const previousEconomy = { ...economy };
+        // Kopiér også transaktionslisten, så ændringer kan
+        // rulles tilbage, hvis spillet ikke kan gemmes.
+        const previousEconomy = JSON.parse(
+            JSON.stringify(economy)
+        );
 
         // Gå én måned frem.
         if (gameCalendar.month === 12) {
@@ -276,19 +350,47 @@ document
             gameCalendar.month++;
         }
 
-        // Bogfør månedens løn og leveomkostninger.
-        economy.lastIncome = MONTHLY_SALARY;
-        economy.lastExpenses = MONTHLY_LIVING_COSTS;
-        economy.lastNet = MONTHLY_SALARY - MONTHLY_LIVING_COSTS;
+        try {
+            // Registrér løn og leveomkostninger hver for sig.
+            registerTransaction(
+                "income",
+                "Løn",
+                "Fast månedsløn fra staldarbejde",
+                MONTHLY_SALARY
+            );
 
-        economy.balance += economy.lastNet;
+            registerTransaction(
+                "expense",
+                "Leveomkostninger",
+                "Månedens faste leveomkostninger",
+                MONTHLY_LIVING_COSTS
+            );
 
-        // Rul ændringerne tilbage, hvis gemningen fejler.
-        if (!saveHorses()) {
+            // Behold de eksisterende månedsoversigter.
+            economy.lastIncome = MONTHLY_SALARY;
+            economy.lastExpenses = MONTHLY_LIVING_COSTS;
+            economy.lastNet =
+                MONTHLY_SALARY - MONTHLY_LIVING_COSTS;
+
+            if (!saveHorses()) {
+                gameCalendar = previousCalendar;
+                economy = previousEconomy;
+
+                renderCalendar();
+                renderEconomy();
+                return;
+            }
+
+        } catch (error) {
+            console.error("Fejl ved bogføring:", error);
+
             gameCalendar = previousCalendar;
             economy = previousEconomy;
+
             renderCalendar();
             renderEconomy();
+
+            alert("Månedens økonomi kunne ikke bogføres.");
             return;
         }
 
@@ -519,7 +621,9 @@ document
             balance: STARTING_BALANCE,
             lastIncome: 0,
             lastExpenses: 0,
-            lastNet: 0
+            lastNet: 0,
+            transactions: [],
+            nextTransactionId: 1
         };
 
         if (!saveHorses()) {
