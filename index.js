@@ -762,71 +762,62 @@ document.getElementById("ledgerMonth")
 document.getElementById("ledgerCategory")
     ?.addEventListener("change", renderLedger);
 
-
 // ========================================
 // SPILLERPROFIL
 // ========================================
-
 function renderPlayer() {
     const playerIdElement = document.getElementById("playerId");
     const playerNameInput = document.getElementById("playerName");
     const saveButton = document.getElementById("savePlayerButton");
     const message = document.getElementById("playerMessage");
-
     if (!playerIdElement || !playerNameInput || !saveButton || !message) {
+        console.error("Spillerprofilens HTML-elementer mangler.");
         return;
     }
-
-    playerIdElement.textContent = "Spiller-ID: " + player.id;
-    playerNameInput.value = player.name;
-    saveButton.disabled = player.name.trim() === "";
+    playerIdElement.textContent = player.id
+        ? "Spiller-ID: " + player.id
+        : "Spiller-ID mangler";
+    playerNameInput.value = player.name || "";
+    saveButton.disabled = false;
 }
-
-document.getElementById("playerName")
-    .addEventListener("input", function() {
-
-        document.getElementById("savePlayerButton").disabled =
-            this.value.trim() === "";
-
-        document.getElementById("playerMessage").textContent = "";
+function setupPlayerProfile() {
+    const input = document.getElementById("playerName");
+    const saveButton = document.getElementById("savePlayerButton");
+    const message = document.getElementById("playerMessage");
+    if (!input || !saveButton || !message) {
+        console.error("Spillerprofilen kunne ikke startes.");
+        return;
+    }
+    input.addEventListener("input", function() {
+        message.textContent = "";
     });
-
-document.getElementById("savePlayerButton")
-    .addEventListener("click", function() {
-
-        const input = document.getElementById("playerName");
-        const message = document.getElementById("playerMessage");
+    saveButton.addEventListener("click", function() {
         const newName = input.value.trim();
-
         if (!newName) {
             message.textContent = "Skriv et spillernavn først.";
             return;
         }
-
         if (newName.length > 40) {
             message.textContent = "Navnet må højst være 40 tegn.";
             return;
         }
-
         const previousName = player.name;
         player.name = newName;
-
         if (!saveHorses()) {
             player.name = previousName;
-            renderPlayer();
             return;
         }
-
         renderPlayer();
         message.textContent = "Spillernavnet er gemt.";
     });
-
-
+}
+    
 // ========================================
 // START SPILLET
 // ========================================
 
 loadHorses();
+setupPlayerProfile();
 renderPlayer();
 renderCalendar();
 renderEconomy();
