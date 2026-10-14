@@ -1,9 +1,5 @@
 /* style.css */
 
-/* ========================================
-   FARVER OG GRUNDLÆGGENDE STYLING
-   ======================================== */
-
 :root {
     --background: #f5f0e8;
     --surface: #fffdf8;
@@ -15,9 +11,7 @@
     --rose-border: #d8a69b;
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -28,39 +22,17 @@ body {
     line-height: 1.5;
 }
 
-main,
-.page-header {
+main, .page-header {
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
 }
 
-h1,
-h2,
-h3,
-p {
-    overflow-wrap: anywhere;
-}
-
-h1,
-h2,
-h3 {
-    color: var(--brown);
-}
-
-h1 {
-    margin: 0;
-    font-size: clamp(30px, 7vw, 44px);
-}
-
-h2 {
-    margin-top: 0;
-}
-
-.intro {
-    color: var(--muted);
-    margin-top: 8px;
-}
+h1, h2, h3, p { overflow-wrap: anywhere; }
+h1, h2, h3 { color: var(--brown); }
+h1 { margin: 0; font-size: clamp(30px, 7vw, 44px); }
+h2 { margin-top: 0; }
+.intro { color: var(--muted); margin-top: 8px; }
 
 .eyebrow {
     margin: 0 0 6px;
@@ -71,18 +43,8 @@ h2 {
     text-transform: uppercase;
 }
 
-
-/* ========================================
-   TOPPEN AF SIDEN
-   ======================================== */
-
-.page-header {
-    margin-bottom: 28px;
-}
-
-.profile-header {
-    margin-bottom: 24px;
-}
+.page-header { margin-bottom: 28px; }
+.profile-header { margin-bottom: 24px; }
 
 .back-link {
     display: inline-block;
@@ -91,18 +53,9 @@ h2 {
     font-weight: bold;
     text-decoration: none;
 }
+.back-link:hover { text-decoration: underline; }
 
-.back-link:hover {
-    text-decoration: underline;
-}
-
-
-/* ========================================
-   FORMULARER OG SEKTIONER
-   ======================================== */
-
-.panel,
-.profile-card {
+.panel, .profile-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
@@ -118,8 +71,7 @@ label {
     font-weight: bold;
 }
 
-input,
-select {
+input, select {
     display: block;
     width: 100%;
     min-height: 44px;
@@ -131,16 +83,10 @@ select {
     font: inherit;
 }
 
-input:focus,
-select:focus {
+input:focus, select:focus {
     outline: 2px solid #b58b6b;
     outline-offset: 2px;
 }
-
-
-/* ========================================
-   KNAPPER
-   ======================================== */
 
 button {
     min-height: 40px;
@@ -153,51 +99,27 @@ button {
     font-weight: bold;
     cursor: pointer;
 }
+button:hover { filter: brightness(0.97); }
+button:active { background: #efd2cb; }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
 
-button:hover {
-    filter: brightness(0.97);
-}
-
-button:active {
-    background: #efd2cb;
-}
-
-button:focus-visible,
-a:focus-visible {
+button:focus-visible, a:focus-visible {
     outline: 2px solid var(--brown);
     outline-offset: 3px;
 }
 
-.button-row,
-.profile-actions {
+.button-row, .profile-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 18px;
 }
 
-.secondary-button {
-    background: #f0ebe4;
-    border-color: var(--border);
-}
+.secondary-button { background: #f0ebe4; border-color: var(--border); }
+.delete-button { background: var(--rose); border-color: var(--rose-border); }
+[hidden] { display: none !important; }
 
-.delete-button {
-    background: var(--rose);
-    border-color: var(--rose-border);
-}
-
-[hidden] {
-    display: none !important;
-}
-
-
-/* ========================================
-   HESTEOVERSIGTEN
-   ======================================== */
-
-.horse-list-section {
-    margin-top: 34px;
-}
+.horse-list-section { margin-top: 34px; }
 
 .section-heading {
     display: flex;
@@ -207,13 +129,9 @@ a:focus-visible {
     gap: 12px;
     margin-bottom: 16px;
 }
+.section-heading h2 { margin-bottom: 0; }
 
-.section-heading h2 {
-    margin-bottom: 0;
-}
-
-.count-label,
-.id-badge {
+.count-label, .id-badge {
     display: inline-block;
     padding: 5px 10px;
     border: 1px solid var(--border);
@@ -238,24 +156,10 @@ a:focus-visible {
     background: var(--surface);
     box-shadow: 0 3px 12px rgba(61, 48, 40, 0.04);
 }
-
-.horse-card h3 {
-    margin: 0 0 5px;
-    font-size: 21px;
-}
-
-.horse-card .horse-id {
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.horse-card .horse-info {
-    margin: 12px 0;
-}
-
-.horse-card button {
-    margin: 5px 5px 0 0;
-}
+.horse-card h3 { margin: 0 0 5px; font-size: 21px; }
+.horse-card .horse-id { color: var(--muted); font-size: 12px; }
+.horse-card .horse-info { margin: 12px 0; }
+.horse-card button { margin: 5px 5px 0 0; }
 
 .open-profile-button {
     background: var(--brown);
@@ -271,16 +175,7 @@ a:focus-visible {
     text-align: center;
 }
 
-
-/* ========================================
-   HESTENS PROFIL
-   ======================================== */
-
-.profile-card {
-    border-top: 5px solid #8b6245;
-    padding: 24px;
-}
-
+.profile-card { border-top: 5px solid #8b6245; padding: 24px; }
 .profile-top {
     display: flex;
     justify-content: space-between;
@@ -288,16 +183,8 @@ a:focus-visible {
     flex-wrap: wrap;
     gap: 10px;
 }
-
-.profile-name {
-    margin: 18px 0 4px;
-    font-size: clamp(28px, 6vw, 38px);
-}
-
-.profile-subtitle {
-    color: var(--muted);
-    margin-top: 0;
-}
+.profile-name { margin: 18px 0 4px; font-size: clamp(28px, 6vw, 38px); }
+.profile-subtitle { color: var(--muted); margin-top: 0; }
 
 .detail-grid {
     display: grid;
@@ -305,7 +192,6 @@ a:focus-visible {
     gap: 12px;
     margin-top: 24px;
 }
-
 .detail-item {
     display: flex;
     flex-direction: column;
@@ -315,17 +201,8 @@ a:focus-visible {
     border-radius: 9px;
     background: #faf6f0;
 }
-
-.detail-label {
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.detail-value {
-    font-weight: bold;
-    overflow-wrap: anywhere;
-}
-
+.detail-label { color: var(--muted); font-size: 12px; }
+.detail-value { font-weight: bold; overflow-wrap: anywhere; }
 .message {
     padding: 18px;
     border: 1px solid var(--border);
@@ -333,39 +210,28 @@ a:focus-visible {
     background: var(--surface);
 }
 
-
-/* ========================================
-   SPILINDSTILLINGER
-   ======================================== */
+.ledger-filters { display: grid; gap: 8px; margin: 18px 0; }
+.ledger-entries { display: grid; gap: 12px; }
+.ledger-entry {
+    padding: 14px;
+    border: 1px solid #dedbd3;
+    border-radius: 12px;
+    background: #fff;
+}
+.ledger-entry p, .ledger-entry h3 { margin: 5px 0; }
+.ledger-date, .ledger-category, .ledger-balance { font-size: 0.9rem; color: #666; }
+.ledger-amount { font-weight: 700; }
+.ledger-entry h3 { font-size: 1.05rem; }
 
 .settings-section {
     margin: 40px 0 20px;
     padding-top: 20px;
     border-top: 1px solid var(--border);
 }
-
-.settings-section p {
-    color: var(--muted);
-}
-
-
-/* ========================================
-   SMÅ SKÆRME
-   ======================================== */
+.settings-section p { color: var(--muted); }
 
 @media (max-width: 480px) {
-    body {
-        padding: 15px;
-    }
-
-    .panel,
-    .profile-card {
-        padding: 16px;
-    }
-
-    .button-row button,
-    .profile-actions button {
-        flex: 1 1 auto;
-    }
+    body { padding: 15px; }
+    .panel, .profile-card { padding: 16px; }
+    .button-row button, .profile-actions button { flex: 1 1 auto; }
 }
-

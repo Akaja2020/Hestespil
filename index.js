@@ -1,4 +1,3 @@
-
 const STORAGE_KEY = "hestespil_horses_v1";
 
 const STARTING_BALANCE = 30000;
@@ -9,10 +8,10 @@ let horses = [];
 let nextHorseId = 1;
 let editingHorseId = null;
 
-let gameCalendar = {
-    year: 1,
-    month: 1
-};
+let player = { id: null, name: "" };
+let nextPlayerId = 1;
+
+let gameCalendar = { year: 1, month: 1 };
 
 let economy = {
     balance: STARTING_BALANCE,
@@ -24,15 +23,9 @@ let economy = {
 };
 
 const MONTH_NAMES = [
-    "Januar", "Februar", "Marts", "April",
-    "Maj", "Juni", "Juli", "August",
-    "September", "Oktober", "November", "December"
+    "Januar", "Februar", "Marts", "April", "Maj", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "December"
 ];
-
-
-// ========================================
-// ÅRSTID
-// ========================================
 
 function getSeason(month) {
     if (month === 12 || month <= 2) return "Vinter";
@@ -40,11 +33,6 @@ function getSeason(month) {
     if (month >= 6 && month <= 8) return "Sommer";
     return "Efterår";
 }
-
-
-// ========================================
-// HESTENS ALDER
-// ========================================
 
 function calculateAge(horse) {
     const totalMonths = Math.max(
@@ -61,17 +49,10 @@ function calculateAge(horse) {
 
 function formatAge(horse) {
     const age = calculateAge(horse);
-    const yearText = age.years + " år";
-    const monthText = age.months +
+
+    return age.years + " år og " + age.months +
         (age.months === 1 ? " måned" : " måneder");
-
-    return yearText + " og " + monthText;
 }
-
-
-// ========================================
-// PENGEFORMAT
-// ========================================
 
 function formatMoney(amount) {
     return Number(amount).toLocaleString("da-DK") + " kr.";
@@ -93,7 +74,26 @@ function loadHorses() {
                 ? data.horses
                 : [];
 
-            nextHorseId = data.nextHorseId || 1;
+            nextHorseId = Number.isInteger(data.nextHorseId) &&
+                data.nextHorseId > 0
+                    ? data.nextHorseId
+                    : 1;
+
+            if (data.player && typeof data.player === "object") {
+                player = {
+                    id: typeof data.player.id === "string"
+                        ? data.player.id
+                        : null,
+                    name: typeof data.player.name === "string"
+                        ? data.player.name
+                        : ""
+                };
+            }
+
+            nextPlayerId = Number.isInteger(data.nextPlayerId) &&
+                data.nextPlayerId > 0
+                    ? data.nextPlayerId
+                    : 1;
 
             if (
                 data.calendar &&
@@ -128,9 +128,7 @@ function loadHorses() {
                 };
             }
 
-            // Indlæs eksisterende økonomi og transaktioner.
-            // Gamle gemte spil beholder deres nuværende saldo.
-
+            // Indlæs økonomien uden at ændre den gemte saldo.
             if (
                 data.economy &&
                 Number.isFinite(data.economy.balance)
@@ -154,17 +152,26 @@ function loadHorses() {
                             : 1
                 };
 
-                // Find næste ledige transaktions-ID.
                 economy.transactions.forEach(function(transaction) {
                     if (
                         Number.isInteger(transaction.id) &&
                         transaction.id >= economy.nextTransactionId
                     ) {
-                        economy.nextTransactionId =
-                            transaction.id + 1;
+                        economy.nextTransactionId = transaction.id + 1;
                     }
                 });
             }
+        }
+
+        // Sørg for, at både nye og eksisterende spil har et spiller-ID.
+        if (!player.id || !/^P-\d{6,}$/.test(player.id)) {
+            player.id = "P-" + String(nextPlayerId).padStart(6, "0");
+            nextPlayerId++;
+        } else {
+            nextPlayerId = Math.max(
+                nextPlayerId,
+                Number(player.id.slice(2)) + 1
+            );
         }
 
         // Find næste ledige heste-ID.
@@ -172,13 +179,13 @@ function loadHorses() {
             if (typeof horse.id === "string") {
                 const number = Number(horse.id.slice(2));
 
-                if (number >= nextHorseId) {
+                if (Number.isFinite(number) && number >= nextHorseId) {
                     nextHorseId = number + 1;
                 }
             }
         });
 
-        // Giv gamle heste en fødselsdato.
+        // Giv ældre heste en fødselsdato, hvis de mangler den.
         horses.forEach(function(horse) {
             if (
                 !Number.isInteger(horse.birthYear) ||
@@ -198,6 +205,7 @@ function loadHorses() {
             }
         });
 
+        // Gem også første spil, så spiller-ID'et bliver bevaret.
         if (!saveHorses()) {
             throw new Error("Spillet kunne ikke gemmes.");
         }
@@ -225,7 +233,9 @@ function saveHorses() {
                 horses: horses,
                 nextHorseId: nextHorseId,
                 calendar: gameCalendar,
-                economy: economy
+                economy: economy,
+                player: player,
+                nextPlayerId: nextPlayerId
             })
         );
 
@@ -233,6 +243,7 @@ function saveHorses() {
 
     } catch (error) {
         console.error("Fejl ved gemning af spillet:", error);
+
         alert("Spillet kunne ikke gemmes i browserens lager.");
         return false;
     }
@@ -254,11 +265,9 @@ function registerTransaction(type, category, description, amount) {
 
     const previousBalance = economy.balance;
 
-    const change = type === "income"
+    economy.balance += type === "income"
         ? amount
         : -amount;
-
-    economy.balance += change;
 
     const transaction = {
         id: economy.nextTransactionId,
@@ -324,11 +333,10 @@ function renderEconomy() {
 
 
 // ========================================
-// NÆSTE MÅNED OG MÅNEDLIG ØKONOMI
+// NÆSTE MÅNED
 // ========================================
 
-document
-    .getElementById("nextMonthButton")
+document.getElementById("nextMonthButton")
     .addEventListener("click", function() {
 
         const previousCalendar = {
@@ -336,13 +344,10 @@ document
             month: gameCalendar.month
         };
 
-        // Kopiér også transaktionslisten, så ændringer kan
-        // rulles tilbage, hvis spillet ikke kan gemmes.
         const previousEconomy = JSON.parse(
             JSON.stringify(economy)
         );
 
-        // Gå én måned frem.
         if (gameCalendar.month === 12) {
             gameCalendar.month = 1;
             gameCalendar.year++;
@@ -351,7 +356,6 @@ document
         }
 
         try {
-            // Registrér løn og leveomkostninger hver for sig.
             registerTransaction(
                 "income",
                 "Løn",
@@ -366,7 +370,6 @@ document
                 MONTHLY_LIVING_COSTS
             );
 
-            // Behold de eksisterende månedsoversigter.
             economy.lastIncome = MONTHLY_SALARY;
             economy.lastExpenses = MONTHLY_LIVING_COSTS;
             economy.lastNet =
@@ -378,6 +381,7 @@ document
 
                 renderCalendar();
                 renderEconomy();
+                refreshLedger();
                 return;
             }
 
@@ -389,6 +393,7 @@ document
 
             renderCalendar();
             renderEconomy();
+            refreshLedger();
 
             alert("Månedens økonomi kunne ikke bogføres.");
             return;
@@ -397,6 +402,7 @@ document
         renderCalendar();
         renderEconomy();
         renderHorses();
+        refreshLedger();
     });
 
 
@@ -464,18 +470,14 @@ function renderHorses() {
                 "profile.html?id=" + encodeURIComponent(horse.id);
         });
 
-        card.appendChild(name);
-        card.appendChild(id);
-        card.appendChild(info);
-        card.appendChild(openButton);
-
+        card.append(name, id, info, openButton);
         horseCards.appendChild(card);
     });
 }
 
 
 // ========================================
-// NULSTIL FORMULAR
+// HESTEFORMULAR
 // ========================================
 
 function resetForm() {
@@ -492,11 +494,6 @@ function resetForm() {
     document.getElementById("formHeading").textContent = "Opret ny hest";
     document.getElementById("cancelEditButton").hidden = true;
 }
-
-
-// ========================================
-// REDIGER HESTENS NAVN
-// ========================================
 
 function editHorse(id) {
     const horse = horses.find(function(item) {
@@ -517,6 +514,7 @@ function editHorse(id) {
     document.getElementById("createHorseButton").textContent = "Gem navn";
     document.getElementById("formHeading").textContent =
         "Rediger hestens navn";
+
     document.getElementById("cancelEditButton").hidden = false;
 
     document.getElementById("createHorse").scrollIntoView({
@@ -524,13 +522,7 @@ function editHorse(id) {
     });
 }
 
-
-// ========================================
-// OPRET HEST ELLER GEM NAVN
-// ========================================
-
-document
-    .getElementById("createHorseButton")
+document.getElementById("createHorseButton")
     .addEventListener("click", function() {
 
         const name = document.getElementById("horseName").value.trim();
@@ -570,7 +562,7 @@ document
                 return;
             }
 
-            const horse = createHorse(name, breed, sex);
+            createHorse(name, breed, sex);
 
             if (!saveHorses()) {
                 horses.pop();
@@ -583,13 +575,7 @@ document
         renderHorses();
     });
 
-
-// ========================================
-// ANNULLER REDIGERING
-// ========================================
-
-document
-    .getElementById("cancelEditButton")
+document.getElementById("cancelEditButton")
     .addEventListener("click", resetForm);
 
 
@@ -597,8 +583,7 @@ document
 // NULSTIL SPILLET – KUN TIL TEST
 // ========================================
 
-document
-    .getElementById("resetGameButton")
+document.getElementById("resetGameButton")
     .addEventListener("click", function() {
 
         if (!confirm(
@@ -617,6 +602,7 @@ document
         horses = [];
         nextHorseId = 1;
         gameCalendar = { year: 1, month: 1 };
+
         economy = {
             balance: STARTING_BALANCE,
             lastIncome: 0,
@@ -626,6 +612,7 @@ document
             nextTransactionId: 1
         };
 
+        // Spillerens ID og navn nulstilles ikke.
         if (!saveHorses()) {
             horses = previousHorses;
             nextHorseId = previousNextHorseId;
@@ -638,8 +625,200 @@ document
         renderCalendar();
         renderEconomy();
         renderHorses();
+        refreshLedger();
 
         alert("Spillet er nulstillet. Startkapitalen er 30.000 kr.");
+    });
+
+
+// ========================================
+// ØKONOMIBOG
+// ========================================
+
+const ledgerMonths = [
+    "Januar", "Februar", "Marts", "April", "Maj", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "December"
+];
+
+function formatLedgerMoney(amount) {
+    return Math.abs(amount).toLocaleString("da-DK") + " kr.";
+}
+
+function renderLedgerFilters() {
+    const yearSelect = document.getElementById("ledgerYear");
+    const categorySelect = document.getElementById("ledgerCategory");
+
+    if (!yearSelect || !categorySelect) return;
+
+    const selectedYear = yearSelect.value;
+    const selectedCategory = categorySelect.value;
+    const transactions = economy.transactions || [];
+
+    const years = [...new Set(transactions.map(t => t.year))]
+        .sort((a, b) => a - b);
+
+    yearSelect.innerHTML = '<option value="all">Alle år</option>';
+
+    years.forEach(function(year) {
+        const option = document.createElement("option");
+        option.value = String(year);
+        option.textContent = "År " + year;
+        yearSelect.appendChild(option);
+    });
+
+    yearSelect.value = years.includes(Number(selectedYear))
+        ? selectedYear
+        : "all";
+
+    const categories = [...new Set(
+        transactions.map(t => t.category).filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, "da"));
+
+    categorySelect.innerHTML =
+        '<option value="all">Alle kategorier</option>';
+
+    categories.forEach(function(category) {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+    });
+
+    categorySelect.value = categories.includes(selectedCategory)
+        ? selectedCategory
+        : "all";
+}
+
+function renderLedger() {
+    const entries = document.getElementById("ledgerEntries");
+    const emptyMessage = document.getElementById("ledgerEmptyMessage");
+
+    if (!entries || !emptyMessage) return;
+
+    const yearFilter = document.getElementById("ledgerYear").value;
+    const monthFilter = document.getElementById("ledgerMonth").value;
+    const categoryFilter = document.getElementById("ledgerCategory").value;
+
+    const transactions = [...(economy.transactions || [])]
+        .filter(function(t) {
+            return (
+                (yearFilter === "all" || t.year === Number(yearFilter)) &&
+                (monthFilter === "all" || t.month === Number(monthFilter)) &&
+                (categoryFilter === "all" || t.category === categoryFilter)
+            );
+        })
+        .reverse();
+
+    entries.replaceChildren();
+
+    transactions.forEach(function(transaction) {
+        const card = document.createElement("article");
+        card.className = "ledger-entry";
+
+        const date = document.createElement("p");
+        date.className = "ledger-date";
+        date.textContent =
+            "År " + transaction.year + " · " +
+            (ledgerMonths[transaction.month - 1] || "Ukendt måned");
+
+        const description = document.createElement("h3");
+        description.textContent = transaction.description || "Transaktion";
+
+        const category = document.createElement("p");
+        category.className = "ledger-category";
+        category.textContent = transaction.category || "Andet";
+
+        const amount = document.createElement("p");
+        amount.className = "ledger-amount";
+        amount.textContent =
+            (transaction.type === "income" ? "+ " : "− ") +
+            formatLedgerMoney(transaction.amount);
+
+        const balance = document.createElement("p");
+        balance.className = "ledger-balance";
+        balance.textContent =
+            "Saldo efter post: " +
+            Number(transaction.balanceAfter).toLocaleString("da-DK") +
+            " kr.";
+
+        card.append(date, description, category, amount, balance);
+        entries.appendChild(card);
+    });
+
+    emptyMessage.hidden = transactions.length !== 0;
+}
+
+function refreshLedger() {
+    renderLedgerFilters();
+    renderLedger();
+}
+
+document.getElementById("ledgerYear")
+    ?.addEventListener("change", renderLedger);
+
+document.getElementById("ledgerMonth")
+    ?.addEventListener("change", renderLedger);
+
+document.getElementById("ledgerCategory")
+    ?.addEventListener("change", renderLedger);
+
+
+// ========================================
+// SPILLERPROFIL
+// ========================================
+
+function renderPlayer() {
+    const playerIdElement = document.getElementById("playerId");
+    const playerNameInput = document.getElementById("playerName");
+    const saveButton = document.getElementById("savePlayerButton");
+    const message = document.getElementById("playerMessage");
+
+    if (!playerIdElement || !playerNameInput || !saveButton || !message) {
+        return;
+    }
+
+    playerIdElement.textContent = "Spiller-ID: " + player.id;
+    playerNameInput.value = player.name;
+    saveButton.disabled = player.name.trim() === "";
+}
+
+document.getElementById("playerName")
+    .addEventListener("input", function() {
+
+        document.getElementById("savePlayerButton").disabled =
+            this.value.trim() === "";
+
+        document.getElementById("playerMessage").textContent = "";
+    });
+
+document.getElementById("savePlayerButton")
+    .addEventListener("click", function() {
+
+        const input = document.getElementById("playerName");
+        const message = document.getElementById("playerMessage");
+        const newName = input.value.trim();
+
+        if (!newName) {
+            message.textContent = "Skriv et spillernavn først.";
+            return;
+        }
+
+        if (newName.length > 40) {
+            message.textContent = "Navnet må højst være 40 tegn.";
+            return;
+        }
+
+        const previousName = player.name;
+        player.name = newName;
+
+        if (!saveHorses()) {
+            player.name = previousName;
+            renderPlayer();
+            return;
+        }
+
+        renderPlayer();
+        message.textContent = "Spillernavnet er gemt.";
     });
 
 
@@ -648,6 +827,8 @@ document
 // ========================================
 
 loadHorses();
+renderPlayer();
 renderCalendar();
 renderEconomy();
 renderHorses();
+refreshLedger();

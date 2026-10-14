@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="da">
 <head>
@@ -15,149 +14,110 @@
     </header>
 
     <main>
-        <!-- SPILLETS KALENDER -->
+        <section class="panel player-panel" aria-labelledby="playerHeading">
+            <p class="eyebrow">DIN IDENTITET</p>
+            <h2 id="playerHeading">Spillerprofil</h2>
+            <p class="horse-id" id="playerId">Spiller-ID indlæses...</p>
+            <label for="playerName">Spillernavn</label>
+            <input id="playerName" type="text" maxlength="40" placeholder="Vælg dit spillernavn">
+            <div class="button-row">
+                <button id="savePlayerButton" type="button" disabled>Gem spillernavn</button>
+            </div>
+            <p id="playerMessage" class="calendar-note" role="status" aria-live="polite"></p>
+        </section>
+
         <section class="panel calendar-panel" aria-labelledby="calendarHeading">
             <p class="eyebrow">SPILLETS TID</p>
             <h2 id="calendarHeading">Kalender</h2>
-
             <div class="calendar-display">
                 <p id="calendarYear">År 1</p>
                 <h3 id="calendarMonth">Januar</h3>
                 <p id="calendarSeason">Vinter</p>
             </div>
-
-            <button id="nextMonthButton" type="button">
-                Næste måned
-            </button>
-
-            <p class="calendar-note">
-                Tiden går kun videre, når du trykker på knappen.
-            </p>
+            <button id="nextMonthButton" type="button">Næste måned</button>
+            <p class="calendar-note">Tiden går kun videre, når du trykker på knappen.</p>
         </section>
 
-        <!-- SPILLERENS ØKONOMI -->
         <section class="panel economy-panel" aria-labelledby="economyHeading">
             <p class="eyebrow">DIN PRIVATØKONOMI</p>
             <h2 id="economyHeading">Økonomi</h2>
-
             <div class="calendar-display">
                 <p>Din saldo</p>
                 <h3 id="moneyBalance">30.000 kr.</h3>
             </div>
-
             <div class="economy-details">
-                <p>
-                    <span>Fast månedsløn</span>
-                    <strong id="monthlySalary">20.000 kr.</strong>
-                </p>
-
-                <p>
-                    <span>Leveomkostninger</span>
-                    <strong id="livingCosts">7.500 kr.</strong>
-                </p>
-
-                <p>
-                    <span>Seneste måneds indtægt</span>
-                    <strong id="lastIncome">0 kr.</strong>
-                </p>
-
-                <p>
-                    <span>Seneste måneds udgifter</span>
-                    <strong id="lastExpenses">0 kr.</strong>
-                </p>
-
-                <p class="economy-total">
-                    <span>Seneste måneds resultat</span>
-                    <strong id="monthlyNet">0 kr.</strong>
-                </p>
+                <p><span>Fast månedsløn</span><strong id="monthlySalary">20.000 kr.</strong></p>
+                <p><span>Leveomkostninger</span><strong id="livingCosts">7.500 kr.</strong></p>
+                <p><span>Seneste måneds indtægt</span><strong id="lastIncome">0 kr.</strong></p>
+                <p><span>Seneste måneds udgifter</span><strong id="lastExpenses">0 kr.</strong></p>
+                <p class="economy-total"><span>Seneste måneds resultat</span><strong id="monthlyNet">0 kr.</strong></p>
             </div>
-
-            <p class="calendar-note">
-                Løn udbetales, og leveomkostninger trækkes,
-                når du går videre til næste måned.
-            </p>
+            <p class="calendar-note">Løn udbetales, og leveomkostninger trækkes, når du går videre til næste måned.</p>
         </section>
 
-        <!-- OPRET HEST -->
+        <section class="panel ledger-panel" aria-labelledby="ledgerHeading">
+            <p class="eyebrow">DIN ØKONOMISKE HISTORIK</p>
+            <h2 id="ledgerHeading">Økonomibog</h2>
+            <p class="calendar-note">Her kan du følge alle indtægter og udgifter i spillet.</p>
+            <div class="ledger-filters">
+                <label for="ledgerYear">År</label>
+                <select id="ledgerYear"><option value="all">Alle år</option></select>
+                <label for="ledgerMonth">Måned</label>
+                <select id="ledgerMonth">
+                    <option value="all">Alle måneder</option>
+                    <option value="1">Januar</option><option value="2">Februar</option>
+                    <option value="3">Marts</option><option value="4">April</option>
+                    <option value="5">Maj</option><option value="6">Juni</option>
+                    <option value="7">Juli</option><option value="8">August</option>
+                    <option value="9">September</option><option value="10">Oktober</option>
+                    <option value="11">November</option><option value="12">December</option>
+                </select>
+                <label for="ledgerCategory">Kategori</label>
+                <select id="ledgerCategory"><option value="all">Alle kategorier</option></select>
+            </div>
+            <div id="ledgerEntries" class="ledger-entries"></div>
+            <p id="ledgerEmptyMessage" class="empty-message" hidden>Der er ingen transaktioner, der passer til dine filtre.</p>
+        </section>
+
         <section class="panel" id="createHorse">
             <h2 id="formHeading">Opret ny hest</h2>
-
             <label for="horseName">Navn</label>
-            <input
-                id="horseName"
-                type="text"
-                placeholder="Hestens navn"
-            >
-
+            <input id="horseName" type="text" placeholder="Hestens navn">
             <label for="horseBreed">Race</label>
             <select id="horseBreed">
                 <option value="">Vælg race</option>
                 <option value="Araber">Araber</option>
-                <option value="Dansk Varmblod">Dansk Varmblod</option>
-                <option value="Islandsk hest">Islandsk hest</option>
+                <option value="Quarter">Quarter</option>
                 <option value="Frieser">Frieser</option>
-                <option value="Fuldblod">Fuldblod</option>
-                <option value="Shetlandspony">Shetlandspony</option>
+                <option value="Welsh Cob">Welsh Cob</option>
             </select>
-
             <label for="horseSex">Køn</label>
             <select id="horseSex">
                 <option value="">Vælg køn</option>
                 <option value="Hoppe">Hoppe</option>
                 <option value="Hingst">Hingst</option>
             </select>
-
             <div class="button-row">
-                <button id="createHorseButton" type="button">
-                    Opret hest
-                </button>
-
-                <button
-                    id="cancelEditButton"
-                    class="secondary-button"
-                    type="button"
-                    hidden
-                >
-                    Annuller
-                </button>
+                <button id="createHorseButton" type="button">Opret hest</button>
+                <button id="cancelEditButton" class="secondary-button" type="button" hidden>Annuller</button>
             </div>
         </section>
 
-        <!-- HESTEOVERSIGT -->
         <section class="horse-list-section" id="horseList">
             <div class="section-heading">
-                <div>
-                    <p class="eyebrow">HESTESTALDEN</p>
-                    <h2>Vores heste</h2>
-                </div>
-
-                <span id="horseCount" class="count-label">
-                    0 heste
-                </span>
+                <div><p class="eyebrow">HESTESTALDEN</p><h2>Vores heste</h2></div>
+                <span id="horseCount" class="count-label">0 heste</span>
             </div>
-
             <div id="horseCards" class="horse-grid"></div>
-
-            <p id="emptyMessage" class="empty-message" hidden>
-                Her er lidt stille endnu. Opret din første hest ovenfor.
-            </p>
+            <p id="emptyMessage" class="empty-message" hidden>Her er lidt stille endnu. Opret din første hest ovenfor.</p>
         </section>
 
-        <!-- TESTINDSTILLINGER -->
         <section class="settings-section">
             <h2>Spilindstillinger</h2>
             <p>Nulstilling er kun beregnet til test under udviklingen.</p>
-
-            <button
-                id="resetGameButton"
-                class="secondary-button"
-                type="button"
-            >
-                Nulstil spillet
-            </button>
+            <button id="resetGameButton" class="secondary-button" type="button">Nulstil spillet</button>
         </section>
     </main>
-
     <script src="index.js"></script>
 </body>
 </html>
