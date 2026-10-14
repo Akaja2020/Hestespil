@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <nav class="main-nav" aria-label="Hovedmenu">
+        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+        <div class="nav-links">
+            <a class="nav-link active" href="index.html">Forside</a>
+            <a class="nav-link" href="#playerProfile">Spillerprofil</a>
+            <a class="nav-link" href="#horseList">Hesteoversigt</a>
+            <a class="nav-link" href="#calendarPanel">Kalender</a>
+            <a class="nav-link" href="#economyPanel">Økonomi</a>
+        </div>
+    </nav>
     <header class="page-header">
         <p class="eyebrow">DIT EGET HESTEUNIVERS</p>
         <h1>Hestespillet</h1>
@@ -14,7 +24,7 @@
     </header>
 
     <main>
-        <section class="panel player-panel" aria-labelledby="playerHeading">
+        <section class="panel player-panel" id="playerProfile" aria-labelledby="playerHeading">
             <p class="eyebrow">DIN IDENTITET</p>
             <h2 id="playerHeading">Spillerprofil</h2>
             <p class="horse-id" id="playerId">Spiller-ID indlæses...</p>
@@ -26,7 +36,7 @@
             <p id="playerMessage" class="calendar-note" role="status" aria-live="polite"></p>
         </section>
 
-        <section class="panel calendar-panel" aria-labelledby="calendarHeading">
+        <section class="panel calendar-panel" id="calendarPanel" aria-labelledby="calendarHeading">
             <p class="eyebrow">SPILLETS TID</p>
             <h2 id="calendarHeading">Kalender</h2>
             <div class="calendar-display">
@@ -38,7 +48,7 @@
             <p class="calendar-note">Tiden går kun videre, når du trykker på knappen.</p>
         </section>
 
-        <section class="panel economy-panel" aria-labelledby="economyHeading">
+        <section class="panel economy-panel" id="economyPanel" aria-labelledby="economyHeading">
             <p class="eyebrow">DIN PRIVATØKONOMI</p>
             <h2 id="economyHeading">Økonomi</h2>
             <div class="calendar-display">

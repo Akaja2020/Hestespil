@@ -13,6 +13,102 @@
 
 * { box-sizing: border-box; }
 
+/* ========================================
+   FAST HOVEDMENU
+   ======================================== */
+
+.main-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    width: calc(100% + 40px);
+    margin: -20px -20px 28px;
+    padding: 10px 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 3px 12px rgba(61, 48, 40, 0.08);
+}
+
+.nav-brand {
+    color: var(--brown);
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nav-links {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 2px 0 5px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav-link {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    color: var(--text);
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    background: var(--background);
+}
+
+.nav-link.active {
+    background: var(--brown);
+    color: white;
+}
+
+.nav-link:focus-visible,
+.nav-brand:focus-visible {
+    outline: 2px solid var(--brown);
+    outline-offset: 3px;
+}
+
+#playerProfile,
+#calendarPanel,
+#economyPanel,
+#horseList {
+    scroll-margin-top: 145px;
+}
+
+@media (min-width: 700px) {
+    .main-nav {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .nav-links {
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-nav {
+        width: calc(100% + 30px);
+        margin: -15px -15px 24px;
+        padding: 10px 15px;
+    }
+}
 body {
     margin: 0;
     padding: 20px;
