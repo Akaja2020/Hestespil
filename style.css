@@ -568,30 +568,45 @@ a:focus-visible {
 }
 
 /* Rettelse af menuens bredde på telefoner */
+/* Endelig rettelse af hovedmenu på telefoner */
 @media (max-width: 699px) {
     .main-nav {
         width: auto;
-        max-width: none;
-        margin-left: -15px;
-        margin-right: -15px;
-        padding-left: 15px;
-        padding-right: 15px;
+        margin: -15px -15px 24px;
+        padding: 10px 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .nav-brand {
+        display: block;
+        max-width: 100%;
+        white-space: normal;
     }
 
     .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
         width: 100%;
         max-width: 100%;
-        overflow-x: visible;
-        flex-wrap: wrap;
+        overflow: visible;
+        gap: 5px;
     }
 
     .nav-link {
         flex: 0 1 auto;
+        min-width: 0;
+        max-width: 100%;
+        padding: 7px 8px;
+        font-size: 12px;
         white-space: normal;
         overflow-wrap: anywhere;
     }
 
     body {
-        overflow-x: clip;
+        overflow-x: hidden;
     }
 }
