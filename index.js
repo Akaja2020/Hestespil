@@ -778,32 +778,26 @@ function renderPlayer() {
         const savedData = localStorage.getItem("hestespil_horses_v1");
 
         if (!savedData) {
-            heading.textContent = "Velkommen til Hestespillet!";
+            heading.textContent = "Velkommen!";
             welcomeMessage.textContent =
                 "Gå til spillerprofilen for at vælge dit spillernavn.";
             return;
         }
 
         const data = JSON.parse(savedData);
-        const playerName =
-            data.player && typeof data.player.name === "string"
-                ? data.player.name.trim()
-                : "";
+        const name = data.player?.name?.trim();
 
-        if (playerName) {
-            heading.textContent = "Velkommen, " + playerName + "!";
+        if (name) {
+            heading.textContent = "Velkommen " + name + "!";
             welcomeMessage.textContent =
                 "Dejligt at se dig tilbage i dit hesteunivers.";
         } else {
-            heading.textContent = "Velkommen til Hestespillet!";
+            heading.textContent = "Velkommen!";
             welcomeMessage.textContent =
                 "Gå til spillerprofilen for at vælge dit spillernavn.";
         }
     } catch (error) {
         console.error("Fejl ved indlæsning af spillernavn:", error);
-        heading.textContent = "Velkommen til Hestespillet!";
-        welcomeMessage.textContent =
-            "Gå til spillerprofilen for at vælge dit spillernavn.";
     }
 }
     
