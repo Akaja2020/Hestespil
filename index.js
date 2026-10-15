@@ -763,53 +763,30 @@ document.getElementById("ledgerCategory")
     ?.addEventListener("change", renderLedger);
 
 // ========================================
-// SPILLERPROFIL
+// VELKOMST PÅ FORSIDEN
 // ========================================
+
 function renderPlayer() {
-    const playerIdElement = document.getElementById("playerId");
-    const playerNameInput = document.getElementById("playerName");
-    const saveButton = document.getElementById("savePlayerButton");
-    const message = document.getElementById("playerMessage");
-    if (!playerIdElement || !playerNameInput || !saveButton || !message) {
-        console.error("Spillerprofilens HTML-elementer mangler.");
+    const heading = document.getElementById("playerHeading");
+    const welcomeMessage = document.getElementById("welcomeMessage");
+
+    // Forsiden viser velkomsten.
+    // Funktionen gør ingenting, hvis elementerne ikke findes.
+    if (!heading || !welcomeMessage) {
         return;
     }
-    playerIdElement.textContent = player.id
-        ? "Spiller-ID: " + player.id
-        : "Spiller-ID mangler";
-    playerNameInput.value = player.name || "";
-    saveButton.disabled = false;
-}
-function setupPlayerProfile() {
-    const input = document.getElementById("playerName");
-    const saveButton = document.getElementById("savePlayerButton");
-    const message = document.getElementById("playerMessage");
-    if (!input || !saveButton || !message) {
-        console.error("Spillerprofilen kunne ikke startes.");
-        return;
+
+    const playerName = player.name.trim();
+
+    if (playerName) {
+        heading.textContent = "Velkommen, " + playerName + "!";
+        welcomeMessage.textContent =
+            "Dejligt at se dig tilbage i dit hesteunivers.";
+    } else {
+        heading.textContent = "Velkommen til Hestespillet!";
+        welcomeMessage.textContent =
+            "Gå til spillerprofilen for at vælge dit spillernavn.";
     }
-    input.addEventListener("input", function() {
-        message.textContent = "";
-    });
-    saveButton.addEventListener("click", function() {
-        const newName = input.value.trim();
-        if (!newName) {
-            message.textContent = "Skriv et spillernavn først.";
-            return;
-        }
-        if (newName.length > 40) {
-            message.textContent = "Navnet må højst være 40 tegn.";
-            return;
-        }
-        const previousName = player.name;
-        player.name = newName;
-        if (!saveHorses()) {
-            player.name = previousName;
-            return;
-        }
-        renderPlayer();
-        message.textContent = "Spillernavnet er gemt.";
-    });
 }
     
 // ========================================

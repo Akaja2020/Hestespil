@@ -24,17 +24,17 @@
     </header>
 
     <main>
-        <section class="panel player-panel" id="playerProfile" aria-labelledby="playerHeading">
-            <p class="eyebrow">DIN IDENTITET</p>
-            <h2 id="playerHeading">Spillerprofil</h2>
-            <p class="horse-id" id="playerId">Spiller-ID indlæses...</p>
-            <label for="playerName">Spillernavn</label>
-            <input id="playerName" type="text" maxlength="40" placeholder="Vælg dit spillernavn">
-            <div class="button-row">
-                <button id="savePlayerButton" type="button" disabled>Gem spillernavn</button>
-            </div>
-            <p id="playerMessage" class="calendar-note" role="status" aria-live="polite"></p>
-        </section>
+       <section class="panel player-panel" id="playerWelcome"
+         aria-labelledby="playerHeading">
+    		<p class="eyebrow">DIT EGET HESTEUNIVERS</p>
+    		<h2 id="playerHeading">Velkommen!</h2>
+    		<p id="welcomeMessage">
+        Velkommen til Hestespillet!
+    		</p>
+    <a class="back-link" href="player.html">
+        Se spillerprofil →
+    </a>
+		</section>
 
         <section class="panel calendar-panel" id="calendarPanel" aria-labelledby="calendarHeading">
             <p class="eyebrow">SPILLETS TID</p>
