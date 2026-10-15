@@ -770,19 +770,37 @@ function renderPlayer() {
     const heading = document.getElementById("playerHeading");
     const welcomeMessage = document.getElementById("welcomeMessage");
 
-    // Forsiden viser velkomsten.
-    // Funktionen gør ingenting, hvis elementerne ikke findes.
     if (!heading || !welcomeMessage) {
         return;
     }
 
-    const playerName = player.name.trim();
+    try {
+        const savedData = localStorage.getItem("hestespil_horses_v1");
 
-    if (playerName) {
-        heading.textContent = "Velkommen, " + playerName + "!";
-        welcomeMessage.textContent =
-            "Dejligt at se dig tilbage i dit hesteunivers.";
-    } else {
+        if (!savedData) {
+            heading.textContent = "Velkommen til Hestespillet!";
+            welcomeMessage.textContent =
+                "Gå til spillerprofilen for at vælge dit spillernavn.";
+            return;
+        }
+
+        const data = JSON.parse(savedData);
+        const playerName =
+            data.player && typeof data.player.name === "string"
+                ? data.player.name.trim()
+                : "";
+
+        if (playerName) {
+            heading.textContent = "Velkommen, " + playerName + "!";
+            welcomeMessage.textContent =
+                "Dejligt at se dig tilbage i dit hesteunivers.";
+        } else {
+            heading.textContent = "Velkommen til Hestespillet!";
+            welcomeMessage.textContent =
+                "Gå til spillerprofilen for at vælge dit spillernavn.";
+        }
+    } catch (error) {
+        console.error("Fejl ved indlæsning af spillernavn:", error);
         heading.textContent = "Velkommen til Hestespillet!";
         welcomeMessage.textContent =
             "Gå til spillerprofilen for at vælge dit spillernavn.";
@@ -794,7 +812,6 @@ function renderPlayer() {
 // ========================================
 
 loadHorses();
-setupPlayerProfile();
 renderPlayer();
 renderCalendar();
 renderEconomy();
