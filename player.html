@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spillerprofil – Hestespillet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="main-nav" aria-label="Hovedmenu">
+        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html">Forside</a>
+            <a class="nav-link active" href="player.html">Spillerprofil</a>
+            <a class="nav-link" href="index.html#horseList">Hesteoversigt</a>
+            <a class="nav-link" href="index.html#calendarPanel">Kalender</a>
+            <a class="nav-link" href="index.html#economyPanel">Økonomi</a>
+        </div>
+    </nav>
+    <header class="page-header">
+        <p class="eyebrow">DIN IDENTITET</p>
+        <h1>Spillerprofil</h1>
+        <p class="intro">
+            Her kan du se og redigere din spillerprofil.
+        </p>
+    </header>
+    <main>
+        <section class="panel player-panel"
+                 aria-labelledby="playerHeading">
+            <h2 id="playerHeading">Dine oplysninger</h2>
+            <p class="horse-id" id="playerId">
+                Spiller-ID indlæses...
+            </p>
+            <label for="playerName">Spillernavn</label>
+            <input
+                id="playerName"
+                type="text"
+                maxlength="40"
+                placeholder="Vælg dit spillernavn"
+            >
+            <div class="button-row">
+                <button id="savePlayerButton" type="button">
+                    Gem spillernavn
+                </button>
+            </div>
+            <p id="playerMessage"
+               class="calendar-note"
+               role="status"
+               aria-live="polite"></p>
+        </section>
+        <section class="panel" aria-labelledby="futureHeading">
+            <p class="eyebrow">DIN UDVIKLING</p>
+            <h2 id="futureHeading">Spillerens udvikling</h2>
+            <p>
+                Her kommer der senere oplysninger om dit job,
+                dine resultater, sponsorer, erfaring og færdigheder.
+            </p>
+        </section>
+        <p>
+            <a class="back-link" href="index.html">
+                ← Tilbage til forsiden
+            </a>
+        </p>
+    </main>
+    <script src="player.js"></script>
+</body>
+</html>
