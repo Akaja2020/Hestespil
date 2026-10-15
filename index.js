@@ -58,7 +58,6 @@ function formatMoney(amount) {
     return Number(amount).toLocaleString("da-DK") + " kr.";
 }
 
-
 // ========================================
 // INDLÆS SPILLET
 // ========================================
@@ -220,7 +219,6 @@ function loadHorses() {
     }
 }
 
-
 // ========================================
 // GEM SPILLET
 // ========================================
@@ -248,7 +246,6 @@ function saveHorses() {
         return false;
     }
 }
-
 
 // ========================================
 // ØKONOMIENS TRANSAKTIONSSYSTEM
@@ -289,7 +286,6 @@ function registerTransaction(type, category, description, amount) {
     };
 }
 
-
 // ========================================
 // VIS KALENDEREN
 // ========================================
@@ -305,15 +301,20 @@ function renderCalendar() {
         getSeason(gameCalendar.month);
 }
 
-
 // ========================================
 // VIS ØKONOMIEN
 // ========================================
 
 function renderEconomy() {
+	
+	if (!document.getElementById("moneyBalance")) {
+        return;
+    }
+	
     document.getElementById("moneyBalance").textContent =
         formatMoney(economy.balance);
 
+    
     document.getElementById("monthlySalary").textContent =
         formatMoney(MONTHLY_SALARY);
 
@@ -330,7 +331,6 @@ function renderEconomy() {
     document.getElementById("lastExpenses").textContent =
         formatMoney(economy.lastExpenses);
 }
-
 
 // ========================================
 // NÆSTE MÅNED
@@ -405,7 +405,6 @@ document.getElementById("nextMonthButton")
         refreshLedger();
     });
 
-
 // ========================================
 // OPRET HEST
 // ========================================
@@ -425,7 +424,6 @@ function createHorse(name, breed, sex) {
 
     return horse;
 }
-
 
 // ========================================
 // VIS HESTEOVERSIGTEN
@@ -474,7 +472,6 @@ function renderHorses() {
         horseCards.appendChild(card);
     });
 }
-
 
 // ========================================
 // HESTEFORMULAR
@@ -578,7 +575,6 @@ document.getElementById("createHorseButton")
 document.getElementById("cancelEditButton")
     .addEventListener("click", resetForm);
 
-
 // ========================================
 // NULSTIL SPILLET – KUN TIL TEST
 // ========================================
@@ -629,7 +625,6 @@ document.getElementById("resetGameButton")
 
         alert("Spillet er nulstillet. Startkapitalen er 30.000 kr.");
     });
-
 
 // ========================================
 // ØKONOMIBOG

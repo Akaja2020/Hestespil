@@ -610,3 +610,79 @@ a:focus-visible {
         overflow-x: hidden;
     }
 }
+
+
+/* Velkomstfelt med hesteillustration */
+.welcome-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.welcome-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.welcome-horse-image {
+    display: block;
+    width: 34%;
+    max-width: 240px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+@media (max-width: 600px) {
+    .welcome-layout {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .welcome-horse-image {
+        width: 100%;
+        max-width: 220px;
+        align-self: center;
+    }
+}
+
+
+/* Økonomisidens saldo */
+.economy-page-balance {
+    margin: 8px 0 24px;
+    color: var(--brown);
+    font-size: clamp(30px, 7vw, 42px);
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.economy-details {
+    margin-top: 20px;
+}
+
+.economy-details p {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 0;
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.economy-details strong {
+    text-align: right;
+}
+
+.economy-details .economy-total {
+    border-bottom: 0;
+    font-weight: bold;
+}
+
+@media (max-width: 480px) {
+    .economy-details p {
+        align-items: flex-start;
+    }
+}

@@ -14,7 +14,7 @@
             <a class="nav-link" href="player.html">Spillerprofil</a>
             <a class="nav-link" href="#horseList">Hesteoversigt</a>
             <a class="nav-link" href="#calendarPanel">Kalender</a>
-            <a class="nav-link" href="#economyPanel">Økonomi</a>
+            <a class="nav-link" href="economy.html">Økonomi</a>
         </div>
     </nav>
     <header class="page-header">
@@ -22,21 +22,33 @@
         <h1>Hestespillet</h1>
         <p class="intro">Lær dine heste at kende, én hest ad gangen.</p>
     </header>
-
     <main>
-       <section class="panel player-panel" id="playerWelcome"
-         aria-labelledby="playerHeading">
-    		<p class="eyebrow">DIT EGET HESTEUNIVERS</p>
-    		<h2 id="playerHeading">Velkommen!</h2>
-    		<p id="welcomeMessage">
-        Velkommen til Hestespillet!
-    		</p>
-    <a class="back-link" href="player.html">
-        Se spillerprofil →
-    </a>
-		</section>
-
-        <section class="panel calendar-panel" id="calendarPanel" aria-labelledby="calendarHeading">
+        <!-- Velkomst og hesteillustration -->
+        <section class="panel player-panel"
+                 id="playerWelcome"
+                 aria-labelledby="playerHeading">
+            <div class="welcome-layout">
+                <div class="welcome-content">
+                    <p class="eyebrow">DIT EGET HESTEUNIVERS</p>
+                    <h2 id="playerHeading">Velkommen!</h2>
+                    <p id="welcomeMessage">
+                        Velkommen til Hestespillet!
+                    </p>
+                    <a class="back-link" href="player.html">
+                        Se spillerprofil →
+                    </a>
+                </div>
+                <img
+                    class="welcome-horse-image"
+                    src="horse-illustration.jpeg"
+                    alt="Kunstnerisk illustration af et hestehoved"
+                >
+            </div>
+        </section>
+        <!-- Kalender -->
+        <section class="panel calendar-panel"
+                 id="calendarPanel"
+                 aria-labelledby="calendarHeading">
             <p class="eyebrow">SPILLETS TID</p>
             <h2 id="calendarHeading">Kalender</h2>
             <div class="calendar-display">
@@ -44,55 +56,33 @@
                 <h3 id="calendarMonth">Januar</h3>
                 <p id="calendarSeason">Vinter</p>
             </div>
-            <button id="nextMonthButton" type="button">Næste måned</button>
-            <p class="calendar-note">Tiden går kun videre, når du trykker på knappen.</p>
+            <button id="nextMonthButton" type="button">
+                Næste måned
+            </button>
+            <p class="calendar-note">
+                Tiden går kun videre, når du trykker på knappen.
+            </p>
         </section>
-
-        <section class="panel economy-panel" id="economyPanel" aria-labelledby="economyHeading">
+        <!-- Genvej til økonomien, uden detaljerede poster -->
+        <section class="panel" id="economyPanel"
+                 aria-labelledby="economyHeading">
             <p class="eyebrow">DIN PRIVATØKONOMI</p>
             <h2 id="economyHeading">Økonomi</h2>
-            <div class="calendar-display">
-                <p>Din saldo</p>
-                <h3 id="moneyBalance">30.000 kr.</h3>
-            </div>
-            <div class="economy-details">
-                <p><span>Fast månedsløn</span><strong id="monthlySalary">20.000 kr.</strong></p>
-                <p><span>Leveomkostninger</span><strong id="livingCosts">7.500 kr.</strong></p>
-                <p><span>Seneste måneds indtægt</span><strong id="lastIncome">0 kr.</strong></p>
-                <p><span>Seneste måneds udgifter</span><strong id="lastExpenses">0 kr.</strong></p>
-                <p class="economy-total"><span>Seneste måneds resultat</span><strong id="monthlyNet">0 kr.</strong></p>
-            </div>
-            <p class="calendar-note">Løn udbetales, og leveomkostninger trækkes, når du går videre til næste måned.</p>
+            <p>
+                Se din saldo, månedens resultat og alle dine
+                indtægter og udgifter på økonomisiden.
+            </p>
+            <a class="back-link" href="economy.html">
+                Gå til økonomien →
+            </a>
         </section>
-
-        <section class="panel ledger-panel" aria-labelledby="ledgerHeading">
-            <p class="eyebrow">DIN ØKONOMISKE HISTORIK</p>
-            <h2 id="ledgerHeading">Økonomibog</h2>
-            <p class="calendar-note">Her kan du følge alle indtægter og udgifter i spillet.</p>
-            <div class="ledger-filters">
-                <label for="ledgerYear">År</label>
-                <select id="ledgerYear"><option value="all">Alle år</option></select>
-                <label for="ledgerMonth">Måned</label>
-                <select id="ledgerMonth">
-                    <option value="all">Alle måneder</option>
-                    <option value="1">Januar</option><option value="2">Februar</option>
-                    <option value="3">Marts</option><option value="4">April</option>
-                    <option value="5">Maj</option><option value="6">Juni</option>
-                    <option value="7">Juli</option><option value="8">August</option>
-                    <option value="9">September</option><option value="10">Oktober</option>
-                    <option value="11">November</option><option value="12">December</option>
-                </select>
-                <label for="ledgerCategory">Kategori</label>
-                <select id="ledgerCategory"><option value="all">Alle kategorier</option></select>
-            </div>
-            <div id="ledgerEntries" class="ledger-entries"></div>
-            <p id="ledgerEmptyMessage" class="empty-message" hidden>Der er ingen transaktioner, der passer til dine filtre.</p>
-        </section>
-
-        <section class="panel" id="createHorse">
+        <!-- Opret hest -->
+        <section class="panel" id="createHorse"
+                 aria-labelledby="formHeading">
             <h2 id="formHeading">Opret ny hest</h2>
             <label for="horseName">Navn</label>
-            <input id="horseName" type="text" placeholder="Hestens navn">
+            <input id="horseName" type="text"
+                   placeholder="Hestens navn">
             <label for="horseBreed">Race</label>
             <select id="horseBreed">
                 <option value="">Vælg race</option>
@@ -108,24 +98,45 @@
                 <option value="Hingst">Hingst</option>
             </select>
             <div class="button-row">
-                <button id="createHorseButton" type="button">Opret hest</button>
-                <button id="cancelEditButton" class="secondary-button" type="button" hidden>Annuller</button>
+                <button id="createHorseButton" type="button">
+                    Opret hest
+                </button>
+                <button id="cancelEditButton"
+                        class="secondary-button"
+                        type="button"
+                        hidden>
+                    Annuller
+                </button>
             </div>
         </section>
-
-        <section class="horse-list-section" id="horseList">
+        <!-- Hesteoversigt -->
+        <section class="horse-list-section" id="horseList"
+                 aria-labelledby="horseListHeading">
             <div class="section-heading">
-                <div><p class="eyebrow">HESTESTALDEN</p><h2>Vores heste</h2></div>
-                <span id="horseCount" class="count-label">0 heste</span>
+                <div>
+                    <p class="eyebrow">HESTESTALDEN</p>
+                    <h2 id="horseListHeading">Vores heste</h2>
+                </div>
+                <span id="horseCount" class="count-label">
+                    0 heste
+                </span>
             </div>
             <div id="horseCards" class="horse-grid"></div>
-            <p id="emptyMessage" class="empty-message" hidden>Her er lidt stille endnu. Opret din første hest ovenfor.</p>
+            <p id="emptyMessage" class="empty-message" hidden>
+                Her er lidt stille endnu. Opret din første hest ovenfor.
+            </p>
         </section>
-
+        <!-- Udviklerindstillinger -->
         <section class="settings-section">
             <h2>Spilindstillinger</h2>
-            <p>Nulstilling er kun beregnet til test under udviklingen.</p>
-            <button id="resetGameButton" class="secondary-button" type="button">Nulstil spillet</button>
+            <p>
+                Nulstilling er kun beregnet til test under udviklingen.
+            </p>
+            <button id="resetGameButton"
+                    class="secondary-button"
+                    type="button">
+                Nulstil spillet
+            </button>
         </section>
     </main>
     <script src="index.js"></script>
