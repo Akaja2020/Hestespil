@@ -706,3 +706,39 @@ a:focus-visible {
         align-items: flex-start;
     }
 }
+
+
+/* Ens menu på alle sider */
+.main-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.main-nav > a:not(.nav-brand) {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Menuen på telefoner */
+@media (max-width: 699px) {
+    .main-nav {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    .main-nav > a:not(.nav-brand) {
+        flex: 0 0 auto;
+        width: auto;
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+}
