@@ -1,41 +1,33 @@
 
-// profile.js
-
 const STORAGE_KEY = "hestespil_horses_v1";
 
+let savedData = {};
 let horses = [];
 let currentHorse = null;
-
-let gameCalendar = {
-    year: 1,
-    month: 1
-};
+let gameCalendar = { year: 1, month: 1 };
 
 const MONTH_NAMES = [
-    "Januar",
-    "Februar",
-    "Marts",
-    "April",
-    "Maj",
-    "Juni",
-    "Juli",
-    "August",
-    "September",
-    "Oktober",
-    "November",
-    "December"
+    "Januar", "Februar", "Marts", "April", "Maj", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "December"
 ];
 
-
-// ========================================
-// BEREGN HESTENS ALDER
-// ========================================
-
 function calculateAge(horse) {
+    const birthYear = Number(horse.birthYear);
+    const birthMonth = Number(horse.birthMonth);
+
+    if (
+        !Number.isInteger(birthYear) ||
+        !Number.isInteger(birthMonth) ||
+        birthMonth < 1 ||
+        birthMonth > 12
+    ) {
+        return null;
+    }
+
     const totalMonths = Math.max(
         0,
-        (gameCalendar.year - horse.birthYear) * 12 +
-        (gameCalendar.month - horse.birthMonth)
+        (gameCalendar.year - birthYear) * 12 +
+        (gameCalendar.month - birthMonth)
     );
 
     return {
@@ -44,246 +36,284 @@ function calculateAge(horse) {
     };
 }
 
-
 function formatAge(horse) {
     const age = calculateAge(horse);
 
-    const monthText =
-        age.months +
-        (age.months === 1 ? " måned" : " måneder");
+    if (!age) return "Ikke registreret";
 
-    return age.years + " år og " + monthText;
+    return age.years + (age.years === 1 ? " år" : " år") +
+        " og " + age.months +
+        (age.months === 1 ? " måned" : " måneder");
 }
 
-
-// ========================================
-// INDLÆS SPILLET
-// ========================================
-
-function loadHorses() {
-    try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-
-        if (savedData !== null) {
-            const data = JSON.parse(savedData);
-
-            horses = Array.isArray(data.horses)
-                ? data.horses
-                : [];
-
-            if (
-                data.calendar &&
-                Number.isInteger(data.calendar.year) &&
-                Number.isInteger(data.calendar.month) &&
-                data.calendar.year >= 1 &&
-                data.calendar.month >= 1 &&
-                data.calendar.month <= 12
-            ) {
-                gameCalendar = {
-                    year: data.calendar.year,
-                    month: data.calendar.month
-                };
-
-            } else {
-                let oldestAge = 0;
-
-                horses.forEach(function(horse) {
-                    if (
-                        !Number.isInteger(horse.birthYear) ||
-                        !Number.isInteger(horse.birthMonth)
-                    ) {
-                        oldestAge = Math.max(
-                            oldestAge,
-                            Number(horse.age) || 0
-                        );
-                    }
-                });
-
-                gameCalendar = {
-                    year: Math.max(1, oldestAge + 1),
-                    month: 1
-                };
-            }
-
-            // Giv ældre heste en fødselsdato.
-            horses.forEach(function(horse) {
-                if (
-                    !Number.isInteger(horse.birthYear) ||
-                    !Number.isInteger(horse.birthMonth)
-                ) {
-                    const oldAge = Math.max(
-                        0,
-                        Number(horse.age) || 0
-                    );
-
-                    horse.birthYear = Math.max(
-                        1,
-                        gameCalendar.year - oldAge
-                    );
-
-                    horse.birthMonth = gameCalendar.month;
-                }
-            });
-        }
-
-    } catch (error) {
-        showError("De gemte heste kunne ikke indlæses.");
-        return false;
+function formatMoney(value) {
+    if (value === null || value === undefined ||
+        value === "" || !Number.isFinite(Number(value))) {
+        return "Ikke registreret";
     }
 
-    return true;
+    return Number(value).toLocaleString("da-DK") + " kr.";
 }
 
+function setText(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+}
 
-// ========================================
-// GEM SPILLET
-// ========================================
+function displayValue(value, fallback = "Ikke registreret") {
+    if (value === null || value === undefined || value === "") {
+        return fallback;
+    }
+    return String(value);
+}
 
-function saveHorses() {
+function showError(message) {
+    const errorBox = document.getElementById("profileError");
+    errorBox.textContent = message;
+    errorBox.hidden = false;
+    document.getElementById("profileContent").hidden = true;
+}
+
+function showStatus(message) {
+    setText("profileStatus", message);
+}
+
+function loadGameData() {
     try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        let nextHorseId = 1;
+        const rawData = localStorage.getItem(STORAGE_KEY);
 
-        if (savedData !== null) {
-            const data = JSON.parse(savedData);
-            nextHorseId = data.nextHorseId || 1;
+        if (rawData === null) {
+            showError("Der blev ikke fundet et gemt spil. Gå til forsiden først.");
+            return false;
         }
 
-        horses.forEach(function(horse) {
-            if (typeof horse.id === "string") {
-                const number = Number(horse.id.slice(2));
+        savedData = JSON.parse(rawData);
 
-                if (number >= nextHorseId) {
-                    nextHorseId = number + 1;
-                }
-            }
-        });
+        if (!savedData || typeof savedData !== "object") {
+            showError("Spillets gemte data kunne ikke læses.");
+            return false;
+        }
 
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({
-                horses: horses,
-                nextHorseId: nextHorseId,
-                calendar: gameCalendar
-            })
-        );
+        horses = Array.isArray(savedData.horses)
+            ? savedData.horses
+            : [];
+
+        if (
+            savedData.calendar &&
+            Number.isInteger(savedData.calendar.year) &&
+            Number.isInteger(savedData.calendar.month) &&
+            savedData.calendar.year >= 1 &&
+            savedData.calendar.month >= 1 &&
+            savedData.calendar.month <= 12
+        ) {
+            gameCalendar = {
+                year: savedData.calendar.year,
+                month: savedData.calendar.month
+            };
+        } else {
+            gameCalendar = { year: 1, month: 1 };
+        }
 
         return true;
-
     } catch (error) {
-        showError("Ændringerne kunne ikke gemmes.");
+        console.error("Fejl ved indlæsning af hesteprofil:", error);
+        showError("Hestens profil kunne ikke indlæses.");
         return false;
     }
 }
 
+function saveGameData() {
+    try {
+        // Genindlæs den seneste datapakke, så andre data bevares.
+        const rawData = localStorage.getItem(STORAGE_KEY);
 
-// ========================================
-// FIND HESTEN FRA SIDENS URL
-// ========================================
+        if (rawData === null) {
+            showError("Det gemte spil blev ikke fundet. Intet blev ændret.");
+            return false;
+        }
+
+        const latestData = JSON.parse(rawData);
+
+        if (!latestData || typeof latestData !== "object") {
+            showError("Spillets data kunne ikke læses. Intet blev ændret.");
+            return false;
+        }
+
+        const latestHorses = Array.isArray(latestData.horses)
+            ? latestData.horses
+            : [];
+
+        const horseIndex = latestHorses.findIndex(
+            horse => horse.id === currentHorse.id
+        );
+
+        if (horseIndex === -1) {
+            showError("Hesten findes ikke længere i det gemte spil.");
+            return false;
+        }
+
+        // Opdater kun denne hests oplysninger.
+        latestHorses[horseIndex] = currentHorse;
+        latestData.horses = latestHorses;
+
+        // Bevar økonomi, spiller, kalender, ID-tællere og øvrige felter.
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(latestData));
+
+        savedData = latestData;
+        horses = latestHorses;
+
+        return true;
+    } catch (error) {
+        console.error("Fejl ved gemning af hesteprofil:", error);
+        showStatus("Ændringerne kunne ikke gemmes.");
+        return false;
+    }
+}
 
 function findCurrentHorse() {
     const parameters = new URLSearchParams(window.location.search);
     const horseId = parameters.get("id");
 
-    if (!horseId) {
-        return null;
-    }
+    if (!horseId) return null;
 
-    return horses.find(function(horse) {
-        return horse.id === horseId;
-    }) || null;
+    return horses.find(horse => horse.id === horseId) || null;
 }
-
-
-// ========================================
-// VIS FEJLBESKED
-// ========================================
-
-function showError(message) {
-    const errorBox = document.getElementById("profileError");
-
-    errorBox.textContent = message;
-    errorBox.hidden = false;
-}
-
-
-// ========================================
-// VIS HESTENS PROFIL
-// ========================================
 
 function renderProfile() {
     if (!currentHorse) {
-        showError(
-            "Vi kunne ikke finde hesten. Gå tilbage til hesteoversigten."
-        );
-
-        document.getElementById("profileContent").hidden = true;
+        showError("Hesten blev ikke fundet. Gå tilbage til hesteoversigten.");
         return;
     }
 
     document.getElementById("profileError").hidden = true;
     document.getElementById("profileContent").hidden = false;
 
-    document.getElementById("profileId").textContent =
-        currentHorse.id;
+    setText("profileName", currentHorse.name);
+    setText("profileId", currentHorse.id);
+    setText("profileSubtitle",
+        displayValue(currentHorse.breed) + " · " +
+        displayValue(currentHorse.sex));
 
-    document.getElementById("profileName").textContent =
-        currentHorse.name;
+    setText("profileBreed", displayValue(currentHorse.breed));
+    setText("profileSex", displayValue(currentHorse.sex));
+    setText("profileAge", formatAge(currentHorse));
 
-    document.getElementById("profileSubtitle").textContent =
-        currentHorse.breed + " · " + currentHorse.sex;
+    const birthDate = Number.isInteger(currentHorse.birthYear) &&
+        Number.isInteger(currentHorse.birthMonth) &&
+        currentHorse.birthMonth >= 1 &&
+        currentHorse.birthMonth <= 12
+        ? MONTH_NAMES[currentHorse.birthMonth - 1] +
+          " år " + currentHorse.birthYear
+        : "Ikke registreret";
 
-    document.getElementById("profileBreed").textContent =
-        currentHorse.breed;
+    setText("profileBirthDate", birthDate);
+    setText("profileBreeder", displayValue(currentHorse.breeder));
+    setText("profileOwner", displayValue(
+        currentHorse.ownerName || savedData.player?.name,
+        "Ikke registreret"
+    ));
 
-    document.getElementById("profileSex").textContent =
-        currentHorse.sex;
+    // Udseende: vis kun faktiske data, hvis de findes.
+    setText("profileColor", displayValue(currentHorse.color));
+    setText("profileMarkings", displayValue(currentHorse.markings));
+    setText("profileManeTail", displayValue(currentHorse.maneTailColor));
+    setText("profileHeight",
+        currentHorse.heightCm
+            ? currentHorse.heightCm + " cm"
+            : "Ikke registreret");
+    setText("profilePersonality", displayValue(currentHorse.personality));
+    setText("profileTemperament", displayValue(currentHorse.temperament));
 
-    document.getElementById("profileAge").textContent =
-        formatAge(currentHorse);
+    // Genetik: kendte data og spillerens gæt vises separat.
+    setText("profileKnownGenetics",
+        displayValue(currentHorse.genetics, "Ingen genetiske oplysninger registreret."));
 
-    document.getElementById("profileBirthDate").textContent =
-        MONTH_NAMES[currentHorse.birthMonth - 1] +
-        " år " +
-        currentHorse.birthYear;
+    setText("profileGeneticGuesses",
+        displayValue(currentHorse.geneticGuesses, "Ingen gæt registreret."));
+
+    // Stamtavle og avl.
+    setText("profileFather", displayValue(currentHorse.fatherName));
+    setText("profileMother", displayValue(currentHorse.motherName));
+
+    const offspringCount = Array.isArray(currentHorse.offspringIds)
+        ? currentHorse.offspringIds.length
+        : 0;
+
+    setText("profileOffspring", offspringCount + " registreret");
+    setText("profileApproval", displayValue(currentHorse.breedingApproval, "Ikke opnået"));
+    setText("profileAssociation", displayValue(currentHorse.breedingAssociation));
+
+    // Sport: vis ikke resultater, som spillet endnu ikke registrerer.
+    setText("profileCompetitionLevel",
+        displayValue(currentHorse.competitionLevel, "Ikke startet"));
+    setText("profileStarts", displayValue(currentHorse.competitionStarts, "0"));
+    setText("profileWins", displayValue(currentHorse.competitionWins, "0"));
+    setText("profileBestResult",
+        displayValue(currentHorse.bestCompetitionResult, "Ingen resultater"));
+
+    // Økonomi.
+    setText("profilePurchasePrice", formatMoney(currentHorse.purchasePrice));
+    setText("profileMarketValue",
+        currentHorse.marketValue === undefined
+            ? "Ikke beregnet"
+            : formatMoney(currentHorse.marketValue));
+    setText("profileInsurance", displayValue(currentHorse.insurance));
+    setText("profileEquipment", displayValue(currentHorse.equipment));
+
+    // Sundhed og historik.
+    setText("profileHealth", displayValue(currentHorse.healthStatus));
+    setText("profileInjuries", displayValue(currentHorse.injuries, "Ingen registreret"));
+    setText("profileLastActivity", displayValue(currentHorse.lastActivity));
+
+    renderHistory();
 
     document.title = currentHorse.name + " | Hestespillet";
 }
 
+function renderHistory() {
+    const list = document.getElementById("profileHistory");
+    list.replaceChildren();
 
-// ========================================
-// ÅBN REDIGERING AF NAVN
-// ========================================
+    const history = Array.isArray(currentHorse.history)
+        ? currentHorse.history
+        : [];
 
-function openProfileEditor() {
-    if (!currentHorse) {
+    if (history.length === 0) {
+        const item = document.createElement("li");
+        item.textContent = "Ingen begivenheder registreret.";
+        list.appendChild(item);
         return;
     }
 
-    document.getElementById("editName").value =
-        currentHorse.name;
+    history.forEach(event => {
+        const item = document.createElement("li");
 
-    document.getElementById("editProfileSection").hidden = false;
+        if (typeof event === "string") {
+            item.textContent = event;
+        } else {
+            const date = event.date ? event.date + " – " : "";
+            item.textContent = date + displayValue(event.description, "Begivenhed");
+        }
 
-    document.getElementById("editProfileSection").scrollIntoView({
-        behavior: "smooth"
+        list.appendChild(item);
     });
 }
 
+function openNameEditor() {
+    document.getElementById("editName").value = currentHorse.name;
+    document.getElementById("editProfileSection").hidden = false;
+    document.getElementById("editProfileSection").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
 
-// ========================================
-// GEM NAVNEÆNDRING
-// ========================================
+function saveName(event) {
+    event.preventDefault();
 
-function saveProfileChanges() {
-    if (!currentHorse) {
-        return;
-    }
+    const name = document.getElementById("editName").value.trim();
 
-    const name =
-        document.getElementById("editName").value.trim();
-
-    if (name === "") {
+    if (!name) {
         alert("Skriv venligst hestens navn.");
         return;
     }
@@ -291,40 +321,76 @@ function saveProfileChanges() {
     const oldName = currentHorse.name;
     currentHorse.name = name;
 
-    if (!saveHorses()) {
+    if (!saveGameData()) {
         currentHorse.name = oldName;
         return;
     }
 
     document.getElementById("editProfileSection").hidden = true;
     renderProfile();
+    showStatus("Hestens navn er gemt.");
 }
 
+function openGeneticsEditor() {
+    document.getElementById("editGenetics").value =
+        typeof currentHorse.geneticGuesses === "string"
+            ? currentHorse.geneticGuesses
+            : "";
 
-// ========================================
-// FORBIND KNAPPERNE
-// ========================================
-
-document
-    .getElementById("editProfileButton")
-    .addEventListener("click", openProfileEditor);
-
-document
-    .getElementById("saveProfileButton")
-    .addEventListener("click", saveProfileChanges);
-
-document
-    .getElementById("cancelProfileEditButton")
-    .addEventListener("click", function() {
-        document.getElementById("editProfileSection").hidden = true;
+    document.getElementById("editGeneticsSection").hidden = false;
+    document.getElementById("editGeneticsSection").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
     });
+}
 
+function saveGeneticGuesses(event) {
+    event.preventDefault();
 
-// ========================================
-// START PROFILSIDEN
-// ========================================
+    const guesses = document.getElementById("editGenetics").value.trim();
+    const oldGuesses = currentHorse.geneticGuesses;
 
-if (loadHorses()) {
+    currentHorse.geneticGuesses = guesses;
+
+    if (!saveGameData()) {
+        currentHorse.geneticGuesses = oldGuesses;
+        return;
+    }
+
+    document.getElementById("editGeneticsSection").hidden = true;
+    renderProfile();
+    showStatus("Dine genetiske gæt er gemt.");
+}
+
+document.getElementById("editProfileButton").addEventListener(
+    "click", openNameEditor
+);
+
+document.getElementById("editProfileSection").addEventListener(
+    "submit", saveName
+);
+
+document.getElementById("cancelProfileEditButton").addEventListener(
+    "click", function() {
+        document.getElementById("editProfileSection").hidden = true;
+    }
+);
+
+document.getElementById("editGeneticsButton").addEventListener(
+    "click", openGeneticsEditor
+);
+
+document.getElementById("editGeneticsSection").addEventListener(
+    "submit", saveGeneticGuesses
+);
+
+document.getElementById("cancelGeneticsButton").addEventListener(
+    "click", function() {
+        document.getElementById("editGeneticsSection").hidden = true;
+    }
+);
+
+if (loadGameData()) {
     currentHorse = findCurrentHorse();
     renderProfile();
 }
