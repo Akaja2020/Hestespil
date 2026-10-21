@@ -96,22 +96,38 @@
     </style>
 </head>
 <body>
-    <header>
-        <nav class="main-nav">
-            <a href="index.html">Forside</a>
-            <a href="player.html">Spillerprofil</a>
-            <a href="index.html#horseList">Heste</a>
-            <a href="index.html#calendar">Kalender</a>
-            <a href="economy.html">Økonomi</a>
-        </nav>
-    </header>
+ 
+<header>
+    <nav class="main-nav" aria-label="Hovedmenu">
+        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+
+        <div class="nav-links">
+            <a class="nav-link" href="index.html">Forside</a>
+            <a class="nav-link" href="player.html">Spillerprofil</a>
+            <a class="nav-link" href="index.html#horseList">Hesteoversigt</a>
+            <a class="nav-link" href="index.html#calendarPanel">Kalender</a>
+            <a class="nav-link" href="economy.html">Økonomi</a>
+        </div>
+    </nav>
+</header>
+
 
     <main class="page-container">
-        <section>
-            <p><a href="index.html#horseList">← Tilbage til hesteoversigten</a></p>
+        
+<section>
+    <p>
+        <a class="back-link" href="index.html#horseList">
+            ← Tilbage til hesteoversigten
+        </a>
+    </p>
 
-            <h1 id="profileName">Hesteprofil</h1>
-            <p id="profileSubtitle">Hestens oplysninger og udvikling</p>
+    <p class="eyebrow">HESTESTALDEN · DIN HEST</p>
+
+    <h1 id="profileName">Profil for din hest</h1>
+
+    <p id="profileSubtitle" class="intro">
+        Hestens oplysninger, udvikling og historie.
+    </p>
 
             <div id="profileError" role="alert" hidden></div>
 

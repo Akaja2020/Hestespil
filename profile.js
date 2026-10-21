@@ -188,7 +188,7 @@ function renderProfile() {
     document.getElementById("profileError").hidden = true;
     document.getElementById("profileContent").hidden = false;
 
-    setText("profileName", currentHorse.name);
+    setText("profileName", "Profil for" + currentHorse.name);
     setText("profileId", currentHorse.id);
     setText("profileSubtitle",
         displayValue(currentHorse.breed) + " · " +
