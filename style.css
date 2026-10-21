@@ -1,7 +1,10 @@
-/* style.css */
 
 /* ========================================
-   FARVER
+   HESTESPILLET – FÆLLES STYLING
+   ======================================== */
+
+/* ========================================
+   1. FARVER OG GRUNDINDSTILLINGER
    ======================================== */
 
 :root {
@@ -19,13 +22,18 @@
     box-sizing: border-box;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 /* ========================================
-   GRUNDLÆGGENDE SIDE
+   2. SIDE OG TYPOGRAFI
    ======================================== */
 
 body {
     margin: 0;
     padding: 20px;
+    overflow-wrap: break-word;
     font-family: Arial, sans-serif;
     background: var(--background);
     color: var(--text);
@@ -33,10 +41,12 @@ body {
 }
 
 main,
-.page-header {
+.page-header,
+.page-container {
     width: 100%;
     max-width: 900px;
-    margin: 0 auto;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 h1,
@@ -53,7 +63,7 @@ h3 {
 }
 
 h1 {
-    margin: 0;
+    margin-top: 0;
     font-size: clamp(30px, 7vw, 44px);
 }
 
@@ -62,8 +72,8 @@ h2 {
 }
 
 .intro {
-    color: var(--muted);
     margin-top: 8px;
+    color: var(--muted);
 }
 
 .eyebrow {
@@ -83,9 +93,8 @@ h2 {
     margin-bottom: 24px;
 }
 
-
 /* ========================================
-   HOVEDMENU – FÆLLES FOR ALLE SIDER
+   3. HOVEDMENU – FÆLLES FOR ALLE SIDER
    ======================================== */
 
 .main-nav {
@@ -93,49 +102,59 @@ h2 {
     top: 0;
     z-index: 1000;
 
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 7px;
+
     width: calc(100% + 40px);
     margin: -20px -20px 28px;
-    padding: 14px 20px;
-
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
+    padding: 12px 20px;
 
     background: var(--surface);
-    border-bottom: 2px solid var(--border);
-    box-shadow: 0 4px 14px rgba(61, 48, 40, 0.09);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 3px 12px rgba(61, 48, 40, 0.08);
 }
 
-/* Sidens navn, hvis menuen bruger det */
+/* Sidens navn, hvis det bruges i menuen */
+
 .nav-brand {
     display: inline-block;
+    flex: 0 0 auto;
     color: var(--brown);
-    font-size: 19px;
+    font-size: 18px;
     font-weight: bold;
     text-decoration: none;
-    white-space: nowrap;
 }
 
-/* Linkgruppe – hvis menuen bruger en separat gruppe */
+/* Gruppe med menupunkter, hvis den bruges */
+
 .nav-links {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-start;
     gap: 7px;
     min-width: 0;
     max-width: 100%;
 }
 
-/* Menupunkter i begge HTML-strukturer */
+/* Menupunkter – både direkte links og links i nav-links */
+
 .main-nav > a:not(.nav-brand),
 .nav-links .nav-link {
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
 
+    width: auto;
     min-height: 40px;
-    padding: 9px 13px;
+    margin: 0;
+    padding: 8px 12px;
 
     border: 1px solid var(--border);
     border-radius: 9px;
@@ -143,11 +162,12 @@ h2 {
     background: #faf6f0;
     color: var(--text);
 
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     line-height: 1.3;
     text-align: center;
     text-decoration: none;
+    white-space: nowrap;
 
     transition:
         background-color 0.18s ease,
@@ -155,7 +175,6 @@ h2 {
         border-color 0.18s ease;
 }
 
-/* Når musen holdes over et menupunkt */
 .main-nav > a:not(.nav-brand):hover,
 .nav-links .nav-link:hover {
     background: #eee3d6;
@@ -163,24 +182,27 @@ h2 {
     color: var(--brown);
 }
 
-/* Den aktuelle side */
+/* Fremhævelse af den aktuelle side, når HTML'en markerer den */
+
 .main-nav > a.active,
 .main-nav > a[aria-current="page"],
 .nav-links .nav-link.active,
 .nav-links .nav-link[aria-current="page"] {
     background: var(--brown);
     border-color: var(--brown);
-    color: #fffdf8;
+    color: var(--surface);
 }
 
-/* Tydelig markering ved tastaturbetjening */
+.nav-brand:focus-visible,
 .main-nav a:focus-visible {
-    outline: 3px solid #b58b6b;
+    outline: 2px solid var(--brown);
     outline-offset: 3px;
 }
 
-/* Links til afsnit må ikke lande under menuen */
+/* Undgå at menuen dækker overskrifter ved interne links */
+
 #playerProfile,
+#calendar,
 #calendarPanel,
 #economyPanel,
 #horseList {
@@ -188,7 +210,7 @@ h2 {
 }
 
 /* ========================================
-   LINKS
+   4. ALMINDELIGE LINKS
    ======================================== */
 
 .back-link {
@@ -204,21 +226,22 @@ h2 {
 }
 
 /* ========================================
-   FELTER OG KORT
+   5. KORT OG PANELER
    ======================================== */
 
 .panel,
 .profile-card {
+    margin-bottom: 28px;
+    padding: 20px;
+
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 28px;
     box-shadow: 0 3px 12px rgba(61, 48, 40, 0.04);
 }
 
 /* ========================================
-   INPUTFELTER
+   6. INPUTFELTER OG FORMULARER
    ======================================== */
 
 label {
@@ -229,7 +252,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
     display: block;
     width: 100%;
     min-height: 44px;
@@ -238,19 +262,24 @@ select {
     border: 1px solid var(--border);
     border-radius: 7px;
 
-    background: white;
+    background: #fff;
     color: var(--text);
     font: inherit;
 }
 
+textarea {
+    resize: vertical;
+}
+
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     outline: 2px solid #b58b6b;
     outline-offset: 2px;
 }
 
 /* ========================================
-   KNAPPER
+   7. KNAPPER
    ======================================== */
 
 button {
@@ -304,12 +333,8 @@ a:focus-visible {
     border-color: var(--rose-border);
 }
 
-[hidden] {
-    display: none !important;
-}
-
 /* ========================================
-   OVERSIGT OVER HESTE
+   8. OVERSIGT OVER HESTE
    ======================================== */
 
 .horse-list-section {
@@ -398,7 +423,7 @@ a:focus-visible {
 }
 
 /* ========================================
-   DEN ENKELTE HESTS PROFIL
+   9. DEN ENKELTE HESTS PROFIL
    ======================================== */
 
 .profile-card {
@@ -420,8 +445,8 @@ a:focus-visible {
 }
 
 .profile-subtitle {
-    color: var(--muted);
     margin-top: 0;
+    color: var(--muted);
 }
 
 .detail-grid {
@@ -466,8 +491,79 @@ a:focus-visible {
     background: var(--surface);
 }
 
+/* Ekstra profilsektioner */
+
+.profile-sections {
+    display: grid;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, 135px), 1fr)
+    );
+    gap: 14px;
+}
+
+.profile-field {
+    min-width: 0;
+    padding: 10px;
+    overflow-wrap: anywhere;
+
+    background: rgba(128, 128, 128, 0.08);
+    border-radius: 8px;
+}
+
+.profile-field small {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+}
+
+.profile-field strong {
+    overflow-wrap: anywhere;
+}
+
+.profile-note {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.profile-status {
+    margin-top: 12px;
+}
+
+details.profile-card > summary {
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.profile-editor {
+    margin-top: 14px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #faf6f0;
+}
+
+.profile-editor label {
+    display: block;
+    margin: 12px 0 5px;
+}
+
+.profile-editor input,
+.profile-editor textarea,
+.profile-editor select {
+    width: 100%;
+    padding: 10px;
+}
+
 /* ========================================
-   ØKONOMI OG POSTER
+   10. ØKONOMI OG POSTER
    ======================================== */
 
 .ledger-filters {
@@ -483,10 +579,8 @@ a:focus-visible {
 
 .ledger-entry {
     padding: 14px;
-
     border: 1px solid #dedbd3;
     border-radius: 12px;
-
     background: #fff;
 }
 
@@ -498,8 +592,8 @@ a:focus-visible {
 .ledger-date,
 .ledger-category,
 .ledger-balance {
-    font-size: 0.9rem;
     color: #666;
+    font-size: 0.9rem;
 }
 
 .ledger-amount {
@@ -510,166 +604,8 @@ a:focus-visible {
     font-size: 1.05rem;
 }
 
-/* ========================================
-   INDSTILLINGER
-   ======================================== */
+/* Saldo på økonomisiden */
 
-.settings-section {
-    margin: 40px 0 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-}
-
-.settings-section p {
-    color: var(--muted);
-}
-
-/* ========================================
-   STØRRE SKÆRME
-   ======================================== */
-
-@media (min-width: 700px) {
-    .main-nav {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-    }
-
-    .nav-links {
-        justify-content: flex-end;
-    }
-
-    .nav-link {
-        padding: 8px 12px;
-        font-size: 14px;
-        white-space: nowrap;
-    }
-}
-
-/* ========================================
-   TELEFONER
-   ======================================== */
-
-@media (max-width: 480px) {
-    body {
-        padding: 15px;
-    }
-
-    .main-nav {
-        width: calc(100% + 30px);
-        margin: -15px -15px 24px;
-        padding: 10px 15px;
-        gap: 6px;
-    }
-
-    .nav-brand {
-        font-size: 17px;
-    }
-
-    .nav-links {
-        gap: 5px;
-    }
-
-    .nav-link {
-        padding: 7px 8px;
-        font-size: 12px;
-    }
-
-    .panel,
-    .profile-card {
-        padding: 16px;
-    }
-
-    .button-row button,
-    .profile-actions button {
-        flex: 1 1 auto;
-    }
-}
-
-/* Rettelse af menuens bredde på telefoner */
-/* Endelig rettelse af hovedmenu på telefoner */
-@media (max-width: 699px) {
-    .main-nav {
-        width: auto;
-        margin: -15px -15px 24px;
-        padding: 10px 15px;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
-    .nav-brand {
-        display: block;
-        max-width: 100%;
-        white-space: normal;
-    }
-
-    .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        width: 100%;
-        max-width: 100%;
-        overflow: visible;
-        gap: 5px;
-    }
-
-    .nav-link {
-        flex: 0 1 auto;
-        min-width: 0;
-        max-width: 100%;
-        padding: 7px 8px;
-        font-size: 12px;
-        white-space: normal;
-        overflow-wrap: anywhere;
-    }
-
-    body {
-        overflow-x: hidden;
-    }
-}
-
-
-/* Velkomstfelt med hesteillustration */
-.welcome-layout {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-}
-
-.welcome-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.welcome-horse-image {
-    display: block;
-    width: 34%;
-    max-width: 240px;
-    height: auto;
-    object-fit: contain;
-    border-radius: 16px;
-}
-
-@media (max-width: 600px) {
-    .welcome-layout {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-
-    .welcome-horse-image {
-        width: 100%;
-        max-width: 220px;
-        align-self: center;
-    }
-}
-
-
-/* Økonomisidens saldo */
 .economy-page-balance {
     margin: 8px 0 24px;
     color: var(--brown);
@@ -701,44 +637,154 @@ a:focus-visible {
     font-weight: bold;
 }
 
-@media (max-width: 480px) {
-    .economy-details p {
-        align-items: flex-start;
+/* ========================================
+   11. VELKOMSTFELT OG HESTEILLUSTRATION
+   ======================================== */
+
+.welcome-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.welcome-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.welcome-horse-image {
+    display: block;
+    width: 34%;
+    max-width: 240px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+/* ========================================
+   12. INDSTILLINGER
+   ======================================== */
+
+.settings-section {
+    margin: 40px 0 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.settings-section p {
+    color: var(--muted);
+}
+
+/* ========================================
+   13. TABLETS OG STØRRE SKÆRME
+   ======================================== */
+
+@media (min-width: 700px) {
+    .main-nav {
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .main-nav > a:not(.nav-brand),
+    .nav-links .nav-link {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .nav-links {
+        justify-content: flex-end;
+        margin-left: auto;
     }
 }
 
+/* ========================================
+   14. TELEFONER
+   ======================================== */
 
-/* Ens menu på alle sider */
-.main-nav {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-}
-
-.main-nav > a:not(.nav-brand) {
-    display: inline-flex;
-    flex: 0 0 auto;
-    width: auto;
-    margin: 0;
-    white-space: nowrap;
-}
-
-/* Menuen på telefoner */
 @media (max-width: 699px) {
+    body {
+        padding: 15px;
+        overflow-x: hidden;
+    }
+
     .main-nav {
+        width: calc(100% + 30px);
+        margin: -15px -15px 24px;
+        padding: 10px 15px;
+
         flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: flex-start;
         gap: 6px;
     }
 
-    .main-nav > a:not(.nav-brand) {
+    .nav-brand {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .nav-links {
+        width: 100%;
+        max-width: 100%;
+        justify-content: flex-start;
+        gap: 5px;
+    }
+
+    .main-nav > a:not(.nav-brand),
+    .nav-links .nav-link {
         flex: 0 0 auto;
         width: auto;
+        min-height: 38px;
         padding: 7px 9px;
         font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .panel,
+    .profile-card {
+        padding: 16px;
+    }
+
+    .button-row button,
+    .profile-actions button {
+        flex: 1 1 auto;
+    }
+
+    .welcome-layout {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .welcome-horse-image {
+        width: 100%;
+        max-width: 220px;
+        align-self: center;
+    }
+
+    .economy-details p {
+        align-items: flex-start;
+    }
+}
+
+/* Ekstra små skærme */
+
+@media (max-width: 380px) {
+    .main-nav {
+        gap: 5px;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .main-nav > a:not(.nav-brand),
+    .nav-links .nav-link {
+        padding: 7px;
+        font-size: 11px;
+    }
+
+    .profile-grid {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
