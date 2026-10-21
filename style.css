@@ -83,8 +83,9 @@ h2 {
     margin-bottom: 24px;
 }
 
+
 /* ========================================
-   FAST HOVEDMENU
+   HOVEDMENU – FÆLLES FOR ALLE SIDER
    ======================================== */
 
 .main-nav {
@@ -94,72 +95,91 @@ h2 {
 
     width: calc(100% + 40px);
     margin: -20px -20px 28px;
-    padding: 10px 20px;
+    padding: 14px 20px;
 
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
 
     background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 3px 12px rgba(61, 48, 40, 0.08);
+    border-bottom: 2px solid var(--border);
+    box-shadow: 0 4px 14px rgba(61, 48, 40, 0.09);
 }
 
+/* Sidens navn, hvis menuen bruger det */
 .nav-brand {
     display: inline-block;
-    align-self: flex-start;
-
     color: var(--brown);
-    font-size: 18px;
+    font-size: 19px;
     font-weight: bold;
     text-decoration: none;
     white-space: nowrap;
 }
 
+/* Linkgruppe – hvis menuen bruger en separat gruppe */
 .nav-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    align-items: center;
+    gap: 7px;
     min-width: 0;
     max-width: 100%;
-    padding: 2px 0;
 }
 
-.nav-link {
-    flex: 0 1 auto;
-    min-width: 0;
-    max-width: 100%;
-    padding: 7px 9px;
+/* Menupunkter i begge HTML-strukturer */
+.main-nav > a:not(.nav-brand),
+.nav-links .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    border: 1px solid transparent;
-    border-radius: 7px;
+    min-height: 40px;
+    padding: 9px 13px;
 
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: #faf6f0;
     color: var(--text);
-    font-size: 13px;
+
+    font-size: 14px;
     font-weight: bold;
-    text-decoration: none;
+    line-height: 1.3;
     text-align: center;
-    overflow-wrap: anywhere;
+    text-decoration: none;
+
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease,
+        border-color 0.18s ease;
 }
 
-.nav-link:hover {
-    background: var(--background);
+/* Når musen holdes over et menupunkt */
+.main-nav > a:not(.nav-brand):hover,
+.nav-links .nav-link:hover {
+    background: #eee3d6;
+    border-color: #b99b80;
+    color: var(--brown);
 }
 
-.nav-link.active {
+/* Den aktuelle side */
+.main-nav > a.active,
+.main-nav > a[aria-current="page"],
+.nav-links .nav-link.active,
+.nav-links .nav-link[aria-current="page"] {
     background: var(--brown);
-    color: white;
+    border-color: var(--brown);
+    color: #fffdf8;
 }
 
-.nav-link:focus-visible,
-.nav-brand:focus-visible {
-    outline: 2px solid var(--brown);
+/* Tydelig markering ved tastaturbetjening */
+.main-nav a:focus-visible {
+    outline: 3px solid #b58b6b;
     outline-offset: 3px;
 }
 
-/* Sørger for, at overskrifter ikke gemmes
-   bag den faste menu, når man følger et link. */
-
+/* Links til afsnit må ikke lande under menuen */
 #playerProfile,
 #calendarPanel,
 #economyPanel,
