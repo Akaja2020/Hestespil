@@ -1,5 +1,6 @@
 
 const STORAGE_KEY = "hestespil_horses_v1";
+const STABLE_STORAGE_KEY = "hestespil_stable_horses_v1";
 
 const STARTING_BALANCE = 30000;
 const MONTHLY_SALARY = 20000;
@@ -7,12 +8,13 @@ const MONTHLY_LIVING_COSTS = 7500;
 
 let horses = [];
 let nextHorseId = 1;
-let editingHorseId = null;
 
 let player = { id: null, name: "" };
 let nextPlayerId = 1;
 
 let gameCalendar = { year: 1, month: 1 };
+
+let stableHorses = [];
 
 let economy = {
     balance: STARTING_BALANCE,
@@ -28,6 +30,63 @@ const MONTH_NAMES = [
     "Juli", "August", "September", "Oktober", "November", "December"
 ];
 
+const STABLE_HORSE_BLUEPRINTS = [
+    {
+        id: "S-000001",
+        name: "Stjerneskud",
+        breed: "Araber",
+        sex: "Hoppe",
+        color: "Skimmel",
+        height: 153,
+        temperament: "Vågen og energisk"
+    },
+    {
+        id: "S-000002",
+        name: "Safir",
+        breed: "Araber",
+        sex: "Hingst",
+        color: "Brun",
+        height: 156,
+        temperament: "Stolt og følsom"
+    },
+    {
+        id: "S-000003",
+        name: "Dusty",
+        breed: "Quarter",
+        sex: "Hingst",
+        color: "Rødskimmel",
+        height: 151,
+        temperament: "Rolig og samarbejdsvillig"
+    },
+    {
+        id: "S-000004",
+        name: "Clover",
+        breed: "Quarter",
+        sex: "Hoppe",
+        color: "Brun",
+        height: 150,
+        temperament: "Venlig og lærenem"
+    },
+    {
+        id: "S-000005",
+        name: "Måneskin",
+        breed: "Welsh Cob",
+        sex: "Hoppe",
+        color: "Rød",
+        height: 145,
+        temperament: "Livlig og nysgerrig"
+    },
+    {
+        id: "S-000006",
+        name: "Midnat",
+        breed: "Frieser",
+        sex: "Hingst",
+        color: "Sort",
+        height: 164,
+        temperament: "Rolig og modig"
+    }
+];
+
 function getSeason(month) {
     if (month === 12 || month <= 2) return "Vinter";
     if (month >= 3 && month <= 5) return "Forår";
@@ -36,10 +95,18 @@ function getSeason(month) {
 }
 
 function calculateAge(horse) {
+    const birthYear = Number.isInteger(horse.birthYear)
+        ? horse.birthYear
+        : gameCalendar.year;
+
+    const birthMonth = Number.isInteger(horse.birthMonth)
+        ? horse.birthMonth
+        : gameCalendar.month;
+
     const totalMonths = Math.max(
         0,
-        (gameCalendar.year - horse.birthYear) * 12 +
-        (gameCalendar.month - horse.birthMonth)
+        (gameCalendar.year - birthYear) * 12 +
+        (gameCalendar.month - birthMonth)
     );
 
     return {
@@ -110,28 +177,8 @@ function loadHorses() {
                     year: data.calendar.year,
                     month: data.calendar.month
                 };
-            } else {
-                let oldestAge = 0;
-
-                horses.forEach(function(horse) {
-                    if (
-                        !Number.isInteger(horse.birthYear) ||
-                        !Number.isInteger(horse.birthMonth)
-                    ) {
-                        oldestAge = Math.max(
-                            oldestAge,
-                            Number(horse.age) || 0
-                        );
-                    }
-                });
-
-                gameCalendar = {
-                    year: Math.max(1, oldestAge + 1),
-                    month: 1
-                };
             }
 
-            // Indlæs den gemte økonomi uden at nulstille saldoen.
             if (
                 data.economy &&
                 Number.isFinite(data.economy.balance)
@@ -141,15 +188,11 @@ function loadHorses() {
                     lastIncome: Number(data.economy.lastIncome) || 0,
                     lastExpenses: Number(data.economy.lastExpenses) || 0,
                     lastNet: Number(data.economy.lastNet) || 0,
-                    transactions: Array.isArray(
-                        data.economy.transactions
-                    )
+                    transactions: Array.isArray(data.economy.transactions)
                         ? data.economy.transactions
                         : [],
                     nextTransactionId:
-                        Number.isInteger(
-                            data.economy.nextTransactionId
-                        ) &&
+                        Number.isInteger(data.economy.nextTransactionId) &&
                         data.economy.nextTransactionId > 0
                             ? data.economy.nextTransactionId
                             : 1
@@ -166,7 +209,6 @@ function loadHorses() {
             }
         }
 
-        // Sørg for, at spilleren har et permanent ID.
         if (!player.id || !/^P-\d{6,}$/.test(player.id)) {
             player.id = "P-" + String(nextPlayerId).padStart(6, "0");
             nextPlayerId++;
@@ -177,7 +219,6 @@ function loadHorses() {
             );
         }
 
-        // Find næste ledige heste-ID.
         horses.forEach(function(horse) {
             if (typeof horse.id === "string") {
                 const number = Number(horse.id.slice(2));
@@ -188,7 +229,6 @@ function loadHorses() {
             }
         });
 
-        // Giv ældre heste en fødselsdato, hvis de mangler den.
         horses.forEach(function(horse) {
             if (
                 !Number.isInteger(horse.birthYear) ||
@@ -214,7 +254,7 @@ function loadHorses() {
 
         alert(
             "Spillet kunne ikke indlæses eller gemmes. " +
-            "Se konsollen for flere oplysninger."
+            "Dine eksisterende data er ikke med vilje blevet slettet."
         );
     }
 }
@@ -239,10 +279,73 @@ function saveHorses() {
         );
 
         return true;
-
     } catch (error) {
         console.error("Fejl ved gemning af spillet:", error);
         alert("Spillet kunne ikke gemmes i browserens lager.");
+        return false;
+    }
+}
+
+
+// ========================================
+// GÅRDENS FASTE HESTE
+// ========================================
+
+function loadStableHorses() {
+    try {
+        const savedStable = localStorage.getItem(STABLE_STORAGE_KEY);
+
+        if (savedStable !== null) {
+            const parsedStable = JSON.parse(savedStable);
+
+            if (
+                Array.isArray(parsedStable) &&
+                parsedStable.length > 0
+            ) {
+                stableHorses = parsedStable;
+                return;
+            }
+        }
+
+        stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
+            return {
+                ...blueprint,
+                birthYear: 1,
+                birthMonth: 1
+            };
+        });
+
+        saveStableHorses();
+
+    } catch (error) {
+        console.error("Fejl ved indlæsning af gårdens heste:", error);
+
+        stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
+            return {
+                ...blueprint,
+                birthYear: 1,
+                birthMonth: 1
+            };
+        });
+
+        alert(
+            "Gårdens heste kunne ikke indlæses fra lageret. " +
+            "Kontrollér, at browserens lager fungerer."
+        );
+    }
+}
+
+function saveStableHorses() {
+    try {
+        localStorage.setItem(
+            STABLE_STORAGE_KEY,
+            JSON.stringify(stableHorses)
+        );
+
+        return true;
+    } catch (error) {
+        console.error("Fejl ved gemning af gårdens heste:", error);
+        alert("Gårdens heste kunne ikke gemmes.");
         return false;
     }
 }
@@ -263,9 +366,7 @@ function registerTransaction(type, category, description, amount) {
 
     const previousBalance = economy.balance;
 
-    economy.balance += type === "income"
-        ? amount
-        : -amount;
+    economy.balance += type === "income" ? amount : -amount;
 
     const transaction = {
         id: economy.nextTransactionId,
@@ -289,7 +390,7 @@ function registerTransaction(type, category, description, amount) {
 
 
 // ========================================
-// VIS KALENDEREN
+// KALENDER
 // ========================================
 
 function renderCalendar() {
@@ -302,8 +403,7 @@ function renderCalendar() {
     }
 
     if (monthElement) {
-        monthElement.textContent =
-            MONTH_NAMES[gameCalendar.month - 1];
+        monthElement.textContent = MONTH_NAMES[gameCalendar.month - 1];
     }
 
     if (seasonElement) {
@@ -313,7 +413,7 @@ function renderCalendar() {
 
 
 // ========================================
-// VIS KUN SALDOEN PÅ FORSIDEN
+// SALDO PÅ FORSIDEN
 // ========================================
 
 function renderEconomy() {
@@ -333,11 +433,7 @@ const nextMonthButton = document.getElementById("nextMonthButton");
 
 if (nextMonthButton) {
     nextMonthButton.addEventListener("click", function() {
-        const previousCalendar = {
-            year: gameCalendar.year,
-            month: gameCalendar.month
-        };
-
+        const previousCalendar = { ...gameCalendar };
         const previousEconomy = JSON.parse(JSON.stringify(economy));
 
         if (gameCalendar.month === 12) {
@@ -389,34 +485,71 @@ if (nextMonthButton) {
 
         renderCalendar();
         renderEconomy();
-        renderHorses();
+        renderStableHorses();
     });
 }
 
 
 // ========================================
-// OPRET HEST
+// VIS GÅRDENS HESTE
 // ========================================
 
-function createHorse(name, breed, sex) {
-    const horse = {
-        id: "H-" + String(nextHorseId).padStart(6, "0"),
-        name: name,
-        breed: breed,
-        sex: sex,
-        birthYear: gameCalendar.year,
-        birthMonth: gameCalendar.month
-    };
+function renderStableHorses() {
+    const cards = document.getElementById("stableHorseCards");
+    const emptyMessage = document.getElementById("stableEmptyMessage");
 
-    nextHorseId++;
-    horses.push(horse);
+    if (!cards) return;
 
-    return horse;
+    cards.replaceChildren();
+
+    if (emptyMessage) {
+        emptyMessage.hidden = stableHorses.length > 0;
+    }
+
+    stableHorses.forEach(function(horse) {
+        const card = document.createElement("article");
+        card.className = "horse-card horse-overview-card";
+
+        const content = document.createElement("div");
+        content.className = "horse-card-content";
+
+        const name = document.createElement("h3");
+        name.textContent = horse.name;
+
+        const id = document.createElement("p");
+        id.className = "horse-id";
+        id.textContent = horse.id;
+
+        const breed = document.createElement("p");
+        breed.className = "horse-info";
+        breed.textContent = horse.breed + " · " + horse.sex;
+
+        const color = document.createElement("p");
+        color.textContent = "Farve: " + horse.color;
+
+        const height = document.createElement("p");
+        height.textContent = "Højde: " + horse.height + " cm";
+
+        const temperament = document.createElement("p");
+        temperament.textContent = "Temperament: " + horse.temperament;
+
+        content.append(
+            name,
+            id,
+            breed,
+            color,
+            height,
+            temperament
+        );
+
+        card.appendChild(content);
+        cards.appendChild(card);
+    });
 }
 
 
 // ========================================
-// VIS HESTEOVERSIGTEN
+// GAMLE HESTE: BEHOLDES OG VISES, HVIS FELTERNE FINDES
 // ========================================
 
 function renderHorses() {
@@ -424,6 +557,8 @@ function renderHorses() {
     const horseCount = document.getElementById("horseCount");
     const emptyMessage = document.getElementById("emptyMessage");
 
+    // Den nye forside bruger gårdens hesteliste i stedet.
+    // Denne funktion er stadig tilgængelig for ældre sider.
     if (!horseCards || !horseCount || !emptyMessage) {
         return;
     }
@@ -468,115 +603,29 @@ function renderHorses() {
 
 
 // ========================================
-// HESTEFORMULAR
+// VELKOMST
 // ========================================
 
-function resetForm() {
-    editingHorseId = null;
+function renderPlayer() {
+    const heading = document.getElementById("playerHeading");
+    const welcomeMessage = document.getElementById("welcomeMessage");
 
-    document.getElementById("horseName").value = "";
-    document.getElementById("horseBreed").value = "";
-    document.getElementById("horseSex").value = "";
+    if (!heading || !welcomeMessage) return;
 
-    document.getElementById("horseBreed").disabled = false;
-    document.getElementById("horseSex").disabled = false;
-
-    document.getElementById("createHorseButton").textContent = "Opret hest";
-    document.getElementById("formHeading").textContent = "Opret ny hest";
-    document.getElementById("cancelEditButton").hidden = true;
-}
-
-function editHorse(id) {
-    const horse = horses.find(function(item) {
-        return item.id === id;
-    });
-
-    if (!horse) return;
-
-    editingHorseId = id;
-
-    document.getElementById("horseName").value = horse.name;
-    document.getElementById("horseBreed").value = horse.breed;
-    document.getElementById("horseSex").value = horse.sex;
-
-    document.getElementById("horseBreed").disabled = true;
-    document.getElementById("horseSex").disabled = true;
-
-    document.getElementById("createHorseButton").textContent = "Gem navn";
-    document.getElementById("formHeading").textContent =
-        "Rediger hestens navn";
-
-    document.getElementById("cancelEditButton").hidden = false;
-
-    document.getElementById("createHorse").scrollIntoView({
-        behavior: "smooth"
-    });
-}
-
-const createHorseButton = document.getElementById("createHorseButton");
-
-if (createHorseButton) {
-    createHorseButton.addEventListener("click", function() {
-        const name = document.getElementById("horseName").value.trim();
-        const breed = document.getElementById("horseBreed").value;
-        const sex = document.getElementById("horseSex").value;
-
-        if (name === "") {
-            alert("Skriv venligst hestens navn.");
-            return;
-        }
-
-        if (editingHorseId !== null) {
-            const horse = horses.find(function(item) {
-                return item.id === editingHorseId;
-            });
-
-            if (!horse) {
-                alert("Hesten blev ikke fundet.");
-                resetForm();
-                return;
-            }
-
-            const oldName = horse.name;
-            horse.name = name;
-
-            if (!saveHorses()) {
-                horse.name = oldName;
-                return;
-            }
-
-        } else {
-            if (
-                breed === "" ||
-                (sex !== "Hoppe" && sex !== "Hingst")
-            ) {
-                alert("Vælg en race og enten hoppe eller hingst.");
-                return;
-            }
-
-            createHorse(name, breed, sex);
-
-            if (!saveHorses()) {
-                horses.pop();
-                nextHorseId--;
-                return;
-            }
-        }
-
-        resetForm();
-        renderHorses();
-    });
-}
-
-const cancelEditButton = document.getElementById("cancelEditButton");
-
-if (cancelEditButton) {
-    cancelEditButton.addEventListener("click", resetForm);
+    if (player.name && player.name.trim()) {
+        heading.textContent = "Velkommen " + player.name.trim() + "!";
+        welcomeMessage.textContent =
+            "Dejligt at se dig tilbage i dit hesteunivers.";
+    } else {
+        heading.textContent = "Velkommen!";
+        welcomeMessage.textContent =
+            "Gå til spillerprofilen for at vælge dit spillernavn.";
+    }
 }
 
 
 // ========================================
-// NULSTIL SPILLET – KUN TIL TEST
+// NULSTILLING – KUN TIL TEST
 // ========================================
 
 const resetGameButton = document.getElementById("resetGameButton");
@@ -609,7 +658,6 @@ if (resetGameButton) {
             nextTransactionId: 1
         };
 
-        // Spillerens ID og navn bevares.
         if (!saveHorses()) {
             horses = previousHorses;
             nextHorseId = previousNextHorseId;
@@ -618,53 +666,13 @@ if (resetGameButton) {
             return;
         }
 
-        resetForm();
         renderCalendar();
         renderEconomy();
         renderHorses();
+        renderStableHorses();
 
         alert("Spillet er nulstillet. Startkapitalen er 30.000 kr.");
     });
-}
-
-
-// ========================================
-// VELKOMST PÅ FORSIDEN
-// ========================================
-
-function renderPlayer() {
-    const heading = document.getElementById("playerHeading");
-    const welcomeMessage = document.getElementById("welcomeMessage");
-
-    if (!heading || !welcomeMessage) {
-        return;
-    }
-
-    try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-
-        if (!savedData) {
-            heading.textContent = "Velkommen!";
-            welcomeMessage.textContent =
-                "Gå til spillerprofilen for at vælge dit spillernavn.";
-            return;
-        }
-
-        const data = JSON.parse(savedData);
-        const name = data.player?.name?.trim();
-
-        if (name) {
-            heading.textContent = "Velkommen " + name + "!";
-            welcomeMessage.textContent =
-                "Dejligt at se dig tilbage i dit hesteunivers.";
-        } else {
-            heading.textContent = "Velkommen!";
-            welcomeMessage.textContent =
-                "Gå til spillerprofilen for at vælge dit spillernavn.";
-        }
-    } catch (error) {
-        console.error("Fejl ved indlæsning af spillernavn:", error);
-    }
 }
 
 
@@ -673,7 +681,9 @@ function renderPlayer() {
 // ========================================
 
 loadHorses();
+loadStableHorses();
 renderPlayer();
 renderCalendar();
 renderEconomy();
 renderHorses();
+renderStableHorses();
