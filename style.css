@@ -789,46 +789,71 @@ details.profile-card > summary {
     }
 }
 
-/* Responsivt layout til hesteoversigten */
+/* ========================================
+   RESPONSIV HESTEOVERSIGT
+   ======================================== */
+
 #horseGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, 230px), 1fr)
+    );
     gap: 20px;
     width: 100%;
-    align-items: stretch;
+    align-items: start;
 }
 
-/* Hestekort */
 #horseGrid .horse-card {
     min-width: 0;
+    padding: 0;
     overflow: hidden;
-    border-radius: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
 }
 
-/* Billede tilpasset skærmstørrelsen */
 #horseGrid .horse-card-image {
     display: block;
     width: 100%;
-    height: clamp(140px, 24vw, 220px);
-    object-fit: cover;
+    max-width: 100%;
+    height: clamp(130px, 22vw, 200px);
+    object-fit: contain;
     object-position: center;
+    background: #faf6f0;
 }
 
-/* Indholdet under billedet */
 #horseGrid .horse-card-content {
+    min-width: 0;
     padding: 16px;
     overflow-wrap: anywhere;
 }
 
-/* Mindre skærme, f.eks. iPhone */
+#horseGrid .horse-card-content h2 {
+    margin-top: 0;
+    font-size: 21px;
+}
+
+#horseGrid .horse-card-content .button {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 10px;
+    padding: 9px 14px;
+    border-radius: 7px;
+    background: var(--brown);
+    color: white;
+    text-align: center;
+    text-decoration: none;
+}
+
 @media (max-width: 480px) {
     #horseGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 16px;
     }
 
     #horseGrid .horse-card-image {
-        height: 180px;
+        height: 160px;
     }
 
     #horseGrid .horse-card-content {
