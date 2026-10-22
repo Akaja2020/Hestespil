@@ -508,12 +508,12 @@ function renderStableHorses() {
     }
 
     const horseImages = {
-        "S-000001": "stjerneskud.png",
-        "S-000002": "safir.png",
-        "S-000003": "dusty.png",
-        "S-000004": "clover.png",
-        "S-000005": "maaneskin.png",
-        "S-000006": "midnat.png"
+        "S-000001": "stjerneskud.PNG",
+        "S-000002": "safir.PNG",
+        "S-000003": "dusty.PNG",
+        "S-000004": "clover.PNG",
+        "S-000005": "maaneskin.PNG",
+        "S-000006": "midnat.PNG"
     };
 
     stableHorses.forEach(function(horse) {
