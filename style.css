@@ -919,3 +919,76 @@ details.profile-card > summary {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
+
+
+/* ========================================
+   GÅRDENS HESTE – BILLEDER OG KORT
+   ======================================== */
+
+#stableHorseCards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    width: 100%;
+    align-items: stretch;
+}
+
+#stableHorseCards .horse-overview-card {
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 5px 18px rgba(61, 48, 40, 0.08);
+}
+
+#stableHorseCards .stable-horse-image {
+    display: block;
+    width: 100%;
+    height: 260px;
+    object-fit: contain;
+    object-position: center;
+    background: #eee5d9;
+}
+
+#stableHorseCards .horse-card-content {
+    min-width: 0;
+    padding: 18px;
+    overflow-wrap: anywhere;
+}
+
+#stableHorseCards .horse-card-content h3 {
+    margin: 0 0 8px;
+    font-size: 24px;
+}
+
+#stableHorseCards .horse-card-content p {
+    margin: 7px 0;
+}
+
+#stableHorseCards .horse-card-content .horse-id {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+#stableHorseCards .horse-card-content .horse-info {
+    color: var(--brown);
+    font-weight: bold;
+}
+
+@media (min-width: 600px) {
+    #stableHorseCards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #stableHorseCards .stable-horse-image {
+        height: 240px;
+    }
+}
+
+@media (min-width: 900px) {
+    #stableHorseCards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

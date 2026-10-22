@@ -63,7 +63,7 @@ const STABLE_HORSE_BLUEPRINTS = [
         name: "Clover",
         breed: "Quarter",
         sex: "Hoppe",
-        color: "Brun",
+        color: "Palomino",
         height: 150,
         temperament: "Venlig og lærenem"
     },
@@ -494,6 +494,7 @@ if (nextMonthButton) {
 // VIS GÅRDENS HESTE
 // ========================================
 
+
 function renderStableHorses() {
     const cards = document.getElementById("stableHorseCards");
     const emptyMessage = document.getElementById("stableEmptyMessage");
@@ -506,9 +507,33 @@ function renderStableHorses() {
         emptyMessage.hidden = stableHorses.length > 0;
     }
 
+    const horseImages = {
+        "S-000001": "stjerneskud.png",
+        "S-000002": "safir.png",
+        "S-000003": "dusty.png",
+        "S-000004": "clover.png",
+        "S-000005": "maaneskin.png",
+        "S-000006": "midnat.png"
+    };
+
     stableHorses.forEach(function(horse) {
+        // Ret Clovers farve i allerede gemte data.
+        if (horse.id === "S-000004") {
+            horse.color = "Palomino";
+        }
+
         const card = document.createElement("article");
         card.className = "horse-card horse-overview-card";
+
+        const image = document.createElement("img");
+        image.className = "stable-horse-image";
+        image.src = horseImages[horse.id] || "";
+        image.alt = "Billede af " + horse.name;
+        image.loading = "lazy";
+
+        image.onerror = function() {
+            image.hidden = true;
+        };
 
         const content = document.createElement("div");
         content.className = "horse-card-content";
@@ -531,7 +556,8 @@ function renderStableHorses() {
         height.textContent = "Højde: " + horse.height + " cm";
 
         const temperament = document.createElement("p");
-        temperament.textContent = "Temperament: " + horse.temperament;
+        temperament.textContent =
+            "Temperament: " + horse.temperament;
 
         content.append(
             name,
@@ -542,11 +568,13 @@ function renderStableHorses() {
             temperament
         );
 
-        card.appendChild(content);
+        card.append(image, content);
         cards.appendChild(card);
     });
-}
 
+    // Gem den rettede farve uden at ændre resten af spillet.
+    saveStableHorses();
+}
 
 // ========================================
 // GAMLE HESTE: BEHOLDES OG VISES, HVIS FELTERNE FINDES
