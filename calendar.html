@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender – Hestespillet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="main-nav" aria-label="Hovedmenu">
+        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html">Forside</a>
+            <a class="nav-link" href="player.html">Spillerprofil</a>
+            <a class="nav-link" href="index.html#horseList">Hesteoversigt</a>
+            <a class="nav-link active" href="calendar.html">Kalender</a>
+            <a class="nav-link" href="economy.html">Økonomi</a>
+        </div>
+    </nav>
+    <main class="page-container">
+        <section class="panel calendar-panel"
+                 aria-labelledby="calendarHeading">
+            <p class="eyebrow">SPILLETS TID</p>
+            <h1 id="calendarHeading">Kalender</h1>
+            <div class="calendar-display">
+                <p id="calendarYear">År 1</p>
+                <h2 id="calendarMonth">Januar</h2>
+                <p id="calendarSeason">Vinter</p>
+            </div>
+            <p id="calendarStatus" role="status">
+                Kalenderen indlæses …
+            </p>
+            <button id="nextMonthButton" type="button" disabled>
+                Næste måned
+            </button>
+            <p class="calendar-note">
+                Tiden går kun videre, når du trykker på knappen.
+                Hver måned bogføres løn og leveomkostninger automatisk.
+            </p>
+        </section>
+    </main>
+    <script src="calendar.js"></script>
+</body>
+</html>
