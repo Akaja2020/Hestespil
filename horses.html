@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesteoversigt – Hestespillet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="main-nav" aria-label="Hovedmenu">
+        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html">Forside</a>
+            <a class="nav-link" href="player.html">Spillerprofil</a>
+            <a class="nav-link active" href="horses.html">Hesteoversigt</a>
+            <a class="nav-link" href="calendar.html">Kalender</a>
+            <a class="nav-link" href="economy.html">Økonomi</a>
+        </div>
+    </nav>
+    <main class="page-container">
+        <section class="panel">
+            <p class="eyebrow">DIN STALD</p>
+            <h1>Hesteoversigt</h1>
+            <p>Her kan du se alle hestene i din stald og åbne deres profiler.</p>
+            <p id="horseCount">Indlæser heste …</p>
+            <div id="horseGrid" class="horse-grid"></div>
+            <p id="horseMessage" role="status"></p>
+            <a class="button" href="index.html">Tilbage til forsiden</a>
+        </section>
+    </main>
+    <script src="horses.js"></script>
+</body>
+</html>
