@@ -788,3 +788,50 @@ details.profile-card > summary {
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+/* Responsivt layout til hesteoversigten */
+#horseGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    gap: 20px;
+    width: 100%;
+    align-items: stretch;
+}
+
+/* Hestekort */
+#horseGrid .horse-card {
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+/* Billede tilpasset skærmstørrelsen */
+#horseGrid .horse-card-image {
+    display: block;
+    width: 100%;
+    height: clamp(140px, 24vw, 220px);
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Indholdet under billedet */
+#horseGrid .horse-card-content {
+    padding: 16px;
+    overflow-wrap: anywhere;
+}
+
+/* Mindre skærme, f.eks. iPhone */
+@media (max-width: 480px) {
+    #horseGrid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    #horseGrid .horse-card-image {
+        height: 180px;
+    }
+
+    #horseGrid .horse-card-content {
+        padding: 14px;
+    }
+}
