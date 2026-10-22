@@ -55,9 +55,9 @@ function renderHorses() {
     }
     horses.forEach(function (horse) {
         const card = document.createElement("article");
-        card.className = "horse-card";
+        card.className = "horse-card horse-overview-card";
         const image = document.createElement("img");
-        image.className = "horse-card-image";
+        image.className = "horse-card-image horse-overview-image";
         image.src = "Horse-illustration.JPEG";
         image.alt = "Illustration af en hest";
         image.loading = "lazy";

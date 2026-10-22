@@ -860,3 +860,62 @@ details.profile-card > summary {
         padding: 14px;
     }
 }
+
+/* Hesteoversigt – tilpas hele siden til mobil */
+#horseGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 100%;
+    gap: 16px;
+}
+#horseGrid .horse-overview-card {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+}
+#horseGrid .horse-overview-image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 180px;
+    object-fit: contain;
+    object-position: center;
+    background: #faf6f0;
+}
+#horseGrid .horse-card-content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 14px;
+    overflow-wrap: anywhere;
+}
+#horseGrid .horse-card-content h2 {
+    margin: 0 0 10px;
+    font-size: 21px;
+}
+#horseGrid .horse-card-content .button {
+    display: inline-block;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+@media (min-width: 600px) {
+    #horseGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    #horseGrid .horse-overview-image {
+        height: 200px;
+    }
+}
+@media (min-width: 900px) {
+    #horseGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
