@@ -10,20 +10,38 @@
 <body>
     <nav class="main-nav" aria-label="Hovedmenu">
     <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-    <details class="nav-menu">
-        <summary aria-label="Åbn hovedmenu">☰ Menu</summary>
-        <div class="nav-links"><a class="nav-link active" href="index.html" aria-current="page">Forside</a><a class="nav-link" href="player.html">Spillerprofil</a><a class="nav-link" href="horses.html">Hesteoversigt</a><a class="nav-link" href="calendar.html">Kalender</a><a class="nav-link" href="economy.html">Økonomi</a></div>
-    </details>
-</nav>
-<section class="game-time-bar" aria-label="Spillets tid">
-    <div class="game-time-current">
-        <span id="gameYear">År 1</span>
-        <strong id="gameMonth">Januar</strong>
-        <span id="gameSeason">Vinter</span>
+    <div class="nav-links" aria-label="Spillets sektioner">
+        <a class="nav-link active" href="index.html">Forside</a>
+        <details class="nav-dropdown" >
+            <summary>Profil</summary>
+            <div class="dropdown-panel">
+                <a href="player.html">Spillerprofil</a>
+                <a href="economy.html">Økonomi</a>
+            </div>
+        </details>
+        <details class="nav-dropdown">
+            <summary>Marked</summary>
+            <div class="dropdown-panel"><span class="dropdown-coming">Hestemarked (kommer senere)</span><span class="dropdown-coming">Udstyr (kommer senere)</span></div>
+        </details>
+        <details class="nav-dropdown">
+            <summary>Min gård</summary>
+            <div class="dropdown-panel"><a href="horses.html">Hesteoversigt</a><span class="dropdown-coming">Faciliteter (kommer senere)</span></div>
+        </details>
+        <details class="nav-dropdown" >
+            <summary>Aktiviteter</summary>
+            <div class="dropdown-panel"><a href="calendar.html">Kalender</a><span class="dropdown-coming">Konkurrencer (kommer senere)</span><span class="dropdown-coming">Kåringer (kommer senere)</span></div>
+        </details>
+        <details class="nav-dropdown">
+            <summary>Hestesundhed</summary>
+            <div class="dropdown-panel"><span class="dropdown-coming">Dyrlæge (kommer senere)</span><span class="dropdown-coming">Smed (kommer senere)</span><span class="dropdown-coming">Sundhed og behandling (kommer senere)</span></div>
+        </details>
     </div>
-    <button id="nextMonthButton" type="button" disabled>Næste måned</button>
-    <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
-</section>
+    <section class="game-time-bar" aria-label="Spillets tid">
+        <div class="game-time-current"><span id="gameYear">År 1</span><strong id="gameMonth">Januar</strong><span id="gameSeason">Vinter</span></div>
+        <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+        <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+    </section>
+</nav>
 
     <header class="page-header">
         <p class="eyebrow">DIT EGET HESTEUNIVERS</p>
@@ -53,25 +71,7 @@
                     alt="Illustration af et hestehoved">
             </div>
         </section>
-
-        <section class="panel calendar-panel"
-                 id="calendarPanel"
-                 aria-labelledby="calendarHeading">
-            <p class="eyebrow">SPILLETS TID</p>
-            <h2 id="calendarHeading">Kalender</h2>
-
-            <div class="calendar-display">
-                <p id="calendarYear">År 1</p>
-                <h3 id="calendarMonth">Januar</h3>
-                <p id="calendarSeason">Vinter</p>
-            </div>
-
-            <p class="calendar-note">
-                Tiden går videre, når du trykker på knappen.
-            </p>
-        </section>
-
-        <section class="panel"
+<section class="panel"
                  id="economyPanel"
                  aria-labelledby="economyHeading">
             <p class="eyebrow">DIN PRIVATØKONOMI</p>
