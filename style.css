@@ -1166,3 +1166,51 @@ details.profile-card > summary {
   .main-nav > .nav-links { gap: .08rem; }
   .main-nav .nav-dropdown > summary, .main-nav .nav-link { padding: .38rem .4rem; font-size: .74rem; }
 }
+
+/* Rettelse: dropdown-menuer skal ligge over sidens indhold på mobil */
+.main-nav {
+  position: relative;
+  z-index: 5000;
+  isolation: isolate;
+  overflow: visible;
+}
+.main-nav > .nav-links {
+  position: relative;
+  z-index: 5001;
+  overflow: visible;
+}
+.main-nav .nav-dropdown[open] {
+  z-index: 5003;
+}
+.main-nav .nav-dropdown .dropdown-panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: auto;
+  z-index: 5004;
+  min-width: 12rem;
+  max-width: min(18rem, calc(100vw - 1.4rem));
+  max-height: min(65vh, 28rem);
+  overflow-y: auto;
+  box-shadow: 0 10px 28px rgba(60, 40, 25, 0.2);
+}
+@media (max-width: 1050px) {
+  .main-nav > .nav-links {
+    overflow-x: visible;
+    overflow-y: visible;
+    flex-wrap: wrap;
+    row-gap: 0.2rem;
+  }
+}
+@media (max-width: 600px) {
+  .main-nav .nav-dropdown .dropdown-panel {
+    position: fixed;
+    top: auto;
+    left: 0.7rem;
+    right: 0.7rem;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    z-index: 6000;
+  }
+}
