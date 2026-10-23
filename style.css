@@ -1214,3 +1214,43 @@ details.profile-card > summary {
     z-index: 6000;
   }
 }
+
+/* Endelig dropdown-rettelse: undgå at menuen klippes af eller placeres bag indhold */
+.main-nav {
+    position: sticky;
+    top: 0;
+    z-index: 99999;
+    overflow: visible !important;
+    isolation: auto;
+}
+.main-nav > .nav-links {
+    position: static;
+    overflow: visible !important;
+    flex-wrap: wrap;
+}
+.main-nav .nav-dropdown { position: relative; z-index: auto; }
+.main-nav .nav-dropdown[open] { position: relative; z-index: 100000; }
+.main-nav .nav-dropdown .dropdown-panel {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    right: auto;
+    z-index: 100001;
+    min-width: 12rem;
+    max-width: min(18rem, calc(100vw - 1.4rem));
+    max-height: min(65vh, 28rem);
+    overflow-y: auto;
+}
+@media (max-width: 600px) {
+    .main-nav > .nav-links { overflow: visible !important; flex-wrap: wrap !important; }
+    .main-nav .nav-dropdown .dropdown-panel {
+        position: absolute !important;
+        top: calc(100% + 0.35rem) !important;
+        left: 0 !important;
+        right: auto !important;
+        width: max-content;
+        min-width: 12rem;
+        max-width: min(18rem, calc(100vw - 1.4rem));
+        z-index: 100001 !important;
+    }
+}
