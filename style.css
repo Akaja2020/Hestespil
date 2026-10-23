@@ -1167,3 +1167,131 @@ details.profile-card > summary {
     }
 }
 
+
+/* Topbjælke: logo og tid på samme linje */
+.main-nav .nav-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.main-nav .nav-brand {
+    flex-shrink: 0;
+    margin-right: auto;
+}
+
+.main-nav .game-time-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.55rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.main-nav .game-time-current {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.main-nav #gameSeason {
+    display: none;
+}
+
+.main-nav .game-time-bar #nextMonthButton {
+    margin: 0;
+    padding: 0.2rem 0.25rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.main-nav .game-time-bar #nextMonthButton:hover {
+    background: #f2e7df;
+}
+
+.main-nav .game-time-bar #gameTimeStatus {
+    display: none;
+}
+
+.main-nav .nav-links {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+}
+
+.main-nav .nav-link,
+.main-nav .nav-dropdown > summary {
+    padding: 0.4rem 0.45rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* Små iPhone-skærme */
+@media (max-width: 600px) {
+    .main-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.45rem;
+        padding: 0.65rem 0.75rem;
+    }
+
+    .main-nav .nav-top-row {
+        gap: 0.35rem;
+    }
+
+    .main-nav .nav-brand {
+        font-size: 0.92rem;
+    }
+
+    .main-nav .game-time-bar {
+        gap: 0.1rem 0.25rem;
+    }
+
+    .main-nav .game-time-current {
+        gap: 0.2rem;
+        font-size: 0.7rem;
+    }
+
+    .main-nav .game-time-bar #nextMonthButton {
+        padding: 0.15rem 0.2rem;
+        font-size: 0.68rem;
+    }
+
+    .main-nav .nav-links {
+        flex-basis: auto;
+        gap: 0.1rem;
+        padding-bottom: 0.2rem;
+    }
+
+    .main-nav .nav-link,
+    .main-nav .nav-dropdown > summary {
+        padding: 0.4rem 0.45rem;
+        font-size: 0.77rem;
+    }
+}
+
