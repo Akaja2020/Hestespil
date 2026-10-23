@@ -8,72 +8,39 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<nav class="main-nav" aria-label="Hovedmenu">
-    <div class="nav-top-row">
-        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-
-        <section class="game-time-bar" aria-label="Spillets tid">
-            <div class="game-time-current">
-                <span id="gameYear">År 1</span>
-                <strong id="gameMonth">Januar</strong>
-            </div>
-
-            <button id="nextMonthButton" type="button" disabled>
-                Næste måned
-            </button>
-
-            <p id="gameTimeStatus" role="status" aria-live="polite">
-                Spillets tid indlæses …
-            </p>
-        </section>
-    </div>
-
+    <nav class="main-nav" aria-label="Hovedmenu">
+    <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
     <div class="nav-links" aria-label="Spillets sektioner">
         <a class="nav-link active" href="index.html">Forside</a>
-
-        <details class="nav-dropdown">
+        <details class="nav-dropdown" >
             <summary>Profil</summary>
             <div class="dropdown-panel">
                 <a href="player.html">Spillerprofil</a>
                 <a href="economy.html">Økonomi</a>
             </div>
         </details>
-
         <details class="nav-dropdown">
             <summary>Marked</summary>
-            <div class="dropdown-panel">
-                <span class="dropdown-coming">Hestemarked (kommer senere)</span>
-                <span class="dropdown-coming">Udstyr (kommer senere)</span>
-            </div>
+            <div class="dropdown-panel"><span class="dropdown-coming">Hestemarked (kommer senere)</span><span class="dropdown-coming">Udstyr (kommer senere)</span></div>
         </details>
-
         <details class="nav-dropdown">
             <summary>Min gård</summary>
-            <div class="dropdown-panel">
-                <a href="horses.html">Hesteoversigt</a>
-                <span class="dropdown-coming">Faciliteter (kommer senere)</span>
-            </div>
+            <div class="dropdown-panel"><a href="horses.html">Hesteoversigt</a><span class="dropdown-coming">Faciliteter (kommer senere)</span></div>
         </details>
-
-        <details class="nav-dropdown">
+        <details class="nav-dropdown" >
             <summary>Aktiviteter</summary>
-            <div class="dropdown-panel">
-                <a href="calendar.html">Kalender</a>
-                <span class="dropdown-coming">Konkurrencer (kommer senere)</span>
-                <span class="dropdown-coming">Kåringer (kommer senere)</span>
-            </div>
+            <div class="dropdown-panel"><a href="calendar.html">Kalender</a><span class="dropdown-coming">Konkurrencer (kommer senere)</span><span class="dropdown-coming">Kåringer (kommer senere)</span></div>
         </details>
-
         <details class="nav-dropdown">
             <summary>Hestesundhed</summary>
-            <div class="dropdown-panel">
-                <span class="dropdown-coming">Dyrlæge (kommer senere)</span>
-                <span class="dropdown-coming">Smed (kommer senere)</span>
-                <span class="dropdown-coming">Sundhed og behandling (kommer senere)</span>
-            </div>
+            <div class="dropdown-panel"><span class="dropdown-coming">Dyrlæge (kommer senere)</span><span class="dropdown-coming">Smed (kommer senere)</span><span class="dropdown-coming">Sundhed og behandling (kommer senere)</span></div>
         </details>
     </div>
+    <section class="game-time-bar" aria-label="Spillets tid">
+        <div class="game-time-current"><span id="gameYear">År 1</span><strong id="gameMonth">Januar</strong><span id="gameSeason">Vinter</span></div>
+        <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+        <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+    </section>
 </nav>
 
     <header class="page-header">
