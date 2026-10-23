@@ -7,61 +7,44 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="main-nav" aria-label="Hovedmenu">
-        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-        <div class="nav-links">
-            <a class="nav-link" href="index.html">Forside</a>
-            <a class="nav-link active" href="player.html">Spillerprofil</a>
-            <a class="nav-link" href="horses.html">Hesteoversigt</a>
-            <a class="nav-link" href="calendar.html">Kalender</a>
-            <a class="nav-link" href="economy.html">Økonomi</a>
-        </div>
-    </nav>
+<nav class="main-nav" aria-label="Hovedmenu">
+    <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+    <details class="nav-menu">
+        <summary aria-label="Åbn hovedmenu">☰ Menu</summary>
+        <div class="nav-links"><a class="nav-link" href="index.html">Forside</a><a class="nav-link active" href="player.html" aria-current="page">Spillerprofil</a><a class="nav-link" href="horses.html">Hesteoversigt</a><a class="nav-link" href="calendar.html">Kalender</a><a class="nav-link" href="economy.html">Økonomi</a></div>
+    </details>
+</nav>
+<section class="game-time-bar" aria-label="Spillets tid">
+    <div class="game-time-current">
+        <span id="gameYear">År 1</span>
+        <strong id="gameMonth">Januar</strong>
+        <span id="gameSeason">Vinter</span>
+    </div>
+    <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+    <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+</section>
     <header class="page-header">
         <p class="eyebrow">DIN IDENTITET</p>
         <h1>Spillerprofil</h1>
-        <p class="intro">
-            Her kan du se og redigere din spillerprofil.
-        </p>
+        <p class="intro">Her kan du se og redigere din spillerprofil.</p>
     </header>
     <main>
-        <section class="panel player-panel"
-                 aria-labelledby="playerHeading">
+        <section class="panel player-panel" aria-labelledby="playerHeading">
             <h2 id="playerHeading">Dine oplysninger</h2>
-            <p class="horse-id" id="playerId">
-                Spiller-ID indlæses...
-            </p>
+            <p class="horse-id" id="playerId">Spiller-ID indlæses...</p>
             <label for="playerName">Spillernavn</label>
-            <input
-                id="playerName"
-                type="text"
-                maxlength="40"
-                placeholder="Vælg dit spillernavn"
-            >
-            <div class="button-row">
-                <button id="savePlayerButton" type="button">
-                    Gem spillernavn
-                </button>
-            </div>
-            <p id="playerMessage"
-               class="calendar-note"
-               role="status"
-               aria-live="polite"></p>
+            <input id="playerName" type="text" maxlength="40" placeholder="Vælg dit spillernavn">
+            <div class="button-row"><button id="savePlayerButton" type="button">Gem spillernavn</button></div>
+            <p id="playerMessage" class="calendar-note" role="status" aria-live="polite"></p>
         </section>
         <section class="panel" aria-labelledby="futureHeading">
             <p class="eyebrow">DIN UDVIKLING</p>
             <h2 id="futureHeading">Spillerens udvikling</h2>
-            <p>
-                Her kommer der senere oplysninger om dit job,
-                dine resultater, sponsorer, erfaring og færdigheder.
-            </p>
+            <p>Her kommer der senere oplysninger om dit job, dine resultater, sponsorer, erfaring og færdigheder.</p>
         </section>
-        <p>
-            <a class="back-link" href="index.html">
-                ← Tilbage til forsiden
-            </a>
-        </p>
+        <p><a class="back-link" href="index.html">← Tilbage til forsiden</a></p>
     </main>
     <script src="player.js"></script>
+    <script src="game-time.js"></script>
 </body>
 </html>

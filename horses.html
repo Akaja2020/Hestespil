@@ -8,15 +8,21 @@
 </head>
 <body>
     <nav class="main-nav" aria-label="Hovedmenu">
-        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-        <div class="nav-links">
-            <a class="nav-link" href="index.html">Forside</a>
-            <a class="nav-link" href="player.html">Spillerprofil</a>
-            <a class="nav-link active" href="horses.html">Hesteoversigt</a>
-            <a class="nav-link" href="calendar.html">Kalender</a>
-            <a class="nav-link" href="economy.html">Økonomi</a>
-        </div>
-    </nav>
+    <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+    <details class="nav-menu">
+        <summary aria-label="Åbn hovedmenu">☰ Menu</summary>
+        <div class="nav-links"><a class="nav-link" href="index.html">Forside</a><a class="nav-link" href="player.html">Spillerprofil</a><a class="nav-link active" href="horses.html" aria-current="page">Hesteoversigt</a><a class="nav-link" href="calendar.html">Kalender</a><a class="nav-link" href="economy.html">Økonomi</a></div>
+    </details>
+</nav>
+<section class="game-time-bar" aria-label="Spillets tid">
+    <div class="game-time-current">
+        <span id="gameYear">År 1</span>
+        <strong id="gameMonth">Januar</strong>
+        <span id="gameSeason">Vinter</span>
+    </div>
+    <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+    <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+</section>
     <main class="page-container">
         <section class="panel">
             <p class="eyebrow">DIN STALD</p>
@@ -29,5 +35,6 @@
         </section>
     </main>
     <script src="horses.js"></script>
+    <script src="game-time.js"></script>
 </body>
 </html>

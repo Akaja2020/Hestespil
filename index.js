@@ -425,69 +425,7 @@ function renderEconomy() {
 }
 
 
-// ========================================
-// NÆSTE MÅNED
-// ========================================
-
-const nextMonthButton = document.getElementById("nextMonthButton");
-
-if (nextMonthButton) {
-    nextMonthButton.addEventListener("click", function() {
-        const previousCalendar = { ...gameCalendar };
-        const previousEconomy = JSON.parse(JSON.stringify(economy));
-
-        if (gameCalendar.month === 12) {
-            gameCalendar.month = 1;
-            gameCalendar.year++;
-        } else {
-            gameCalendar.month++;
-        }
-
-        try {
-            registerTransaction(
-                "income",
-                "Løn",
-                "Fast månedsløn fra staldarbejde",
-                MONTHLY_SALARY
-            );
-
-            registerTransaction(
-                "expense",
-                "Leveomkostninger",
-                "Månedens faste leveomkostninger",
-                MONTHLY_LIVING_COSTS
-            );
-
-            economy.lastIncome = MONTHLY_SALARY;
-            economy.lastExpenses = MONTHLY_LIVING_COSTS;
-            economy.lastNet = MONTHLY_SALARY - MONTHLY_LIVING_COSTS;
-
-            if (!saveHorses()) {
-                gameCalendar = previousCalendar;
-                economy = previousEconomy;
-                renderCalendar();
-                renderEconomy();
-                return;
-            }
-
-        } catch (error) {
-            console.error("Fejl ved bogføring:", error);
-
-            gameCalendar = previousCalendar;
-            economy = previousEconomy;
-
-            renderCalendar();
-            renderEconomy();
-
-            alert("Månedens økonomi kunne ikke bogføres.");
-            return;
-        }
-
-        renderCalendar();
-        renderEconomy();
-        renderStableHorses();
-    });
-}
+// Tidsstyringen håndteres af game-time.js på alle sider.
 
 
 // ========================================

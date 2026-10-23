@@ -9,15 +9,21 @@
 </head>
 <body>
     <nav class="main-nav" aria-label="Hovedmenu">
-        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-        <div class="nav-links">
-            <a class="nav-link active" href="index.html">Forside</a>
-            <a class="nav-link" href="player.html">Spillerprofil</a>
-            <a class="nav-link" href="horses.html">Hesteoversigt</a>
-            <a class="nav-link" href="calendar.html">Kalender</a>
-            <a class="nav-link" href="economy.html">Økonomi</a>
-        </div>
-    </nav>
+    <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+    <details class="nav-menu">
+        <summary aria-label="Åbn hovedmenu">☰ Menu</summary>
+        <div class="nav-links"><a class="nav-link active" href="index.html" aria-current="page">Forside</a><a class="nav-link" href="player.html">Spillerprofil</a><a class="nav-link" href="horses.html">Hesteoversigt</a><a class="nav-link" href="calendar.html">Kalender</a><a class="nav-link" href="economy.html">Økonomi</a></div>
+    </details>
+</nav>
+<section class="game-time-bar" aria-label="Spillets tid">
+    <div class="game-time-current">
+        <span id="gameYear">År 1</span>
+        <strong id="gameMonth">Januar</strong>
+        <span id="gameSeason">Vinter</span>
+    </div>
+    <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+    <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+</section>
 
     <header class="page-header">
         <p class="eyebrow">DIT EGET HESTEUNIVERS</p>
@@ -59,10 +65,6 @@
                 <h3 id="calendarMonth">Januar</h3>
                 <p id="calendarSeason">Vinter</p>
             </div>
-
-            <button id="nextMonthButton" type="button">
-                Næste måned
-            </button>
 
             <p class="calendar-note">
                 Tiden går videre, når du trykker på knappen.
@@ -134,5 +136,6 @@
     </main>
 
     <script src="index.js"></script>
+    <script src="game-time.js"></script>
 </body>
 </html>

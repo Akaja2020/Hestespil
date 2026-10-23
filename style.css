@@ -992,3 +992,69 @@ details.profile-card > summary {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
+
+
+/* ========================================
+   FÆLLES MOBILMENU OG TIDSBJÆLKE
+   ======================================== */
+.main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+.nav-menu { position: relative; margin-left: auto; }
+.nav-menu > summary {
+    list-style: none;
+    cursor: pointer;
+    border: 1px solid var(--border-color, #d8d0c2);
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    font-weight: 700;
+    background: var(--panel-bg, #fff);
+    color: inherit;
+}
+.nav-menu > summary::-webkit-details-marker { display: none; }
+.nav-menu[open] .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: absolute;
+    z-index: 1000;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    min-width: 13rem;
+    padding: 0.65rem;
+    border: 1px solid var(--border-color, #d8d0c2);
+    border-radius: 1rem;
+    background: var(--panel-bg, #fff);
+    box-shadow: 0 0.6rem 1.8rem rgba(0,0,0,.12);
+}
+.nav-menu .nav-link { display: block; padding: 0.7rem 0.85rem; border-radius: 0.65rem; }
+.game-time-bar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    margin: 0 auto 1.25rem;
+    padding: 0.8rem 1rem;
+    width: min(100% - 1.5rem, 1000px);
+    border: 1px solid var(--border-color, #d8d0c2);
+    border-radius: 1rem;
+    background: var(--panel-bg, #fff);
+}
+.game-time-current { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
+.game-time-current strong { font-size: 1.1rem; }
+#gameTimeStatus { flex-basis: 100%; margin: 0; text-align: center; font-size: 0.85rem; opacity: .8; }
+#nextMonthButton:disabled { opacity: .55; cursor: wait; }
+@media (max-width: 699px) {
+    .main-nav { align-items: center; }
+    .nav-brand { max-width: 70%; }
+    .game-time-bar { align-items: stretch; }
+    .game-time-current { justify-content: center; }
+    .game-time-bar #nextMonthButton { width: 100%; }
+}

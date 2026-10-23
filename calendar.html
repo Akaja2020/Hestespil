@@ -7,19 +7,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="main-nav" aria-label="Hovedmenu">
-        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-        <div class="nav-links">
-            <a class="nav-link" href="index.html">Forside</a>
-            <a class="nav-link" href="player.html">Spillerprofil</a>
-            <a class="nav-link" href="horses.html">Hesteoversigt</a>
-            <a class="nav-link active" href="calendar.html">Kalender</a>
-            <a class="nav-link" href="economy.html">Økonomi</a>
-        </div>
-    </nav>
+<nav class="main-nav" aria-label="Hovedmenu">
+    <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+    <details class="nav-menu">
+        <summary aria-label="Åbn hovedmenu">☰ Menu</summary>
+        <div class="nav-links"><a class="nav-link" href="index.html">Forside</a><a class="nav-link" href="player.html">Spillerprofil</a><a class="nav-link" href="horses.html">Hesteoversigt</a><a class="nav-link active" href="calendar.html" aria-current="page">Kalender</a><a class="nav-link" href="economy.html">Økonomi</a></div>
+    </details>
+</nav>
+<section class="game-time-bar" aria-label="Spillets tid">
+    <div class="game-time-current">
+        <span id="gameYear">År 1</span>
+        <strong id="gameMonth">Januar</strong>
+        <span id="gameSeason">Vinter</span>
+    </div>
+    <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+    <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+</section>
     <main class="page-container">
-        <section class="panel calendar-panel"
-                 aria-labelledby="calendarHeading">
+        <section class="panel calendar-panel" aria-labelledby="calendarHeading">
             <p class="eyebrow">SPILLETS TID</p>
             <h1 id="calendarHeading">Kalender</h1>
             <div class="calendar-display">
@@ -27,18 +32,14 @@
                 <h2 id="calendarMonth">Januar</h2>
                 <p id="calendarSeason">Vinter</p>
             </div>
-            <p id="calendarStatus" role="status">
-                Kalenderen indlæses …
-            </p>
-            <button id="nextMonthButton" type="button" disabled>
-                Næste måned
-            </button>
+            <p id="calendarStatus" role="status">Kalenderen indlæses …</p>
             <p class="calendar-note">
-                Tiden går kun videre, når du trykker på knappen.
+                Tiden går kun videre, når du trykker på knappen i tidsbjælken.
                 Hver måned bogføres løn og leveomkostninger automatisk.
             </p>
         </section>
     </main>
     <script src="calendar.js"></script>
+    <script src="game-time.js"></script>
 </body>
 </html>
