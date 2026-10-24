@@ -1293,5 +1293,5 @@ details.profile-card > summary {
 /* Finjustering: Forside på linje med dropdown-menuerne */
 .main-nav > .nav-links > .nav-link {
     position: relative;
-    top: 5px;
+    top: 10px;
 }
