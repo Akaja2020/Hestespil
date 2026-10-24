@@ -1289,9 +1289,15 @@ details.profile-card > summary {
     display: none;
 }
 
-
 /* Finjustering: Forside på linje med dropdown-menuerne */
 .main-nav > .nav-links > .nav-link {
     position: relative;
-    top: 10px;
+    top: 0;
 }
+
+/* Justering af Forside */
+.main-nav > .nav-links > .nav-link.active {
+    transform: translateY(-9px);
+}
+
+
