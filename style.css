@@ -1298,5 +1298,5 @@ details.profile-card > summary {
 /* Justering af Forside-linket kun på hjemmesiden */
 .home-page .main-nav > .nav-links > .nav-link[href="index.html"] {
     transform: translateY(-9px);
+    align-self: center;
 }
-
