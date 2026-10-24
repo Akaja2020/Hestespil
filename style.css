@@ -1296,7 +1296,7 @@ details.profile-card > summary {
 }
 
 /* Justering af Forside */
-.main-nav > .nav-links > .nav-link.active {
+.main-nav > .nav-links > .nav-link[href="index.html"] {
     transform: translateY(-9px);
 }
 
