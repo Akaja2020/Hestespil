@@ -1254,3 +1254,38 @@ details.profile-card > summary {
         z-index: 100001 !important;
     }
 }
+
+/* Samlet justering af hovedmenuen */
+.main-nav > .nav-links {
+    align-items: center;
+}
+
+.main-nav .nav-link,
+.main-nav .nav-dropdown > summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 38px;
+    margin: 0;
+    line-height: 1.25;
+    vertical-align: middle;
+}
+
+.main-nav .nav-link {
+    text-decoration: none;
+}
+
+.main-nav .nav-dropdown {
+    align-self: center;
+    margin: 0;
+}
+
+.main-nav .nav-dropdown > summary {
+    list-style: none;
+}
+
+.main-nav .nav-dropdown > summary::-webkit-details-marker {
+    display: none;
+}
+
