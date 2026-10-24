@@ -1,4 +1,149 @@
+
 <!DOCTYPE html>
-<html lang="da"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hestespillet – Velkommen</title><link rel="stylesheet" href="style.css"></head><body>
-<nav class="main-nav" aria-label="Hovedmenu"><a class="nav-brand" href="index.html">🐴 Hestespillet</a><div class="nav-links" aria-label="Spillets sektioner"><a class="nav-link active" aria-current="page" href="index.html">Forside</a><details class="nav-dropdown"><summary>Profil</summary><div class="dropdown-panel"><a href="player.html">Spillerprofil</a><a href="economy.html">Økonomi</a></div></details><details class="nav-dropdown"><summary>Marked</summary><div class="dropdown-panel"><span class="dropdown-coming">Hestemarked (kommer senere)</span><span class="dropdown-coming">Udstyr (kommer senere)</span></div></details><details class="nav-dropdown"><summary>Min gård</summary><div class="dropdown-panel"><a href="stable.html">Gården – lej en hest</a><a href="horses.html">Hesteoversigt</a><span class="dropdown-coming">Faciliteter (kommer senere)</span></div></details><details class="nav-dropdown"><summary>Aktiviteter</summary><div class="dropdown-panel"><a href="calendar.html">Kalender</a><span class="dropdown-coming">Konkurrencer (kommer senere)</span><span class="dropdown-coming">Kåringer (kommer senere)</span></div></details><details class="nav-dropdown"><summary>Hestesundhed</summary><div class="dropdown-panel"><span class="dropdown-coming">Dyrlæge (kommer senere)</span><span class="dropdown-coming">Smed (kommer senere)</span><span class="dropdown-coming">Sundhed og behandling (kommer senere)</span></div></details></div><section class="game-time-bar" aria-label="Spillets tid"><div class="game-time-current"><span id="gameYear">År 1</span><strong id="gameMonth">Januar</strong><span id="gameSeason">Vinter</span></div><button id="nextMonthButton" type="button" disabled>Næste måned</button><p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p></section></nav>
-<header class="page-header"><p class="eyebrow">VELKOMMEN TIL</p><h1>Hestespillet</h1><p class="intro">Dit eget hesteunivers begynder her. Besøg gården, lær hestene at kende, og gør dig klar til dit næste eventyr.</p></header><main><section class="panel welcome-layout" aria-labelledby="welcomeHeading"><div class="welcome-content"><p class="eyebrow">DIT EGET HESTEUNIVERS</p><h2 id="welcomeHeading">Velkommen til dit hesteliv</h2><p id="welcomeMessage">Glæd dig til at passe heste, udvikle din gård og opleve nye eventyr.</p><div class="button-row"><a class="button open-profile-button" href="stable.html">Besøg gården</a></div></div><img class="welcome-horse-image" src="Horse-illustration.JPEG" alt="Illustration af en hest"></section></main><script src="index.js"></script><script src="game-time.js"></script></body></html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hestespillet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="main-nav" aria-label="Hovedmenu">
+    <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+    <div class="nav-links" aria-label="Spillets sektioner">
+        <a class="nav-link active" href="index.html">Forside</a>
+        <details class="nav-dropdown" >
+            <summary>Profil</summary>
+            <div class="dropdown-panel">
+                <a href="player.html">Spillerprofil</a>
+                <a href="economy.html">Økonomi</a>
+            </div>
+        </details>
+        <details class="nav-dropdown">
+    			<summary>Marked</summary>
+    			<div class="dropdown-panel">
+        			<a href="stable.html">Lejehestegården</a>
+        			<span class="dropdown-coming">Hestemarked (kommer senere)</span>
+        			<span class="dropdown-coming">Udstyr (kommer senere)</span>
+    			</div>
+		</details>
+        <details class="nav-dropdown">
+    			<summary>Min gård</summary>
+    			<div class="dropdown-panel">
+        			<a href="horses.html">Hesteoversigt</a>
+        			<a href="boarding.html">Opstaldningsgårde</a>
+        			<span class="dropdown-coming">Faciliteter (kommer senere)</span>
+    			</div>
+		</details>
+        <details class="nav-dropdown" >
+            <summary>Aktiviteter</summary>
+            <div class="dropdown-panel"><a href="calendar.html">Kalender</a><span class="dropdown-coming">Konkurrencer (kommer senere)</span><span class="dropdown-coming">Kåringer (kommer senere)</span></div>
+        </details>
+        <details class="nav-dropdown">
+            <summary>Hestesundhed</summary>
+            <div class="dropdown-panel"><span class="dropdown-coming">Dyrlæge (kommer senere)</span><span class="dropdown-coming">Smed (kommer senere)</span><span class="dropdown-coming">Sundhed og behandling (kommer senere)</span></div>
+        </details>
+    </div>
+    <section class="game-time-bar" aria-label="Spillets tid">
+        <div class="game-time-current"><span id="gameYear">År 1</span><strong id="gameMonth">Januar</strong><span id="gameSeason">Vinter</span></div>
+        <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+        <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+    </section>
+</nav>
+
+    <header class="page-header">
+        <p class="eyebrow">DIT EGET HESTEUNIVERS</p>
+        <h1>Hestespillet</h1>
+        <p class="intro">Find din nye hest på gården.</p>
+    </header>
+
+    <main>
+        <section class="panel player-panel"
+                 id="playerWelcome"
+                 aria-labelledby="playerHeading">
+            <div class="welcome-layout">
+                <div class="welcome-content">
+                    <p class="eyebrow">VELKOMMEN TIL GÅRDEN</p>
+                    <h2 id="playerHeading">Velkommen!</h2>
+                    <p id="welcomeMessage">
+                        Gårdens heste venter på at møde dig.
+                    </p>
+                    <a class="back-link" href="player.html">
+                        Se spillerprofil →
+                    </a>
+                </div>
+
+                <img
+                    class="welcome-horse-image"
+                    src="Horse-illustration.JPEG"
+                    alt="Illustration af et hestehoved">
+            </div>
+        </section>
+<section class="panel"
+                 id="economyPanel"
+                 aria-labelledby="economyHeading">
+            <p class="eyebrow">DIN PRIVATØKONOMI</p>
+            <h2 id="economyHeading">Økonomi</h2>
+
+            <p>
+                Se din saldo og dine udgifter til hesteleje
+                på økonomisiden.
+            </p>
+
+            <div class="balance-preview">
+                <span>Din aktuelle saldo</span>
+                <strong id="moneyBalance">30.000 kr.</strong>
+            </div>
+
+            <a class="back-link" href="economy.html">
+                Gå til økonomien →
+            </a>
+        </section>
+
+        <section class="panel" id="stablePanel"
+                 aria-labelledby="stableHeading">
+            <p class="eyebrow">GÅRDENS HESTE</p>
+            <h2 id="stableHeading">Mød hestene</h2>
+            <p>
+                Gården har seks heste med forskellige racer
+                og egenskaber. Du kan leje én hest ad gangen.
+            </p>
+
+            <p id="leaseStatus" aria-live="polite">
+                Du har endnu ikke valgt en hest at leje.
+            </p>
+
+            <div id="stableHorseCards" class="horse-grid"></div>
+
+            <p id="stableEmptyMessage" class="empty-message" hidden>
+                Hestene kunne ikke vises. Prøv at genindlæse siden.
+            </p>
+        </section>
+
+        <section class="horse-list-section" id="horseList"
+                 aria-labelledby="horseListHeading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">DIN HEST</p>
+                    <h2 id="horseListHeading">Din lejede hest</h2>
+                </div>
+            </div>
+
+            <div id="leasedHorseDetails"></div>
+        </section>
+
+        <section class="settings-section">
+            <h2>Spilindstillinger</h2>
+            <p>Nulstilling er kun beregnet til test under udviklingen.</p>
+            <button id="resetGameButton"
+                    class="secondary-button"
+                    type="button">
+                Nulstil spillet
+            </button>
+        </section>
+    </main>
+
+    <script src="index.js"></script>
+    <script src="game-time.js"></script>
+</body>
+</html>

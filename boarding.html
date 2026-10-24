@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opstaldningsgårde – Hestespillet</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="page-header">
+    <h1>Opstaldningsgårde</h1>
+    <p>Find et sted, hvor din lejede hest kan bo.</p>
+  </header>
+
+  <nav class="main-nav" aria-label="Hovednavigation">
+    <a href="index.html">Forside</a>
+    <a href="stable.html">Lejehestegården</a>
+    <a href="horses.html">Mine heste</a>
+    <a href="economy.html">Økonomi</a>
+    <a href="player.html">Profil</a>
+    <a href="calendar.html">Kalender</a>
+  </nav>
+
+  <main class="page-content">
+    <section class="panel">
+      <h2>Vælg opstaldningsgård</h2>
+      <p>Opstaldningsgårdene er adskilt fra lejehestegården. Her vælger du senere, hvor din lejede hest skal stå.</p>
+      <p class="notice" id="boardingStatus" role="status">Du har endnu ikke valgt en opstaldningsgård. Valget gemmes først, når opstaldningsfunktionen kobles til lejesystemet.</p>
+    </section>
+
+    <section class="boarding-grid" aria-label="Opstaldningsgårde">
+      <article class="boarding-card">
+        <div class="boarding-art art-meadow" role="img" aria-label="Illustration af en gård med grønne folde">
+          <span class="art-sun"></span><span class="art-barn"></span><span class="art-horse">♞</span>
+        </div>
+        <div class="boarding-card-content">
+          <p class="farm-type">Rolig og enkel</p>
+          <h2>Enggården</h2>
+          <p>En hyggelig gård med grønne folde og en rolig hverdag.</p>
+          <dl class="farm-facts">
+            <div><dt>Opstaldning</dt><dd>1.500 kr./måned</dd></div>
+            <div><dt>Faciliteter</dt><dd>Folde og ridebane</dd></div>
+          </dl>
+          <button type="button" disabled aria-describedby="comingSoon">Vælg gård</button>
+        </div>
+      </article>
+
+      <article class="boarding-card">
+        <div class="boarding-art art-forest" role="img" aria-label="Illustration af en gård tæt på skov">
+          <span class="art-sun"></span><span class="art-barn"></span><span class="art-horse">♞</span>
+        </div>
+        <div class="boarding-card-content">
+          <p class="farm-type">Natur og ture</p>
+          <h2>Skovly</h2>
+          <p>En naturnær gård med gode muligheder for rideture.</p>
+          <dl class="farm-facts">
+            <div><dt>Opstaldning</dt><dd>2.200 kr./måned</dd></div>
+            <div><dt>Faciliteter</dt><dd>Folde og skovstier</dd></div>
+          </dl>
+          <button type="button" disabled aria-describedby="comingSoon">Vælg gård</button>
+        </div>
+      </article>
+
+      <article class="boarding-card">
+        <div class="boarding-art art-arena" role="img" aria-label="Illustration af en større ridegård">
+          <span class="art-sun"></span><span class="art-barn"></span><span class="art-horse">♞</span>
+        </div>
+        <div class="boarding-card-content">
+          <p class="farm-type">Flere træningsmuligheder</p>
+          <h2>Højgård Ridecenter</h2>
+          <p>Et større sted med gode rammer for træning og udvikling.</p>
+          <dl class="farm-facts">
+            <div><dt>Opstaldning</dt><dd>3.000 kr./måned</dd></div>
+            <div><dt>Faciliteter</dt><dd>Folde, ridebane og ridehal</dd></div>
+          </dl>
+          <button type="button" disabled aria-describedby="comingSoon">Vælg gård</button>
+        </div>
+      </article>
+    </section>
+
+    <p id="comingSoon" class="small-note">Valg af gård aktiveres, når lejehest og opstaldning forbindes. Denne side ændrer ikke dine gemte spildata.</p>
+    <p><a href="stable.html">Tilbage til lejehestegården</a></p>
+  </main>
+
+  <script src="boarding.js"></script>
+  <script src="game-time.js"></script>
+</body>
+</html>
