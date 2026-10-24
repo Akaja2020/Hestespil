@@ -1289,3 +1289,9 @@ details.profile-card > summary {
     display: none;
 }
 
+
+/* Finjustering: Forside på linje med dropdown-menuerne */
+.main-nav > .nav-links > .nav-link {
+    position: relative;
+    top: 5px;
+}
