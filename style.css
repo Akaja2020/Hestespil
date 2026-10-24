@@ -1295,9 +1295,8 @@ details.profile-card > summary {
     top: 0;
 }
 
-/* Justering af Forside */
-.main-nav > .nav-links > .nav-link[href="index.html"] {
+/* Justering af Forside-linket kun på hjemmesiden */
+.home-page .main-nav > .nav-links > .nav-link[href="index.html"] {
     transform: translateY(-9px);
 }
-
 
