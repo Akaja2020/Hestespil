@@ -83,13 +83,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Markér den aktuelle side i menuen.
-    document.querySelectorAll(".main-nav a.nav-link[href]").forEach(function (link) {
-        const targetPage = link.getAttribute("href").toLowerCase();
+   document.querySelectorAll(".main-nav a.nav-link[href]").forEach(function (link) {
+    const targetPage = link.getAttribute("href").toLowerCase();
 
-        if (targetPage === currentPage) {
-            link.setAttribute("aria-current", "page");
-        }
-    });
+    if (targetPage === currentPage) {
+        link.setAttribute("aria-current", "page");
+    }
+});
 
     // Luk andre undermenuer, når en undermenu åbnes.
     const dropdowns = document.querySelectorAll(".nav-dropdown");
