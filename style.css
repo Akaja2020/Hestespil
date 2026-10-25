@@ -1300,3 +1300,163 @@ details.profile-card > summary {
     transform: translateY(-9px);
     align-self: center;
 }
+
+/* ========================================
+   OPSTALDNINGSGÅRDE
+   Matcher spillets fælles design
+======================================== */
+
+.boarding-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+    align-items: stretch;
+}
+
+.boarding-card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface, #fffdf8);
+    border: 1px solid var(--border, #d8c7b5);
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(61, 48, 40, 0.08);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.boarding-card-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.2rem;
+}
+
+.boarding-art {
+    min-height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 2.5rem;
+    background: var(--rose, #f8e8e4);
+    border-bottom: 1px solid var(--border, #d8c7b5);
+}
+
+.boarding-art.art-meadow {
+    background: #f3eadb;
+}
+
+.boarding-art.art-forest {
+    background: #e9e5d9;
+}
+
+.boarding-art.art-arena {
+    background: #eee4dc;
+}
+
+.farm-type {
+    margin: 0 0 0.5rem;
+    color: var(--muted, #82766b);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.boarding-card h2 {
+    margin-top: 0;
+    margin-bottom: 0.6rem;
+    color: var(--brown, #70452c);
+}
+
+.boarding-card p {
+    line-height: 1.6;
+}
+
+.farm-facts {
+    margin: 1rem 0 1.25rem;
+}
+
+.farm-facts div {
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--border, #d8c7b5);
+}
+
+.farm-facts dt {
+    color: var(--text, #3d3028);
+    font-weight: 700;
+}
+
+.farm-facts dd {
+    margin: 0.2rem 0 0;
+    color: var(--muted, #82766b);
+    line-height: 1.5;
+}
+
+.boarding-card button {
+    width: 100%;
+    margin-top: auto;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--rose-border, #d8a69b);
+    border-radius: 8px;
+    background: var(--rose, #f8e8e4);
+    color: var(--text, #3d3028);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.boarding-card button:hover:not(:disabled) {
+    background: #f2d9d3;
+    border-color: var(--rose-border, #d8a69b);
+}
+
+.boarding-card button:focus-visible {
+    outline: 2px solid var(--brown, #70452c);
+    outline-offset: 3px;
+}
+
+.boarding-card button:disabled {
+    opacity: 0.65;
+    cursor: default;
+}
+
+.boarding-card.boarding-selected {
+    border: 2px solid var(--brown, #70452c);
+    box-shadow: 0 0 0 3px rgba(112, 69, 44, 0.10);
+}
+
+.boarding-card.boarding-selected .boarding-card-content {
+    background: #fbf5ed;
+}
+
+.boarding-card.boarding-selected button {
+    background: #e9d6c5;
+    border-color: var(--brown, #70452c);
+}
+
+.boarding-status {
+    padding: 1rem;
+    border: 1px solid var(--border, #d8c7b5);
+    border-radius: 10px;
+    background: var(--surface, #fffdf8);
+    line-height: 1.6;
+}
+
+.small-note {
+    color: var(--muted, #82766b);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+    .boarding-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .boarding-card-content {
+        padding: 1rem;
+    }
+}
