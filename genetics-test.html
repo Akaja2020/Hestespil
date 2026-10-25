@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test af hestegenetik</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f1e9;
+      color: #302a24;
+    }
+
+    h1 {
+      font-size: 25px;
+    }
+
+    .intro {
+      line-height: 1.5;
+    }
+
+    .horse {
+      background: white;
+      padding: 15px;
+      margin: 14px 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px #00000012;
+      overflow-wrap: anywhere;
+    }
+
+    .horse h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .result {
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .success {
+      color: #216b3a;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #a12626;
+      font-weight: bold;
+    }
+
+    code {
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🐴 Test af hestegenetik</h1>
+
+  <p class="intro">
+    Denne side tester hestenes skjulte farvegener.
+    Resultaterne vises kun på denne testside og
+    ændrer ikke hestene i stalden.
+  </p>
+
+  <div id="testStatus">Tester genetiksystemet...</div>
+  <div id="results"></div>
+
+  <script src="horse-genetics.js"></script>
+
+  <script>
+    const heste = [
+      { id: "S-000001", navn: "Stjerneskud" },
+      { id: "S-000002", navn: "Safir" },
+      { id: "S-000003", navn: "Dusty" },
+      { id: "S-000004", navn: "Clover" },
+      { id: "S-000005", navn: "Måneskin" },
+      { id: "S-000006", navn: "Midnat" }
+    ];
+
+    const status = document.getElementById("testStatus");
+    const resultater = document.getElementById("results");
+
+    try {
+      if (!window.HorseGenetics) {
+        throw new Error(
+          "horse-genetics.js blev ikke indlæst. " +
+          "Kontrollér, at filen ligger i samme mappe."
+        );
+      }
+
+      const kort = heste.map(hest => {
+        const gener =
+          HorseGenetics.getGenotype(hest.id);
+
+        const grundfarve =
+          HorseGenetics.getBaseColor(gener);
+
+        const beregnetFarve =
+          HorseGenetics.calculateColor(gener);
+
+        return {
+          navn: hest.navn,
+          id: hest.id,
+          gener: gener,
+          grundfarve: grundfarve,
+          beregnetFarve: beregnetFarve
+        };
+      });
+
+      status.innerHTML =
+        '<p class="success">✓ Genetiksystemet virker!</p>';
+
+      kort.forEach(hest => {
+        const kort = document.createElement("section");
+        kort.className = "horse";
+
+        const overskrift = document.createElement("h2");
+        overskrift.textContent = hest.navn;
+
+        const oplysninger = document.createElement("div");
+        oplysninger.className = "result";
+
+        const id = document.createElement("p");
+        id.textContent = "ID: " + hest.id;
+
+        const gener = document.createElement("p");
+        gener.textContent =
+          "Skjulte gener: " + JSON.stringify(hest.gener);
+
+        const grundfarve = document.createElement("p");
+        grundfarve.textContent =
+          "Grundfarve: " + hest.grundfarve;
+
+        const farve = document.createElement("p");
+        farve.textContent =
+          "Beregnet farve: " + hest.beregnetFarve;
+
+        oplysninger.append(id, gener, grundfarve, farve);
+        kort.append(overskrift, oplysninger);
+        resultater.appendChild(kort);
+      });
+
+    } catch (fejl) {
+      status.innerHTML =
+        '<p class="error">Der opstod en fejl:</p>';
+
+      const fejltekst = document.createElement("p");
+      fejltekst.textContent = fejl.message;
+      status.appendChild(fejltekst);
+    }
+  </script>
+</body>
+</html>
