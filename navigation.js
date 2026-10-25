@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Markér den aktuelle side i menuen.
-    document.querySelectorAll(".main-nav a[href]").forEach(function (link) {
+    document.querySelectorAll(".main-nav a.nav-link[href]").forEach(function (link) {
         const targetPage = link.getAttribute("href").toLowerCase();
 
         if (targetPage === currentPage) {
