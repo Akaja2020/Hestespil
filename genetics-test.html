@@ -10,36 +10,26 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 18px;
       background: #f5f1e9;
       color: #302a24;
     }
 
-    h1 {
-      font-size: 25px;
-    }
-
-    .intro {
-      line-height: 1.5;
-    }
+    h1 { font-size: 25px; }
 
     .horse {
       background: white;
       padding: 15px;
       margin: 14px 0;
       border-radius: 12px;
-      box-shadow: 0 2px 6px #00000012;
       overflow-wrap: anywhere;
     }
 
-    .horse h2 {
-      margin-top: 0;
-      font-size: 18px;
-    }
+    .horse h2 { margin-top: 0; }
 
     .result {
-      line-height: 1.6;
       font-size: 14px;
+      line-height: 1.6;
     }
 
     .success {
@@ -52,8 +42,17 @@
       font-weight: bold;
     }
 
-    code {
-      overflow-wrap: anywhere;
+    select {
+      font-size: 16px;
+      padding: 8px;
+      border-radius: 8px;
+      max-width: 100%;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #62584d;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -61,98 +60,133 @@
 <body>
   <h1>🐴 Test af hestegenetik</h1>
 
-  <p class="intro">
-    Denne side tester hestenes skjulte farvegener.
-    Resultaterne vises kun på denne testside og
-    ændrer ikke hestene i stalden.
+  <p>
+    Her tester vi grundfarve, skimmel, roan
+    og skimmelens forenklede aldersudvikling.
   </p>
 
-  <div id="testStatus">Tester genetiksystemet...</div>
+  <label for="age">
+    <strong>Test skimmel ved denne alder:</strong>
+  </label>
+
+  <p>
+    <select id="age">
+      <option value="0">Føl (0 år)</option>
+      <option value="2">2 år</option>
+      <option value="5" selected>5 år</option>
+      <option value="10">10 år</option>
+    </select>
+  </p>
+
+  <p class="note">
+    Aldersstadierne er en forenkling til spillets
+    første prototype. Virkelige skimler udvikler
+    sig forskelligt.
+  </p>
+
+  <div id="status">Tester genetiksystemet...</div>
   <div id="results"></div>
 
   <script src="horse-genetics.js"></script>
 
   <script>
-    const heste = [
-      { id: "S-000001", navn: "Stjerneskud" },
-      { id: "S-000002", navn: "Safir" },
-      { id: "S-000003", navn: "Dusty" },
-      { id: "S-000004", navn: "Clover" },
-      { id: "S-000005", navn: "Måneskin" },
-      { id: "S-000006", navn: "Midnat" }
+    const horses = [
+      { id: "S-000001", name: "Stjerneskud" },
+      { id: "S-000002", name: "Safir" },
+      { id: "S-000003", name: "Dusty" },
+      { id: "S-000004", name: "Clover" },
+      { id: "S-000005", name: "Måneskin" },
+      { id: "S-000006", name: "Midnat" }
     ];
 
-    const status = document.getElementById("testStatus");
-    const resultater = document.getElementById("results");
+    const status = document.getElementById("status");
+    const results = document.getElementById("results");
+    const ageSelect = document.getElementById("age");
 
-    try {
-      if (!window.HorseGenetics) {
-        throw new Error(
-          "horse-genetics.js blev ikke indlæst. " +
-          "Kontrollér, at filen ligger i samme mappe."
-        );
-      }
-
-      const kort = heste.map(hest => {
-        const gener =
-          HorseGenetics.getGenotype(hest.id);
-
-        const grundfarve =
-          HorseGenetics.getBaseColor(gener);
-
-        const beregnetFarve =
-          HorseGenetics.calculateColor(gener);
-
-        return {
-          navn: hest.navn,
-          id: hest.id,
-          gener: gener,
-          grundfarve: grundfarve,
-          beregnetFarve: beregnetFarve
-        };
-      });
-
-      status.innerHTML =
-        '<p class="success">✓ Genetiksystemet virker!</p>';
-
-      kort.forEach(hest => {
-        const kort = document.createElement("section");
-        kort.className = "horse";
-
-        const overskrift = document.createElement("h2");
-        overskrift.textContent = hest.navn;
-
-        const oplysninger = document.createElement("div");
-        oplysninger.className = "result";
-
-        const id = document.createElement("p");
-        id.textContent = "ID: " + hest.id;
-
-        const gener = document.createElement("p");
-        gener.textContent =
-          "Skjulte gener: " + JSON.stringify(hest.gener);
-
-        const grundfarve = document.createElement("p");
-        grundfarve.textContent =
-          "Grundfarve: " + hest.grundfarve;
-
-        const farve = document.createElement("p");
-        farve.textContent =
-          "Beregnet farve: " + hest.beregnetFarve;
-
-        oplysninger.append(id, gener, grundfarve, farve);
-        kort.append(overskrift, oplysninger);
-        resultater.appendChild(kort);
-      });
-
-    } catch (fejl) {
-      status.innerHTML =
-        '<p class="error">Der opstod en fejl:</p>';
-
-      const fejltekst = document.createElement("p");
-      fejltekst.textContent = fejl.message;
-      status.appendChild(fejltekst);
+    function addLine(parent, label, value) {
+      const p = document.createElement("p");
+      p.textContent = label + ": " + value;
+      parent.appendChild(p);
     }
+
+    function render() {
+      results.replaceChildren();
+
+      try {
+        if (!window.HorseGenetics) {
+          throw new Error(
+            "horse-genetics.js blev ikke indlæst."
+          );
+        }
+
+        const age = Number(ageSelect.value);
+
+        horses.forEach(horse => {
+          const genes =
+            HorseGenetics.getGenotype(horse.id);
+
+          const appearance =
+            HorseGenetics.getCoatAppearance(genes, age);
+
+          const card = document.createElement("section");
+          card.className = "horse";
+
+          const heading = document.createElement("h2");
+          heading.textContent = horse.name;
+          card.appendChild(heading);
+
+          addLine(card, "ID", horse.id);
+          addLine(
+            card,
+            "Grundfarve",
+            appearance.baseColor
+          );
+          addLine(
+            card,
+            "Skimmelgen",
+            appearance.gray ? "Ja" : "Nej"
+          );
+          addLine(
+            card,
+            "Roan-gen",
+            appearance.roan ? "Ja" : "Nej"
+          );
+          addLine(
+            card,
+            "Pelsberegning",
+            appearance.coatType
+          );
+
+          if (appearance.gray) {
+            addLine(
+              card,
+              "Skimmelstadium",
+              appearance.grayStageLabel
+            );
+          }
+
+          const genotype = document.createElement("p");
+          genotype.className = "note";
+          genotype.textContent =
+            "Skjulte gener: " + JSON.stringify(genes);
+
+          card.appendChild(genotype);
+          results.appendChild(card);
+        });
+
+        status.className = "success";
+        status.textContent =
+          "✓ Genetiksystemet virker! Vælg en alder for at teste igen.";
+
+      } catch (error) {
+        status.className = "error";
+        status.textContent =
+          "Fejl: " + error.message;
+      }
+    }
+
+    ageSelect.addEventListener("change", render);
+    render();
   </script>
 </body>
 </html>

@@ -1,53 +1,73 @@
 
 /*
  * horse-genetics.js
- * Første version af hestespillets skjulte farvegenetik.
+ * Skjult farvegenetik til hestespillet.
  *
- * Understøtter:
- * - Extension (E/e)
- * - Agouti (A/a)
- * - Cream (N/Cr)
+ * Gener:
+ * Extension: E/e
+ * Agouti: A/a
+ * Cream: N/Cr
+ * Skimmel: G/g
+ * Roan: Rn/rn
  *
- * Grey og roan er endnu ikke implementeret.
+ * Skimmel og roan er separate fra grundfarven.
  */
 
 window.HorseGenetics = (() => {
-  // Skjulte genotyper for gårdens faste heste.
-  // Disse data bruges ikke direkte i hestekortenes visning.
   const genetics = {
     "S-000001": {
       extension: ["E", "e"],
       agouti: ["A", "a"],
-      cream: ["N", "N"]
+      cream: ["N", "N"],
+      gray: ["G", "g"],
+      roan: ["rn", "rn"]
     },
+
     "S-000002": {
       extension: ["E", "e"],
       agouti: ["A", "a"],
-      cream: ["N", "N"]
+      cream: ["N", "N"],
+      gray: ["g", "g"],
+      roan: ["rn", "rn"]
     },
+
     "S-000003": {
       extension: ["e", "e"],
       agouti: ["a", "a"],
-      cream: ["N", "N"]
+      cream: ["N", "N"],
+      gray: ["g", "g"],
+      roan: ["Rn", "rn"]
     },
+
     "S-000004": {
       extension: ["e", "e"],
       agouti: ["a", "a"],
-      cream: ["N", "Cr"]
+      cream: ["N", "Cr"],
+      gray: ["g", "g"],
+      roan: ["rn", "rn"]
     },
+
     "S-000005": {
       extension: ["e", "e"],
       agouti: ["a", "a"],
-      cream: ["N", "N"]
+      cream: ["N", "N"],
+      gray: ["g", "g"],
+      roan: ["rn", "rn"]
     },
+
     "S-000006": {
       extension: ["E", "e"],
       agouti: ["a", "a"],
-      cream: ["N", "N"]
+      cream: ["N", "N"],
+      gray: ["g", "g"],
+      roan: ["rn", "rn"]
     }
   };
 
-  // Hent en hests skjulte genotype via dens ID.
+  function copyData(data) {
+    return JSON.parse(JSON.stringify(data));
+  }
+
   function getGenotype(horseId) {
     const genotype = genetics[horseId];
 
@@ -57,21 +77,18 @@ window.HorseGenetics = (() => {
       );
     }
 
-    // Returnér en kopi, så interne data ikke ændres ved et uheld.
-    return structuredClone(genotype);
+    return copyData(genotype);
   }
 
-  // Bestem grundfarven ud fra Extension og Agouti.
+  // Grundfarve før skimmel og roan.
   function getBaseColor(genotype) {
     const [e1, e2] = genotype.extension;
     const [a1, a2] = genotype.agouti;
 
-    // To e-alleler giver rød grundfarve.
     if (e1 === "e" && e2 === "e") {
       return "red";
     }
 
-    // Agouti påvirker kun sort pigment.
     if (a1 === "a" && a2 === "a") {
       return "black";
     }
@@ -79,9 +96,10 @@ window.HorseGenetics = (() => {
     return "bay";
   }
 
-  // Beregn synlig grundfarve inkl. Cream-fortynding.
+  // Grundfarve inklusive Cream-genet.
   function calculateColor(genotype) {
     const baseColor = getBaseColor(genotype);
+
     const creamCount = genotype.cream.filter(
       allele => allele === "Cr"
     ).length;
@@ -96,24 +114,100 @@ window.HorseGenetics = (() => {
       return "smoky_black";
     }
 
-    // To Cream-alleler.
     if (baseColor === "red") return "cremello";
     if (baseColor === "bay") return "perlino";
+
     return "smoky_cream";
   }
 
-  // Træk én tilfældig allel fra hvert locus hos en forælder.
+  function hasDominantAllele(genotype, locus, allele) {
+    return genotype[locus].includes(allele);
+  }
+
+  function hasGray(genotype) {
+    return hasDominantAllele(genotype, "gray", "G");
+  }
+
+  function hasRoan(genotype) {
+    return hasDominantAllele(genotype, "roan", "Rn");
+  }
+
+  // Forenklet model for skimmelens udvikling med alderen.
+  // Den præcise udvikling varierer fra hest til hest.
+  function getGrayStage(ageYears) {
+    const age = Math.max(0, Number(ageYears) || 0);
+
+    if (age < 1) return "young";
+    if (age < 4) return "early";
+    if (age < 8) return "intermediate";
+
+    return "light";
+  }
+
+  function getGrayStageLabel(stage) {
+    const labels = {
+      young: "Ung skimmel",
+      early: "Tidlig afblegning",
+      intermediate: "Tiltagende afblegning",
+      light: "Lys skimmel"
+    };
+
+    return labels[stage] || "Ukendt stadium";
+  }
+
+  // Samlet pelsberegning.
+  function getCoatAppearance(genotype, ageYears = 0) {
+    const baseColor = getBaseColor(genotype);
+    const color = calculateColor(genotype);
+    const gray = hasGray(genotype);
+    const roan = hasRoan(genotype);
+
+    let coatType = "solid";
+    let grayStage = null;
+
+    if (gray) {
+      coatType = "gray";
+      grayStage = getGrayStage(ageYears);
+    } else if (roan) {
+      coatType = "roan";
+    }
+
+    return {
+      baseColor,
+      color,
+      gray,
+      roan,
+      coatType,
+      grayStage,
+      grayStageLabel: gray
+        ? getGrayStageLabel(grayStage)
+        : null
+    };
+  }
+
   function inheritLocus(parentAlleles) {
     return parentAlleles[
       Math.floor(Math.random() * parentAlleles.length)
     ];
   }
 
-  // Opret føllets genotype fra to forældres genotyper.
+  // Føllet arver én allel fra hver forælder ved hvert gen.
   function createFoalGenotype(parent1, parent2) {
     const child = {};
 
-    for (const locus of ["extension", "agouti", "cream"]) {
+    for (const locus of [
+      "extension",
+      "agouti",
+      "cream",
+      "gray",
+      "roan"
+    ]) {
+      if (!parent1[locus] || !parent2[locus]) {
+        throw new Error(
+          `Genet ${locus} mangler hos en af forældrene`
+        );
+      }
+
       child[locus] = [
         inheritLocus(parent1[locus]),
         inheritLocus(parent2[locus])
@@ -127,6 +221,11 @@ window.HorseGenetics = (() => {
     getGenotype,
     getBaseColor,
     calculateColor,
+    hasGray,
+    hasRoan,
+    getGrayStage,
+    getGrayStageLabel,
+    getCoatAppearance,
     createFoalGenotype
   };
 })();
