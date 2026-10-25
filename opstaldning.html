@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opstaldning · Horsedreams Online</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.boarding-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+.boarding-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+}
+.boarding-card h2 { margin: 0; }
+.boarding-price {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--brown);
+}
+.boarding-card ul { padding-left: 20px; margin: 0; }
+.boarding-card li { margin: 5px 0; }
+.boarding-card button { margin-top: auto; }
+.boarding-card.selected {
+    border: 2px solid #63845b;
+    box-shadow: 0 0 0 2px #63845b20;
+}
+.boarding-status {
+    padding: 14px;
+    border-radius: 10px;
+    background: #eef4e9;
+    border: 1px solid #c9d9bf;
+}
+.boarding-note { color: var(--muted); font-size: .92rem; }
+.boarding-card .tag {
+    font-size: .75rem;
+    font-weight: bold;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<nav class="main-nav" aria-label="Hovedmenu">
+    <a class="nav-brand" href="index.html">🐴 Horsedreams Online</a>
+
+    <div class="nav-links" aria-label="Spillets sektioner">
+        <a class="nav-link" href="index.html">Forside</a>
+
+        <details class="nav-dropdown">
+            <summary>Profil</summary>
+            <div class="dropdown-panel">
+                <a href="player.html">Spillerprofil</a>
+                <a href="economy.html">Økonomi</a>
+            </div>
+        </details>
+
+        <details class="nav-dropdown">
+            <summary>Marked</summary>
+            <div class="dropdown-panel">
+                <span class="dropdown-coming">Hestemarked (kommer senere)</span>
+                <span class="dropdown-coming">Udstyr (kommer senere)</span>
+            </div>
+        </details>
+
+        <details class="nav-dropdown">
+            <summary>Min gård</summary>
+            <div class="dropdown-panel">
+                <a href="horses.html">Hesteoversigt</a>
+                <a href="opstaldning.html" aria-current="page">Opstaldning</a>
+                <span class="dropdown-coming">Faciliteter (kommer senere)</span>
+            </div>
+        </details>
+
+        <details class="nav-dropdown">
+            <summary>Aktiviteter</summary>
+            <div class="dropdown-panel">
+                <a href="calendar.html">Kalender</a>
+                <span class="dropdown-coming">Konkurrencer (kommer senere)</span>
+                <span class="dropdown-coming">Kåringer (kommer senere)</span>
+            </div>
+        </details>
+
+        <details class="nav-dropdown">
+            <summary>Hestesundhed</summary>
+            <div class="dropdown-panel">
+                <span class="dropdown-coming">Dyrlæge (kommer senere)</span>
+                <span class="dropdown-coming">Smed (kommer senere)</span>
+                <span class="dropdown-coming">Sundhed og behandling (kommer senere)</span>
+            </div>
+        </details>
+    </div>
+
+    <section class="game-time-bar" aria-label="Spillets tid">
+        <div class="game-time-current">
+            <span id="gameYear">År 1</span>
+            <strong id="gameMonth">Januar</strong>
+            <span id="gameSeason">Vinter</span>
+        </div>
+        <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+        <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+    </section>
+</nav>
+
+<header class="page-header">
+    <p class="eyebrow">HORSEDREAMS ONLINE</p>
+    <h1>Vælg opstaldning</h1>
+    <p class="intro">Find det sted, der passer bedst til dig og din hest. Foder er inkluderet i alle månedspriser.</p>
+</header>
+
+<main>
+    <section class="panel">
+        <p class="eyebrow">DIT VALG</p>
+        <h2 id="currentBoardingTitle">Du har ikke valgt opstaldning endnu</h2>
+        <p id="currentBoardingText">Vælg et af de tre opstaldningssteder nedenfor.</p>
+        <p class="boarding-note">Når du skifter sted, gælder det nye valg fra næste spilletidsmåned. Der trækkes kun én opstaldningspris pr. måned.</p>
+        <p id="boardingStatus" class="boarding-status" role="status" aria-live="polite">Indlæser dit valg …</p>
+    </section>
+
+    <section class="boarding-grid" aria-label="Opstaldningssteder">
+        <article class="boarding-card" data-stable="enggaarden">
+            <span class="tag">Budgetvenlig</span>
+            <h2>Enggården</h2>
+            <p class="boarding-price">1.500 kr./md.</p>
+            <ul>
+                <li>Løsdrift</li>
+                <li>Ridesti i lille skov</li>
+                <li>Udendørs ridebane, 20 × 40 m</li>
+            </ul>
+            <p class="boarding-note">Foder inkluderet.</p>
+            <button type="button" data-choose="enggaarden">Vælg Enggården</button>
+        </article>
+
+        <article class="boarding-card" data-stable="skovly">
+            <span class="tag">Mellemklasse</span>
+            <h2>Skovly</h2>
+            <p class="boarding-price">2.500 kr./md.</p>
+            <ul>
+                <li>Bokse</li>
+                <li>Jordfolde</li>
+                <li>Udendørs ridebane, 20 × 60 m</li>
+                <li>Ridesti i mellem skov</li>
+                <li>Lille ridehus, 20 × 40 m</li>
+            </ul>
+            <p class="boarding-note">Foder inkluderet.</p>
+            <button type="button" data-choose="skovly">Vælg Skovly</button>
+        </article>
+
+        <article class="boarding-card" data-stable="hoejgaard">
+            <span class="tag">Flest faciliteter</span>
+            <h2>Højgård Ridecenter</h2>
+            <p class="boarding-price">3.000 kr./md.</p>
+            <ul>
+                <li>Boks</li>
+                <li>Jordfolde og græsfolde</li>
+                <li>Ridebane, 20 × 60 m</li>
+                <li>Udendørs springbane</li>
+                <li>Ridehus, 20 × 60 m</li>
+                <li>Ridesti i stor skov</li>
+            </ul>
+            <p class="boarding-note">Foder inkluderet.</p>
+            <button type="button" data-choose="hoejgaard">Vælg Højgård</button>
+        </article>
+    </section>
+
+    <section class="panel">
+        <h2>Dit månedlige budget</h2>
+        <p>Med den nuværende løn og faste udgifter ser dit budget sådan ud:</p>
+
+        <div class="economy-details">
+            <p><span>Løn efter skat</span><strong>+20.000 kr.</strong></p>
+            <p><span>Leveomkostninger</span><strong>−7.500 kr.</strong></p>
+            <p><span>Lejehest</span><strong>−4.000 kr.</strong></p>
+            <p><span>Opstaldning</span><strong id="budgetBoarding">Ikke valgt</strong></p>
+            <p class="economy-total"><span>Tilbage pr. måned</span><strong id="budgetRemaining">Afhænger af dit valg</strong></p>
+        </div>
+
+        <p class="boarding-note">Budgettet viser de aftalte faste poster. Eventuelle senere udgifter kommer oveni.</p>
+        <a class="back-link" href="economy.html">Se økonomi og posteringer →</a>
+    </section>
+</main>
+
+<script src="opstaldning.js"></script>
+<script src="game-time.js"></script>
+<script src="navigation.js"></script>
+</body>
+</html>
