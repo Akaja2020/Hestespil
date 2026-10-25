@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <details class="nav-dropdown">
                     <summary>Marked</summary>
                     <div class="dropdown-panel">
-                        <a href="stable.html">Lejehestegården</a>
+                        <a href="stable.html">Æblelundens udlejningsstald</a>
                         <span class="dropdown-coming">Hestemarked (kommer senere)</span>
                         <span class="dropdown-coming">Udstyr (kommer senere)</span>
                     </div>
