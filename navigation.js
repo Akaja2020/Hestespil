@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <details class="nav-dropdown">
                     <summary>Marked</summary>
                     <div class="dropdown-panel">
-                        <a href="stable.html">Æblelundens udlejningsstald</a>
+                        <a href="stable.html">Lejehestegården</a>
                         <span class="dropdown-coming">Hestemarked (kommer senere)</span>
                         <span class="dropdown-coming">Udstyr (kommer senere)</span>
                     </div>
@@ -82,16 +82,14 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.insertAdjacentHTML("afterbegin", menu);
     }
 
-    // Markér den aktuelle side i menuen.
-   document.querySelectorAll(".main-nav a.nav-link[href]").forEach(function (link) {
-    const targetPage = link.getAttribute("href").toLowerCase();
+    document.querySelectorAll(".main-nav a.nav-link[href]").forEach(function (link) {
+        const targetPage = link.getAttribute("href").toLowerCase();
 
-    if (targetPage === currentPage) {
-        link.setAttribute("aria-current", "page");
-    }
-});
+        if (targetPage === currentPage) {
+            link.setAttribute("aria-current", "page");
+        }
+    });
 
-    // Luk andre undermenuer, når en undermenu åbnes.
     const dropdowns = document.querySelectorAll(".nav-dropdown");
 
     dropdowns.forEach(function (dropdown) {
@@ -105,4 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     });
+
+    // Fortæl tidsstyringen, at menuen og månedsknappen er blevet oprettet igen.
+    document.dispatchEvent(new Event("game-navigation-ready"));
 });
