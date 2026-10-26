@@ -201,6 +201,70 @@ function saveHorses() {
 
 
 // ========================================
+// GÅRDENS FASTE HESTE
+// ========================================
+
+function loadStableHorses() {
+    try {
+        const savedStable = localStorage.getItem(STABLE_STORAGE_KEY);
+
+        if (savedStable !== null) {
+            const parsedStable = JSON.parse(savedStable);
+
+            if (
+                Array.isArray(parsedStable) &&
+                parsedStable.length > 0
+            ) {
+                stableHorses = parsedStable;
+                return;
+            }
+        }
+
+        stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
+            return {
+                ...blueprint,
+                birthYear: 1,
+                birthMonth: 1
+            };
+        });
+
+        saveStableHorses();
+
+    } catch (error) {
+        console.error("Fejl ved indlæsning af gårdens heste:", error);
+
+        stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
+            return {
+                ...blueprint,
+                birthYear: 1,
+                birthMonth: 1
+            };
+        });
+
+        alert(
+            "Gårdens heste kunne ikke indlæses fra lageret. " +
+            "Kontrollér, at browserens lager fungerer."
+        );
+    }
+}
+
+function saveStableHorses() {
+    try {
+        localStorage.setItem(
+            STABLE_STORAGE_KEY,
+            JSON.stringify(stableHorses)
+        );
+
+        return true;
+    } catch (error) {
+        console.error("Fejl ved gemning af gårdens heste:", error);
+        alert("Gårdens heste kunne ikke gemmes.");
+        return false;
+    }
+}
+
+
+// ========================================
 // ØKONOMIENS TRANSAKTIONSSYSTEM
 // ========================================
 

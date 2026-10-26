@@ -2,43 +2,144 @@
 /*
  * stable.js
  * Udlejningsstalden i Horsedreams Online.
- * Bevarer hestens ID og eksisterende data ved udlejning.
+ *
+ * Arbejdsgang:
+ * 1. Vælg en hest.
+ * 2. Vælg opstaldningsgård på boarding.html.
+ * 3. Bekræft samlet betaling.
+ * 4. Første måneds leje og opstaldning trækkes én gang.
+ *
+ * Bevarer eksisterende localStorage-nøgler og hestedata.
  */
-
 "use strict";
 
 const STABLE_STORAGE_KEY = "hestespil_stable_horses_v1";
 const GAME_STORAGE_KEY = "hestespil_horses_v1";
 const BOARDING_STORAGE_KEY = "hestespil_boarding_v1";
+const PENDING_LEASE_KEY = "hestespil_pending_lease_horse_v1";
 
 const MONTHLY_RENT = 2000;
 
 const DEFAULT_STABLE_HORSES = [
-    { id: "S-000001", name: "Stjerneskud", breed: "Araber", gender: "Hoppe", color: "Skimmel", height: "153 cm", temperament: "Vågen og energisk", image: "stjerneskud.PNG" },
-    { id: "S-000002", name: "Safir", breed: "Araber", gender: "Hingst", color: "Brun", height: "156 cm", temperament: "Stolt og følsom", image: "safir.PNG" },
-    { id: "S-000003", name: "Dusty", breed: "Quarter", gender: "Hingst", color: "Rødskimmel", height: "151 cm", temperament: "Rolig og samarbejdsvillig", image: "dusty.PNG" },
-    { id: "S-000004", name: "Clover", breed: "Quarter", gender: "Hoppe", color: "Palomino", height: "150 cm", temperament: "Venlig og lærenem", image: "clover.PNG" },
-    { id: "S-000005", name: "Måneskin", breed: "Welsh Cob", gender: "Hoppe", color: "Rød", height: "145 cm", temperament: "Livlig og nysgerrig", image: "maaneskin.PNG" },
-    { id: "S-000006", name: "Midnat", breed: "Frieser", gender: "Hingst", color: "Sort", height: "164 cm", temperament: "Rolig og modig", image: "midnat.PNG" }
+    {
+        id: "S-000001",
+        name: "Stjerneskud",
+        breed: "Araber",
+        gender: "Hoppe",
+        color: "Skimmel",
+        height: "153 cm",
+        temperament: "Vågen og energisk",
+        image: "stjerneskud.PNG"
+    },
+    {
+        id: "S-000002",
+        name: "Safir",
+        breed: "Araber",
+        gender: "Hingst",
+        color: "Brun",
+        height: "156 cm",
+        temperament: "Stolt og følsom",
+        image: "safir.PNG"
+    },
+    {
+        id: "S-000003",
+        name: "Dusty",
+        breed: "Quarter",
+        gender: "Hingst",
+        color: "Rødskimmel",
+        height: "151 cm",
+        temperament: "Rolig og samarbejdsvillig",
+        image: "dusty.PNG"
+    },
+    {
+        id: "S-000004",
+        name: "Clover",
+        breed: "Quarter",
+        gender: "Hoppe",
+        color: "Palomino",
+        height: "150 cm",
+        temperament: "Venlig og lærenem",
+        image: "clover.PNG"
+    },
+    {
+        id: "S-000005",
+        name: "Måneskin",
+        breed: "Welsh Cob",
+        gender: "Hoppe",
+        color: "Rød",
+        height: "145 cm",
+        temperament: "Livlig og nysgerrig",
+        image: "maaneskin.PNG"
+    },
+    {
+        id: "S-000006",
+        name: "Midnat",
+        breed: "Frieser",
+        gender: "Hingst",
+        color: "Sort",
+        height: "164 cm",
+        temperament: "Rolig og modig",
+        image: "midnat.PNG"
+    }
 ];
 
 const BOARDING_FARMS = {
-    enggaarden: { name: "Enggården", price: 1500 },
-    skovly: { name: "Skovly", price: 2500 },
-    hojgaard: { name: "Højgård Ridecenter", price: 3000 },
-    hoejgaard: { name: "Højgård Ridecenter", price: 3000 }
+    enggaarden: {
+        name: "Enggården",
+        price: 1500
+    },
+    skovly: {
+        name: "Skovly",
+        price: 2500
+    },
+    hojgaard: {
+        name: "Højgård Ridecenter",
+        price: 3000
+    },
+    hoejgaard: {
+        name: "Højgård Ridecenter",
+        price: 3000
+    }
 };
 
+/* ---------- Hjælpefunktioner ---------- */
+
 function readJSON(key) {
-    const raw = localStorage.getItem(key);
-    return raw === null ? null : JSON.parse(raw);
+    try {
+        const raw = localStorage.getItem(key);
+        return raw === null ? null : JSON.parse(raw);
+    } catch (error) {
+        console.error("Kunne ikke læse gemte data:", key, error);
+        return null;
+    }
+}
+
+function money(amount) {
+    const value = Number(amount);
+
+    if (!Number.isFinite(value)) {
+        return "ukendt beløb";
+    }
+
+    return value.toLocaleString("da-DK") + " kr.";
+}
+
+function textEl(tag, className, text) {
+    const element = document.createElement(tag);
+
+    if (className) {
+        element.className = className;
+    }
+
+    element.textContent = text == null ? "" : String(text);
+    return element;
 }
 
 function getStableHorses() {
     try {
         const raw = localStorage.getItem(STABLE_STORAGE_KEY);
 
-        // Standardhestene oprettes kun første gang.
+        // Brug standardhestene, hvis staldlisten aldrig er blevet gemt.
         if (raw === null) {
             return DEFAULT_STABLE_HORSES.map(horse => ({ ...horse }));
         }
@@ -49,7 +150,6 @@ function getStableHorses() {
             throw new Error("Udlejningsstaldens data er ugyldige.");
         }
 
-        // En tom liste er gyldig: alle hestene kan være udlejet.
         return saved.map(horse => {
             const defaults = DEFAULT_STABLE_HORSES.find(
                 item => item.id === horse.id
@@ -59,79 +159,6 @@ function getStableHorses() {
         });
     } catch (error) {
         console.error("Kunne ikke indlæse udlejningsstalden:", error);
-        return [];
-    }
-}
-
-function textEl(tag, className, text) {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    element.textContent = text;
-    return element;
-}
-
-function money(amount) {
-    return Number(amount).toLocaleString("da-DK") + " kr.";
-}
-
-function getSelectedFarm() {
-    const choice = readJSON(BOARDING_STORAGE_KEY);
-
-    if (!choice || !BOARDING_FARMS[choice.id]) {
-        return null;
-    }
-
-    return {
-        id: choice.id,
-        ...BOARDING_FARMS[choice.id]
-    };
-}
-
-
-function chooseBoardingFarm() {
-    const options = [
-        { id: "enggaarden", name: "Enggården", price: 1500 },
-        { id: "skovly", name: "Skovly", price: 2500 },
-        { id: "hojgaard", name: "Højgård Ridecenter", price: 3000 }
-    ];
-
-    const currentFarm = getSelectedFarm();
-
-    const promptText =
-        "Vælg opstaldningsgård ved at indtaste et tal:\n\n" +
-        "1. Enggården – 1.500 kr./måned\n" +
-        "2. Skovly – 2.500 kr./måned\n" +
-        "3. Højgård Ridecenter – 3.000 kr./måned\n\n" +
-        (currentFarm
-            ? "Dit tidligere valg var " + currentFarm.name + ".\n"
-            : "Du har ikke valgt en gård endnu.\n") +
-        "Indtast 1, 2 eller 3. Tryk Annuller for at gå tilbage.";
-
-    const answer = window.prompt(promptText);
-
-    if (answer === null) return null;
-
-    const selected = options[Number(answer) - 1];
-
-    if (!selected || answer.trim() !== String(Number(answer))) {
-        alert("Ugyldigt valg. Vælg 1, 2 eller 3.");
-        return chooseBoardingFarm();
-    }
-
-    try {
-        localStorage.setItem(
-            BOARDING_STORAGE_KEY,
-            JSON.stringify({
-                id: selected.id,
-                name: selected.name,
-                price: selected.price,
-                changedAt: new Date().toISOString()
-            })
-        );
-
-        return selected;
-    } catch (error) {
-        alert("Gårdvalget kunne ikke gemmes i browseren.");
         return null;
     }
 }
@@ -157,19 +184,123 @@ function validateGameData(data) {
 
 function hasActiveRental(data) {
     return data.horses.some(horse =>
-        horse.rental && horse.rental.active === true
+        horse &&
+        horse.rental &&
+        horse.rental.active === true
     );
 }
 
-function leaseHorse(horseId) {
-    let oldGameRaw;
-    let oldStableRaw;
-    let oldBoardingRaw;
+function getSelectedFarm() {
+    const choice = readJSON(BOARDING_STORAGE_KEY);
+
+    if (!choice || !BOARDING_FARMS[choice.id]) {
+        return null;
+    }
+
+    return {
+        id: choice.id,
+        ...BOARDING_FARMS[choice.id]
+    };
+}
+
+/* ---------- Vælg hest ---------- */
+
+/*
+ * Denne funktion opretter kun en midlertidig lejeproces.
+ * Den trækker ikke penge og flytter ikke hesten.
+ */
+function startLeaseSelection(horseId) {
+    try {
+        const game = readJSON(GAME_STORAGE_KEY);
+
+        if (!validateGameData(game)) {
+            alert(
+                "Spildata blev ikke fundet eller kunne ikke valideres. " +
+                "Gå til forsiden først."
+            );
+            return;
+        }
+
+        if (hasActiveRental(game)) {
+            alert(
+                "Du har allerede en lejehest. " +
+                "Du kan kun leje én hest ad gangen."
+            );
+            return;
+        }
+
+        const stableHorses = getStableHorses();
+
+        if (!Array.isArray(stableHorses)) {
+            alert(
+                "Udlejningsstalden kunne ikke læses. " +
+                "Ingen ændringer er foretaget."
+            );
+            return;
+        }
+
+        const horse = stableHorses.find(item => item.id === horseId);
+
+        if (!horse) {
+            alert(
+                "Hesten findes ikke længere i udlejningsstalden. " +
+                "Opdatér siden."
+            );
+            return;
+        }
+
+        if (game.horses.some(item => item && item.id === horse.id)) {
+            alert(
+                "Hesten findes allerede i din hesteoversigt. " +
+                "Ingen betaling er gennemført."
+            );
+            return;
+        }
+
+        localStorage.setItem(
+            PENDING_LEASE_KEY,
+            JSON.stringify({
+                horseId: horse.id,
+                startedAt: new Date().toISOString()
+            })
+        );
+
+        window.location.href = "boarding.html?lease=1";
+    } catch (error) {
+        console.error("Kunne ikke starte lejeprocessen:", error);
+
+        alert(
+            "Lejeprocessen kunne ikke startes. " +
+            "Ingen betaling er gennemført."
+        );
+    }
+}
+
+/* ---------- Gennemfør leje ---------- */
+
+/*
+ * Kaldes fra boarding.js, når spilleren har valgt gård
+ * og bekræftet betalingen.
+ *
+ * Denne funktion er det eneste sted, hvor første måneds
+ * leje og opstaldning trækkes.
+ */
+function leaseHorse(horseId, farmId) {
+    let oldStableRaw = null;
+    let stableWasChanged = false;
+    let gameWasCommitted = false;
 
     try {
-        oldGameRaw = localStorage.getItem(GAME_STORAGE_KEY);
-        oldStableRaw = localStorage.getItem(STABLE_STORAGE_KEY);
-        oldBoardingRaw = localStorage.getItem(BOARDING_STORAGE_KEY);
+        const pending = readJSON(PENDING_LEASE_KEY);
+
+        if (!pending || pending.horseId !== horseId) {
+            throw new Error(
+                "Den valgte hest stemmer ikke med den igangværende leje. " +
+                "Gå tilbage og vælg hesten igen."
+            );
+        }
+
+        const oldGameRaw = localStorage.getItem(GAME_STORAGE_KEY);
 
         if (oldGameRaw === null) {
             throw new Error(
@@ -185,52 +316,62 @@ function leaseHorse(horseId) {
             );
         }
 
+        if (hasActiveRental(game)) {
+            throw new Error(
+                "Du har allerede en lejehest. " +
+                "Du kan kun leje én hest ad gangen."
+            );
+        }
+
+        const farm = BOARDING_FARMS[farmId];
+
+        if (!farm) {
+            throw new Error("Vælg en gyldig opstaldningsgård.");
+        }
+
         const stableHorses = getStableHorses();
+
+        if (!Array.isArray(stableHorses)) {
+            throw new Error(
+                "Udlejningsstalden kunne ikke læses. Ingen betaling er gennemført."
+            );
+        }
+
         const horseIndex = stableHorses.findIndex(
-            horse => horse.id === horseId
+            item => item && item.id === horseId
         );
 
         if (horseIndex === -1) {
             throw new Error(
-                "Hesten findes ikke længere i udlejningsstalden. Opdatér siden."
+                "Hesten findes ikke længere i udlejningsstalden."
             );
         }
 
-        if (hasActiveRental(game)) {
+        const horse = stableHorses[horseIndex];
+
+        if (game.horses.some(item => item && item.id === horse.id)) {
             throw new Error(
-                "Du har allerede en lejehest. Du kan kun leje én hest ad gangen."
+                "Hesten findes allerede i din hesteoversigt."
             );
         }
-
-        const farm = getSelectedFarm() || chooseBoardingFarm();
-
-		if (!farm) {
-    			return;
-		}
 
         const totalCost = MONTHLY_RENT + farm.price;
 
         if (game.economy.balance < totalCost) {
             throw new Error(
                 "Du har ikke råd til første måneds leje og opstaldning. " +
-                "Du skal bruge " + money(totalCost) + "."
-            );
-        }
-
-        const horse = stableHorses[horseIndex];
-
-        if (game.horses.some(existing => existing.id === horse.id)) {
-            throw new Error(
-                "Hesten findes allerede i din hesteoversigt. " +
-                "Ingen betaling er gennemført."
+                "Du skal bruge " + money(totalCost) +
+                ". Din saldo er " + money(game.economy.balance) + "."
             );
         }
 
         const year = game.calendar.year;
         const month = game.calendar.month;
 
-        // Bevar samtlige eksisterende felter på hesten.
-        // Tilføj kun oplysninger, som lejesystemet har brug for.
+        /*
+         * Bevar alle eksisterende hestedata.
+         * Tilføj kun oplysningerne om leje og opstaldning.
+         */
         const leasedHorse = {
             ...horse,
             sex: horse.sex || horse.gender || "",
@@ -242,7 +383,7 @@ function leaseHorse(horseId) {
                 startMonth: month,
                 lastRentPaidYear: year,
                 lastRentPaidMonth: month,
-                boardingId: farm.id,
+                boardingId: farmId,
                 boardingName: farm.name,
                 monthlyBoarding: farm.price,
                 lastBoardingPaidYear: year,
@@ -250,16 +391,18 @@ function leaseHorse(horseId) {
             }
         };
 
-        // Fjern kun den valgte hest fra udlejningsstalden.
-        stableHorses.splice(horseIndex, 1);
-
-        const economy = game.economy;
+        /*
+         * Arbejd på en kopi af spillets økonomi.
+         * Ingen data gemmes, før hele den nye spiltilstand er klar.
+         */
+        const newGame = JSON.parse(JSON.stringify(game));
+        const economy = newGame.economy;
 
         function postExpense(category, description, amount) {
             economy.balance -= amount;
 
             economy.transactions.push({
-                id: economy.nextTransactionId++,
+                id: economy.nextTransactionId,
                 year,
                 month,
                 type: "expense",
@@ -268,11 +411,13 @@ function leaseHorse(horseId) {
                 amount,
                 balanceAfter: economy.balance
             });
+
+            economy.nextTransactionId += 1;
         }
 
         postExpense(
             "Leje af hest",
-            "Første måneds leje af " + horse.name,
+            "Første måneds leje af " + (horse.name || horse.id),
             MONTHLY_RENT
         );
 
@@ -288,81 +433,190 @@ function leaseHorse(horseId) {
         economy.lastNet =
             (Number(economy.lastIncome) || 0) - economy.lastExpenses;
 
-        // Gem begge ændringer. Hvis en af dem fejler,
-        // forsøger vi at gendanne de oprindelige data.
-        game.horses.push(leasedHorse);
+        newGame.horses.push(leasedHorse);
 
-        localStorage.setItem(GAME_STORAGE_KEY, JSON.stringify(game));
-        localStorage.setItem(
-            STABLE_STORAGE_KEY,
-            JSON.stringify(stableHorses)
+        /*
+         * Lav den nye staldliste i hukommelsen.
+         */
+        const newStable = stableHorses.filter(
+            item => item && item.id !== horseId
         );
 
-        // Kontroller, at hesten er flyttet og saldoen gemt.
-        const savedGame = readJSON(GAME_STORAGE_KEY);
-        const savedStable = readJSON(STABLE_STORAGE_KEY);
-
-        const horseSaved = savedGame.horses.some(
-            item => item.id === horse.id &&
-                item.rental &&
-                item.rental.active === true
-        );
-
-        const horseRemoved = Array.isArray(savedStable) &&
-            !savedStable.some(item => item.id === horse.id);
-
-        if (!horseSaved || !horseRemoved) {
-            throw new Error("Kontrollen af den gemte leje mislykkedes.");
+        if (newStable.length !== stableHorses.length - 1) {
+            throw new Error(
+                "Hesten kunne ikke fjernes entydigt fra udlejningsstalden."
+            );
         }
 
-        alert(
-            horse.name + " er nu lejet!\n\n" +
+        /*
+         * Gem først den nye staldliste.
+         * Hvis den efterfølgende lagring af spillet fejler,
+         * forsøger vi at gendanne staldlisten.
+         */
+        oldStableRaw = localStorage.getItem(STABLE_STORAGE_KEY);
+
+        localStorage.setItem(
+            STABLE_STORAGE_KEY,
+            JSON.stringify(newStable)
+        );
+
+        stableWasChanged = true;
+
+        /*
+         * Gem derefter spillet med hesten og begge udgifter.
+         * Når dette lykkes, betragtes lejen som gennemført.
+         */
+        localStorage.setItem(
+            GAME_STORAGE_KEY,
+            JSON.stringify(newGame)
+        );
+
+        gameWasCommitted = true;
+
+        /*
+         * Efter dette punkt må vi ikke rulle økonomien tilbage.
+         * En kontrolfejl efter lagringen ændrer ikke på, at
+         * betalingen allerede er gemt.
+         */
+        let savedGame = null;
+        let savedStable = null;
+
+        try {
+            savedGame = readJSON(GAME_STORAGE_KEY);
+            savedStable = readJSON(STABLE_STORAGE_KEY);
+        } catch (verificationError) {
+            console.error(
+                "Kontrol af gemte data mislykkedes:",
+                verificationError
+            );
+        }
+
+        const savedHorse = Boolean(
+            savedGame &&
+            Array.isArray(savedGame.horses) &&
+            savedGame.horses.some(item =>
+                item &&
+                item.id === horseId &&
+                item.rental &&
+                item.rental.active === true
+            )
+        );
+
+        const removedFromStable = Boolean(
+            Array.isArray(savedStable) &&
+            !savedStable.some(item => item && item.id === horseId)
+        );
+
+        /*
+         * Fjern kun den midlertidige markering, hvis det er
+         * tydeligt, at spillet er gemt med den lejede hest.
+         */
+        if (savedHorse) {
+            try {
+                localStorage.removeItem(PENDING_LEASE_KEY);
+            } catch (pendingError) {
+                console.error(
+                    "Den midlertidige lejemarkering kunne ikke fjernes:",
+                    pendingError
+                );
+            }
+        }
+
+        const remainingBalance =
+            savedGame &&
+            savedGame.economy &&
+            Number.isFinite(savedGame.economy.balance)
+                ? savedGame.economy.balance
+                : newGame.economy.balance;
+
+        let message =
+            (horse.name || horse.id) + " er nu lejet!\n\n" +
             "Første måneds leje: " + money(MONTHLY_RENT) + "\n" +
             "Opstaldning hos " + farm.name + ": " + money(farm.price) + "\n" +
             "Samlet betaling: " + money(totalCost) + "\n" +
-            "Resterende saldo: " + money(savedGame.economy.balance)
-        );
+            "Resterende saldo: " + money(remainingBalance);
 
-        window.location.reload();
+        if (!savedHorse || !removedFromStable) {
+            message +=
+                "\n\nBemærk: En efterfølgende kontrol af hestelisterne " +
+                "gav ikke det forventede resultat. Betalingen er gemt " +
+                "og bliver ikke trukket igen automatisk. Kontrollér " +
+                "hesteoversigten og stalden, før du foretager dig mere.";
+        }
 
+        alert(message);
+
+        window.location.href = "stable.html";
     } catch (error) {
         console.error("Lejehandlingen mislykkedes:", error);
 
-        // Gendan tidligere data, hvis de var gemt før forsøget.
-        try {
-            if (oldGameRaw !== undefined && oldGameRaw !== null) {
-                localStorage.setItem(GAME_STORAGE_KEY, oldGameRaw);
+        /*
+         * Hvis spillet allerede er gemt, må vi ikke gendanne
+         * gamle data eller risikere at skabe en dobbeltbetaling.
+         */
+        if (!gameWasCommitted && stableWasChanged) {
+            try {
+                if (oldStableRaw === null) {
+                    /*
+                     * Staldlisten eksisterede ikke før lejen.
+                     * Fjern kun den nye staldliste, hvis vi endnu
+                     * ikke har gemt den nye spiltilstand.
+                     */
+                    localStorage.removeItem(STABLE_STORAGE_KEY);
+                } else {
+                    localStorage.setItem(
+                        STABLE_STORAGE_KEY,
+                        oldStableRaw
+                    );
+                }
+            } catch (restoreError) {
+                console.error(
+                    "Staldlisten kunne ikke gendannes:",
+                    restoreError
+                );
             }
-
-            if (oldStableRaw !== undefined && oldStableRaw !== null) {
-                localStorage.setItem(STABLE_STORAGE_KEY, oldStableRaw);
-            }
-
-            if (oldBoardingRaw !== undefined && oldBoardingRaw !== null) {
-                localStorage.setItem(BOARDING_STORAGE_KEY, oldBoardingRaw);
-            }
-        } catch (restoreError) {
-            console.error("Gendannelse af data mislykkedes:", restoreError);
         }
 
         alert(
             "Hesten kunne ikke lejes.\n\n" +
-            error.message +
-            "\n\nKontrollér spillet, før du prøver igen."
+            (error && error.message
+                ? error.message
+                : "Der opstod en ukendt fejl.") +
+            "\n\nKontrollér saldo, stalden og hesteoversigten, " +
+            "før du prøver igen."
         );
     }
 }
+
+/* ---------- Vis hestene i udlejningsstalden ---------- */
 
 function renderStableHorses() {
     const container = document.getElementById("stableHorseCards");
     const empty = document.getElementById("stableEmptyMessage");
     const count = document.getElementById("stableHorseCount");
 
-    if (!container || !empty) return;
+    // På boarding.html findes disse elementer normalt ikke.
+    if (!container || !empty) {
+        return;
+    }
 
     const horses = getStableHorses();
 
     container.replaceChildren();
+
+    if (!Array.isArray(horses)) {
+        empty.hidden = false;
+        empty.textContent =
+            "Udlejningsstalden kunne ikke indlæses. " +
+            "Dine gemte data er ikke blevet nulstillet.";
+
+        if (count) {
+            count.textContent = "Kunne ikke indlæse heste";
+        }
+
+        return;
+    }
+
     empty.hidden = horses.length > 0;
 
     if (count) {
@@ -389,8 +643,16 @@ function renderStableHorses() {
         content.className = "horse-card-content";
 
         content.append(
-            textEl("p", "horse-id", "ID: " + (horse.id || "Ukendt")),
-            textEl("h3", "", horse.name || "Hest"),
+            textEl(
+                "p",
+                "horse-id",
+                "ID: " + (horse.id || "Ukendt")
+            ),
+            textEl(
+                "h3",
+                "",
+                horse.name || "Hest"
+            ),
             textEl(
                 "p",
                 "horse-info",
@@ -398,48 +660,34 @@ function renderStableHorses() {
                     .filter(Boolean)
                     .join(" · ")
             ),
-            textEl("p", "", "Højde: " + (horse.height || "Ikke angivet")),
+            textEl(
+                "p",
+                "",
+                "Højde: " + (horse.height || "Ikke angivet")
+            ),
             textEl(
                 "p",
                 "",
                 "Temperament: " + (horse.temperament || "Ikke angivet")
             ),
-            textEl("p", "", "Leje: " + money(MONTHLY_RENT) + " pr. måned"),
             textEl(
                 "p",
                 "",
-                "Opstaldning: " +
-                (getSelectedFarm()
-                    ? money(getSelectedFarm().price) + " pr. måned"
-                    : "Vælg opstaldningsgård først")
+                "Leje: " + money(MONTHLY_RENT) + " pr. måned"
+            ),
+            textEl(
+                "p",
+                "",
+                "Vælg hesten først; derefter vælger du opstaldningsgård."
             )
         );
 
         const button = document.createElement("button");
         button.type = "button";
-        button.textContent = "Lej denne hest";
+        button.textContent = "Vælg hest og fortsæt";
 
         button.addEventListener("click", () => {
-            const farm = getSelectedFarm() || chooseBoardingFarm();
-
-			if (!farm) {
-    				return;
-			}
-
-            const total = MONTHLY_RENT + farm.price;
-
-            const confirmed = window.confirm(
-                "Vil du leje " + horse.name + "?\n\n" +
-                "Første måneds leje: " + money(MONTHLY_RENT) + "\n" +
-                "Første måneds opstaldning hos " + farm.name + ": " +
-                money(farm.price) + "\n" +
-                "Samlet betaling nu: " + money(total) + "\n\n" +
-                "Betalingen trækkes straks, hvis du bekræfter."
-            );
-
-            if (confirmed) {
-                leaseHorse(horse.id);
-            }
+            startLeaseSelection(horse.id);
         });
 
         content.appendChild(button);
@@ -447,5 +695,11 @@ function renderStableHorses() {
         container.appendChild(card);
     });
 }
+
+/* ---------- Tilgængelighed for boarding.js ---------- */
+
+window.leaseHorse = leaseHorse;
+window.startLeaseSelection = startLeaseSelection;
+window.getSelectedBoardingFarm = getSelectedFarm;
 
 renderStableHorses();
