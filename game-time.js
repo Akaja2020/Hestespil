@@ -3,7 +3,7 @@ Denne fil flytter kalenderen og bogfører månedens økonomi.
 Leje og opstaldning opkræves kun for aktive lejeheste. */
 
 (function () {
-“use strict”;
+"use strict";
 
 const STORAGE_KEY = "hestespil_horses_v1";
 const MONTHLY_SALARY = 20000;
