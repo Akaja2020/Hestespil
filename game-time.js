@@ -69,20 +69,32 @@ function render(data) {
     });
 }
 function validate(data) {
-    return data &&
-        data.calendar &&
-        Number.isInteger(data.calendar.year) &&
-        Number.isInteger(data.calendar.month) &&
-        data.calendar.year >= 1 &&
-        data.calendar.month >= 1 &&
-        data.calendar.month <= 12 &&
-        data.economy &&
-        Array.isArray(data.economy.transactions) &&
-        typeof data.economy.balance === "number" &&
-        typeof data.economy.nextTransactionId === "number" &&
-        Array.isArray(data.horses);
+    /* Older saves may lack nextTransactionId or transactions. Fill these
+       fields in memory only; nothing is saved until the user advances time. */
+    if (!data || !data.calendar ||
+        !Number.isInteger(data.calendar.year) ||
+        !Number.isInteger(data.calendar.month) ||
+        data.calendar.year < 1 || data.calendar.month < 1 ||
+        data.calendar.month > 12 || !Array.isArray(data.horses) ||
+        !data.economy || typeof data.economy.balance !== "number" ||
+        !Number.isFinite(data.economy.balance)) {
+        return false;
+    }
+    if (!Array.isArray(data.economy.transactions)) {
+        data.economy.transactions = [];
+    }
+    if (!Number.isInteger(data.economy.nextTransactionId) ||
+        data.economy.nextTransactionId < 1) {
+        const maxId = data.economy.transactions.reduce(function (max, tx) {
+            const id = tx && Number(tx.id);
+            return Number.isFinite(id) ? Math.max(max, id) : max;
+        }, 0);
+        data.economy.nextTransactionId = maxId + 1;
+    }
+    return true;
 }
 function load() {
+    say("Kontrollerer gemte spildata …");
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
@@ -91,7 +103,13 @@ function load() {
         }
         const data = JSON.parse(raw);
         if (!validate(data)) {
-            say("Spillets kalender eller økonomi kunne ikke valideres. Data er ikke ændret.");
+            say("Kunne ikke indlæse spillet: kalender, hesteliste eller saldo mangler/er ugyldig. Ingen data er ændret.");
+            console.error("Ugyldige spildata til tidsstyring:", {
+                hasCalendar: Boolean(data && data.calendar),
+                hasHorses: Boolean(data && Array.isArray(data.horses)),
+                hasEconomy: Boolean(data && data.economy),
+                balance: data && data.economy ? data.economy.balance : undefined
+            });
             return;
         }
         render(data);
@@ -268,6 +286,9 @@ function advance() {
 }
 if (button) {
     button.addEventListener("click", advance);
+} else {
+    say("Fejl: knappen Næste måned findes ikke på denne side.");
+    console.error("game-time.js: #nextMonthButton blev ikke fundet.");
 }
 load();
 
