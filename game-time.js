@@ -167,12 +167,23 @@ function advance() {
             }
             const currentYear = data.calendar.year;
             const currentMonth = data.calendar.month;
+            /*
+             * Gamle lejeaftaler kan mangle betalingsmarkører. Hvis hesten
+             * allerede blev oprettet i den aktuelle måned, antages første
+             * måneds betaling at være håndteret ved leasing. Det forhindrer
+             * en ekstra opkrævning for eksisterende gemte lejeaftaler.
+             */
+            const isStartMonth =
+                rental.startYear === currentYear &&
+                rental.startMonth === currentMonth;
             const rentAlreadyPaid =
-                rental.lastRentPaidYear === currentYear &&
-                rental.lastRentPaidMonth === currentMonth;
+                (rental.lastRentPaidYear === currentYear &&
+                 rental.lastRentPaidMonth === currentMonth) ||
+                (isStartMonth && rental.lastRentPaidYear == null);
             const boardingAlreadyPaid =
-                rental.lastBoardingPaidYear === currentYear &&
-                rental.lastBoardingPaidMonth === currentMonth;
+                (rental.lastBoardingPaidYear === currentYear &&
+                 rental.lastBoardingPaidMonth === currentMonth) ||
+                (isStartMonth && rental.lastBoardingPaidYear == null);
             /* Månedlig hesteleje. */
             if (!rentAlreadyPaid) {
                 const rent =
