@@ -131,134 +131,47 @@ function formatMoney(amount) {
 // INDLÆS SPILLET
 // ========================================
 
-function loadHorses() {
+
+function loadStableHorses() {
     try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
+        const savedStable = localStorage.getItem(STABLE_STORAGE_KEY);
 
-        if (savedData !== null) {
-            const data = JSON.parse(savedData);
+        if (savedStable !== null) {
+            const parsedStable = JSON.parse(savedStable);
 
-            horses = Array.isArray(data.horses)
-                ? data.horses
-                : [];
-
-            nextHorseId =
-                Number.isInteger(data.nextHorseId) &&
-                data.nextHorseId > 0
-                    ? data.nextHorseId
-                    : 1;
-
-            if (data.player && typeof data.player === "object") {
-                player = {
-                    id: typeof data.player.id === "string"
-                        ? data.player.id
-                        : null,
-                    name: typeof data.player.name === "string"
-                        ? data.player.name
-                        : ""
-                };
+            if (Array.isArray(parsedStable)) {
+                stableHorses = parsedStable;
+                return;
             }
 
-            nextPlayerId =
-                Number.isInteger(data.nextPlayerId) &&
-                data.nextPlayerId > 0
-                    ? data.nextPlayerId
-                    : 1;
-
-            if (
-                data.calendar &&
-                Number.isInteger(data.calendar.year) &&
-                Number.isInteger(data.calendar.month) &&
-                data.calendar.year >= 1 &&
-                data.calendar.month >= 1 &&
-                data.calendar.month <= 12
-            ) {
-                gameCalendar = {
-                    year: data.calendar.year,
-                    month: data.calendar.month
-                };
-            }
-
-            if (
-                data.economy &&
-                Number.isFinite(data.economy.balance)
-            ) {
-                economy = {
-                    balance: data.economy.balance,
-                    lastIncome: Number(data.economy.lastIncome) || 0,
-                    lastExpenses: Number(data.economy.lastExpenses) || 0,
-                    lastNet: Number(data.economy.lastNet) || 0,
-                    transactions: Array.isArray(data.economy.transactions)
-                        ? data.economy.transactions
-                        : [],
-                    nextTransactionId:
-                        Number.isInteger(data.economy.nextTransactionId) &&
-                        data.economy.nextTransactionId > 0
-                            ? data.economy.nextTransactionId
-                            : 1
-                };
-
-                economy.transactions.forEach(function(transaction) {
-                    if (
-                        Number.isInteger(transaction.id) &&
-                        transaction.id >= economy.nextTransactionId
-                    ) {
-                        economy.nextTransactionId = transaction.id + 1;
-                    }
-                });
-            }
+            throw new Error("Udlejningsstaldens data har et ugyldigt format.");
         }
 
-        if (!player.id || !/^P-\d{6,}$/.test(player.id)) {
-            player.id = "P-" + String(nextPlayerId).padStart(6, "0");
-            nextPlayerId++;
-        } else {
-            nextPlayerId = Math.max(
-                nextPlayerId,
-                Number(player.id.slice(2)) + 1
-            );
-        }
-
-        horses.forEach(function(horse) {
-            if (typeof horse.id === "string") {
-                const number = Number(horse.id.slice(2));
-
-                if (Number.isFinite(number) && number >= nextHorseId) {
-                    nextHorseId = number + 1;
-                }
-            }
+        // Opret kun standardhestene første gang, hvis der
+        // slet ikke findes gemte data.
+        stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
+            return {
+                ...blueprint,
+                birthYear: 1,
+                birthMonth: 1
+            };
         });
 
-        horses.forEach(function(horse) {
-            if (
-                !Number.isInteger(horse.birthYear) ||
-                !Number.isInteger(horse.birthMonth)
-            ) {
-                const oldAge = Math.max(0, Number(horse.age) || 0);
-
-                horse.birthYear = Math.max(
-                    1,
-                    gameCalendar.year - oldAge
-                );
-
-                horse.birthMonth = gameCalendar.month;
-            }
-        });
-
-        if (!saveHorses()) {
-            throw new Error("Spillet kunne ikke gemmes.");
-        }
+        saveStableHorses();
 
     } catch (error) {
-        console.error("Fejl ved indlæsning af spillet:", error);
+        console.error("Fejl ved indlæsning af gårdens heste:", error);
+
+        // Gendan ikke automatisk hestene ved fejl.
+        // Det ville risikere at få allerede udlejede heste tilbage.
+        stableHorses = [];
 
         alert(
-            "Spillet kunne ikke indlæses eller gemmes. " +
-            "Dine eksisterende data er ikke med vilje blevet slettet."
+            "Udlejningsstalden kunne ikke indlæses korrekt. " +
+            "De gemte data er ikke med vilje blevet overskrevet."
         );
     }
 }
-
 
 // ========================================
 // GEM SPILLET
