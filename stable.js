@@ -87,6 +87,55 @@ function getSelectedFarm() {
     };
 }
 
+
+function chooseBoardingFarm() {
+    const options = [
+        { id: "enggaarden", name: "Enggården", price: 1500 },
+        { id: "skovly", name: "Skovly", price: 2500 },
+        { id: "hojgaard", name: "Højgård Ridecenter", price: 3000 }
+    ];
+
+    const currentFarm = getSelectedFarm();
+
+    const promptText =
+        "Vælg opstaldningsgård ved at indtaste et tal:\n\n" +
+        "1. Enggården – 1.500 kr./måned\n" +
+        "2. Skovly – 2.500 kr./måned\n" +
+        "3. Højgård Ridecenter – 3.000 kr./måned\n\n" +
+        (currentFarm
+            ? "Dit tidligere valg var " + currentFarm.name + ".\n"
+            : "Du har ikke valgt en gård endnu.\n") +
+        "Indtast 1, 2 eller 3. Tryk Annuller for at gå tilbage.";
+
+    const answer = window.prompt(promptText);
+
+    if (answer === null) return null;
+
+    const selected = options[Number(answer) - 1];
+
+    if (!selected || answer.trim() !== String(Number(answer))) {
+        alert("Ugyldigt valg. Vælg 1, 2 eller 3.");
+        return chooseBoardingFarm();
+    }
+
+    try {
+        localStorage.setItem(
+            BOARDING_STORAGE_KEY,
+            JSON.stringify({
+                id: selected.id,
+                name: selected.name,
+                price: selected.price,
+                changedAt: new Date().toISOString()
+            })
+        );
+
+        return selected;
+    } catch (error) {
+        alert("Gårdvalget kunne ikke gemmes i browseren.");
+        return null;
+    }
+}
+
 function validateGameData(data) {
     return Boolean(
         data &&
@@ -153,13 +202,11 @@ function leaseHorse(horseId) {
             );
         }
 
-        const farm = getSelectedFarm();
+        const farm = getSelectedFarm() || chooseBoardingFarm();
 
-        if (!farm) {
-            throw new Error(
-                "Vælg først en opstaldningsgård på opstaldningssiden."
-            );
-        }
+		if (!farm) {
+    			return;
+		}
 
         const totalCost = MONTHLY_RENT + farm.price;
 
@@ -373,14 +420,11 @@ function renderStableHorses() {
         button.textContent = "Lej denne hest";
 
         button.addEventListener("click", () => {
-            const farm = getSelectedFarm();
+            const farm = getSelectedFarm() || chooseBoardingFarm();
 
-            if (!farm) {
-                alert(
-                    "Du skal vælge en opstaldningsgård, før du kan leje en hest."
-                );
-                return;
-            }
+			if (!farm) {
+    				return;
+			}
 
             const total = MONTHLY_RENT + farm.price;
 
