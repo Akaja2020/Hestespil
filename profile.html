@@ -1,76 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hesteprofil | Hestespillet</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <style>
         .profile-sections {
             display: grid;
             gap: 16px;
             margin-top: 20px;
         }
-
         .profile-card {
-    			padding: 20px;
-    			border-radius: 16px;
-    			background: var(--card-bg, #fff);
-    			border: 1px solid #e2d7c8;
-    			box-shadow: 0 3px 10px rgba(70, 48, 30, 0.06);
-		}
-
+            padding: 20px;
+            border-radius: 16px;
+            background: var(--card-bg, #fff);
+            border: 1px solid #e2d7c8;
+            box-shadow: 0 3px 10px rgba(70, 48, 30, 0.06);
+        }
         .profile-card h2 {
-    			margin-top: 0;
-    			margin-bottom: 16px;
-    			color: #75543b;
-    			font-size: 1.25rem;
-		}
-
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #75543b;
+            font-size: 1.25rem;
+        }
         .profile-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
             gap: 14px;
         }
-
         .profile-field {
             padding: 10px;
             background: rgba(128, 128, 128, 0.08);
             border-radius: 8px;
             overflow-wrap: anywhere;
         }
-
         .profile-field small {
             display: block;
             margin-bottom: 5px;
             opacity: 0.75;
         }
-
         .profile-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 14px;
         }
-
         .profile-actions button,
         .profile-actions a {
             padding: 10px 14px;
         }
-
         .profile-editor {
             margin-top: 14px;
             padding: 14px;
             border: 1px solid #bbb;
             border-radius: 10px;
         }
-
         .profile-editor label {
             display: block;
             margin: 12px 0 5px;
         }
-
         .profile-editor input,
         .profile-editor textarea,
         .profile-editor select {
@@ -78,116 +67,135 @@
             width: 100%;
             padding: 10px;
         }
-
         .profile-note {
             font-size: 0.9rem;
             opacity: 0.8;
         }
-
         .profile-status {
             margin-top: 12px;
         }
-
         details.profile-card > summary {
             cursor: pointer;
             font-weight: bold;
             font-size: 1.1rem;
         }
-
         [hidden] {
             display: none !important;
         }
     </style>
 </head>
 <body>
- 
-<header>
     <nav class="main-nav" aria-label="Hovedmenu">
         <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-
-        <div class="nav-links">
+        <div class="nav-links" aria-label="Spillets sektioner">
             <a class="nav-link" href="index.html">Forside</a>
-            <a class="nav-link" href="player.html">Spillerprofil</a>
-            <a class="nav-link" href="horses.html">Hesteoversigt</a>
-            <a class="nav-link" href="calendar.html">Kalender</a>
-            <a class="nav-link" href="economy.html">Økonomi</a>
+            <details class="nav-dropdown">
+                <summary>Profil</summary>
+                <div class="dropdown-panel">
+                    <a href="player.html">Spillerprofil</a>
+                    <a href="economy.html">Økonomi</a>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Marked</summary>
+                <div class="dropdown-panel">
+                    <span class="dropdown-coming">Hestemarked (kommer senere)</span>
+                    <span class="dropdown-coming">Udstyr (kommer senere)</span>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Min gård</summary>
+                <div class="dropdown-panel">
+                    <a href="horses.html">Hesteoversigt</a>
+                    <span class="dropdown-coming">Faciliteter (kommer senere)</span>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Aktiviteter</summary>
+                <div class="dropdown-panel">
+                    <a href="calendar.html">Kalender</a>
+                    <span class="dropdown-coming">Konkurrencer (kommer senere)</span>
+                    <span class="dropdown-coming">Kåringer (kommer senere)</span>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Hestesundhed</summary>
+                <div class="dropdown-panel">
+                    <span class="dropdown-coming">Dyrlæge (kommer senere)</span>
+                    <span class="dropdown-coming">Smed (kommer senere)</span>
+                    <span class="dropdown-coming">Sundhed og behandling (kommer senere)</span>
+                </div>
+            </details>
         </div>
+        <section class="game-time-bar" aria-label="Spillets tid">
+            <div class="game-time-current">
+                <span id="gameYear">År 1</span>
+                <strong id="gameMonth">Januar</strong>
+                <span id="gameSeason">Vinter</span>
+            </div>
+            <button id="nextMonthButton" type="button" disabled>
+                Næste måned
+            </button>
+            <p id="gameTimeStatus" role="status" aria-live="polite">
+                Spillets tid indlæses …
+            </p>
+        </section>
     </nav>
-</header>
-
-
     <main class="page-container">
-        
-<section>
-    <p>
-        <a class="back-link" href="index.html#horseList">
-            ← Tilbage til hesteoversigten
-        </a>
-    </p>
-
-    <p class="eyebrow">HESTESTALDEN · DIN HEST</p>
-
-    <h1 id="profileName">Profil for din hest</h1>
-
-    <p id="profileSubtitle" class="intro">
-        Hestens oplysninger, udvikling og historie.
-    </p>
-
+        <section>
+            <p>
+                <a class="back-link" href="index.html#horseList">
+                    ← Tilbage til hesteoversigten
+                </a>
+            </p>
+            <p class="eyebrow">HESTESTALDEN · DIN HEST</p>
+            <h1 id="profileName">Profil for din hest</h1>
+            <p id="profileSubtitle" class="intro">
+                Hestens oplysninger, udvikling og historie.
+            </p>
             <div id="profileError" role="alert" hidden></div>
-
             <div id="profileContent" hidden>
                 <section class="profile-card">
                     <h2>Grundoplysninger</h2>
-
                     <div class="profile-grid">
                         <div class="profile-field">
                             <small>Heste-ID</small>
                             <strong id="profileId">—</strong>
                         </div>
-
                         <div class="profile-field">
                             <small>Race</small>
                             <strong id="profileBreed">—</strong>
                         </div>
-
                         <div class="profile-field">
                             <small>Køn</small>
                             <strong id="profileSex">—</strong>
                         </div>
-
                         <div class="profile-field">
                             <small>Født</small>
                             <strong id="profileBirthDate">—</strong>
                         </div>
-
                         <div class="profile-field">
                             <small>Alder</small>
                             <strong id="profileAge">—</strong>
                         </div>
-
                         <div class="profile-field">
                             <small>Opdrætter</small>
                             <strong id="profileBreeder">Ikke registreret</strong>
                         </div>
-
                         <div class="profile-field">
                             <small>Ejer</small>
                             <strong id="profileOwner">Ikke registreret</strong>
                         </div>
                     </div>
-
                     <div class="profile-actions">
                         <button type="button" id="editProfileButton">
                             Rediger navn
                         </button>
                     </div>
-
                     <form id="editProfileSection" class="profile-editor" hidden>
                         <h3>Rediger hestens navn</h3>
-
                         <label for="editName">Navn</label>
                         <input id="editName" type="text" maxlength="60" required>
-
                         <div class="profile-actions">
                             <button type="submit">Gem navn</button>
                             <button type="button" id="cancelProfileEditButton">
@@ -196,14 +204,12 @@
                         </div>
                     </form>
                 </section>
-
                 <div class="profile-sections">
                     <details class="profile-card" open>
                         <summary>Udseende og personlighed</summary>
                         <p class="profile-note">
                             Oplysningerne styres af hestens data og spillets regler.
                         </p>
-
                         <div class="profile-grid">
                             <div class="profile-field">
                                 <small>Grundfarve</small>
@@ -231,39 +237,35 @@
                             </div>
                         </div>
                     </details>
-
                     <details class="profile-card">
                         <summary>Genetik</summary>
                         <p>
                             Kendte genetiske oplysninger og spillerens egne gæt
                             holdes adskilt.
                         </p>
-
                         <h3>Kendte oplysninger</h3>
-                        <p id="profileKnownGenetics">Ingen genetiske oplysninger registreret.</p>
-
+                        <p id="profileKnownGenetics">
+                            Ingen genetiske oplysninger registreret.
+                        </p>
                         <h3>Mine genetiske gæt</h3>
                         <p class="profile-note">
                             Gæt er spillerens vurderinger og ændrer ikke i sig selv
                             hestens faktiske genetik.
                         </p>
-
                         <div id="profileGeneticGuesses">Ingen gæt registreret.</div>
-
                         <div class="profile-actions">
                             <button type="button" id="editGeneticsButton">
                                 Rediger mine gæt
                             </button>
                         </div>
-
                         <form id="editGeneticsSection" class="profile-editor" hidden>
-                            <label for="editGenetics">
-                                Dine genetiske gæt
-                            </label>
-                            <textarea id="editGenetics" rows="5"
+                            <label for="editGenetics">Dine genetiske gæt</label>
+                            <textarea
+                                id="editGenetics"
+                                rows="5"
                                 maxlength="3000"
-                                placeholder="Skriv dine gæt her. Du kan også lade feltet være tomt."></textarea>
-
+                                placeholder="Skriv dine gæt her. Du kan også lade feltet være tomt."
+                            ></textarea>
                             <div class="profile-actions">
                                 <button type="submit">Gem gæt</button>
                                 <button type="button" id="cancelGeneticsButton">
@@ -272,7 +274,6 @@
                             </div>
                         </form>
                     </details>
-
                     <details class="profile-card">
                         <summary>Stamtavle og avl</summary>
                         <div class="profile-grid">
@@ -298,7 +299,6 @@
                             </div>
                         </div>
                     </details>
-
                     <details class="profile-card">
                         <summary>Sport og resultater</summary>
                         <div class="profile-grid">
@@ -320,7 +320,6 @@
                             </div>
                         </div>
                     </details>
-
                     <details class="profile-card">
                         <summary>Økonomi og udstyr</summary>
                         <div class="profile-grid">
@@ -342,7 +341,6 @@
                             </div>
                         </div>
                     </details>
-
                     <details class="profile-card">
                         <summary>Sundhed og historik</summary>
                         <div class="profile-grid">
@@ -359,19 +357,18 @@
                                 <strong id="profileLastActivity">Ingen registreret</strong>
                             </div>
                         </div>
-
                         <h3>Begivenheder</h3>
                         <ul id="profileHistory">
                             <li>Ingen begivenheder registreret.</li>
                         </ul>
                     </details>
                 </div>
-
                 <p id="profileStatus" class="profile-status" role="status"></p>
             </div>
         </section>
     </main>
-
-    <script src="profile.js"></script>
+    <script src="profile.js?v=2"></script>
+    <script src="game-time.js?v=2"></script>
+    <script src="navigation.js?v=2"></script>
 </body>
 </html>
