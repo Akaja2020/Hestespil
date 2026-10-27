@@ -1,4 +1,3 @@
-
 const STORAGE_KEY = "hestespil_horses_v1";
 const STABLE_STORAGE_KEY = "hestespil_stable_horses_v1";
 
@@ -131,6 +130,117 @@ function formatMoney(amount) {
 // INDLÆS SPILLET
 // ========================================
 
+function loadHorses() {
+    try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+
+        if (savedData !== null) {
+            const data = JSON.parse(savedData);
+
+            if (
+                !data ||
+                !Array.isArray(data.horses) ||
+                !data.calendar ||
+                !data.economy ||
+                !data.player
+            ) {
+                throw new Error("Spildata har et ugyldigt format.");
+            }
+
+            horses = data.horses;
+
+            nextHorseId = Number.isInteger(data.nextHorseId)
+                ? data.nextHorseId
+                : 1;
+
+            gameCalendar = {
+                year: Number.isInteger(data.calendar.year)
+                    ? data.calendar.year
+                    : 1,
+
+                month: Number.isInteger(data.calendar.month)
+                    ? data.calendar.month
+                    : 1
+            };
+
+            economy = {
+                balance: Number.isFinite(data.economy.balance)
+                    ? data.economy.balance
+                    : STARTING_BALANCE,
+
+                lastIncome: Number(data.economy.lastIncome) || 0,
+                lastExpenses: Number(data.economy.lastExpenses) || 0,
+                lastNet: Number(data.economy.lastNet) || 0,
+
+                transactions: Array.isArray(data.economy.transactions)
+                    ? data.economy.transactions
+                    : [],
+
+                nextTransactionId:
+                    Number.isInteger(data.economy.nextTransactionId) &&
+                    data.economy.nextTransactionId > 0
+                        ? data.economy.nextTransactionId
+                        : 1
+            };
+
+            player = {
+                id: data.player.id || "P-000001",
+
+                name: typeof data.player.name === "string"
+                    ? data.player.name
+                    : ""
+            };
+
+            nextPlayerId = Number.isInteger(data.nextPlayerId)
+                ? data.nextPlayerId
+                : 2;
+
+            return;
+        }
+
+        // Opret en ny spiltilstand, når der ikke findes gemte data.
+        horses = [];
+        nextHorseId = 1;
+
+        player = {
+            id: "P-000001",
+            name: ""
+        };
+
+        nextPlayerId = 2;
+
+        gameCalendar = {
+            year: 1,
+            month: 1
+        };
+
+        economy = {
+            balance: STARTING_BALANCE,
+            lastIncome: 0,
+            lastExpenses: 0,
+            lastNet: 0,
+            transactions: [],
+            nextTransactionId: 1
+        };
+
+        if (!saveHorses()) {
+            throw new Error("Den nye spiltilstand kunne ikke gemmes.");
+        }
+
+    } catch (error) {
+        console.error("Fejl ved indlæsning af spillet:", error);
+
+        alert(
+            "Spillet kunne ikke indlæses korrekt. " +
+            "Se fejlmeddelelsen i browserens konsol."
+        );
+    }
+}
+
+
+// ========================================
+// GÅRDENS FASTE HESTE
+// ========================================
 
 function loadStableHorses() {
     try {
@@ -144,11 +254,13 @@ function loadStableHorses() {
                 return;
             }
 
-            throw new Error("Udlejningsstaldens data har et ugyldigt format.");
+            throw new Error(
+                "Udlejningsstaldens data har et ugyldigt format."
+            );
         }
 
-        // Opret kun standardhestene første gang, hvis der
-        // slet ikke findes gemte data.
+        // Opret kun standardhestene første gang,
+        // hvis der slet ikke findes gemte data.
         stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
             return {
                 ...blueprint,
@@ -163,7 +275,7 @@ function loadStableHorses() {
         console.error("Fejl ved indlæsning af gårdens heste:", error);
 
         // Gendan ikke automatisk hestene ved fejl.
-        // Det ville risikere at få allerede udlejede heste tilbage.
+        // Det kan ellers få allerede udlejede heste tilbage.
         stableHorses = [];
 
         alert(
@@ -172,6 +284,7 @@ function loadStableHorses() {
         );
     }
 }
+
 
 // ========================================
 // GEM SPILLET
@@ -192,59 +305,11 @@ function saveHorses() {
         );
 
         return true;
+
     } catch (error) {
         console.error("Fejl ved gemning af spillet:", error);
         alert("Spillet kunne ikke gemmes i browserens lager.");
         return false;
-    }
-}
-
-
-// ========================================
-// GÅRDENS FASTE HESTE
-// ========================================
-
-function loadStableHorses() {
-    try {
-        const savedStable = localStorage.getItem(STABLE_STORAGE_KEY);
-
-        if (savedStable !== null) {
-            const parsedStable = JSON.parse(savedStable);
-
-            if (
-                Array.isArray(parsedStable) &&
-                parsedStable.length > 0
-            ) {
-                stableHorses = parsedStable;
-                return;
-            }
-        }
-
-        stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
-            return {
-                ...blueprint,
-                birthYear: 1,
-                birthMonth: 1
-            };
-        });
-
-        saveStableHorses();
-
-    } catch (error) {
-        console.error("Fejl ved indlæsning af gårdens heste:", error);
-
-        stableHorses = STABLE_HORSE_BLUEPRINTS.map(function(blueprint) {
-            return {
-                ...blueprint,
-                birthYear: 1,
-                birthMonth: 1
-            };
-        });
-
-        alert(
-            "Gårdens heste kunne ikke indlæses fra lageret. " +
-            "Kontrollér, at browserens lager fungerer."
-        );
     }
 }
 
@@ -256,6 +321,7 @@ function saveStableHorses() {
         );
 
         return true;
+
     } catch (error) {
         console.error("Fejl ved gemning af gårdens heste:", error);
         alert("Gårdens heste kunne ikke gemmes.");
@@ -316,7 +382,8 @@ function renderCalendar() {
     }
 
     if (monthElement) {
-        monthElement.textContent = MONTH_NAMES[gameCalendar.month - 1];
+        monthElement.textContent =
+            MONTH_NAMES[gameCalendar.month - 1];
     }
 
     if (seasonElement) {
@@ -344,7 +411,6 @@ function renderEconomy() {
 // ========================================
 // VIS GÅRDENS HESTE
 // ========================================
-
 
 function renderStableHorses() {
     const cards = document.getElementById("stableHorseCards");
@@ -426,6 +492,7 @@ function renderStableHorses() {
     // Gem den rettede farve uden at ændre resten af spillet.
     saveStableHorses();
 }
+
 
 // ========================================
 // GAMLE HESTE: BEHOLDES OG VISES, HVIS FELTERNE FINDES
