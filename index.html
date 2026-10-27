@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hestespillet</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="home-page">
-	
     <nav class="main-nav" aria-label="Hovedmenu">
         <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-
         <div class="nav-links" aria-label="Spillets sektioner">
             <a class="nav-link active" href="index.html" style="transform: translateY(0px);">Forside</a>
-
             <details class="nav-dropdown">
                 <summary>Profil</summary>
                 <div class="dropdown-panel">
@@ -22,7 +18,6 @@
                     <a href="economy.html">Økonomi</a>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Marked</summary>
                 <div class="dropdown-panel">
@@ -31,7 +26,6 @@
                     <span class="dropdown-coming">Udstyr (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Min gård</summary>
                 <div class="dropdown-panel">
@@ -40,7 +34,6 @@
                     <span class="dropdown-coming">Faciliteter (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Aktiviteter</summary>
                 <div class="dropdown-panel">
@@ -49,7 +42,6 @@
                     <span class="dropdown-coming">Kåringer (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Hestesundhed</summary>
                 <div class="dropdown-panel">
@@ -59,24 +51,20 @@
                 </div>
             </details>
         </div>
-
         <section class="game-time-bar" aria-label="Spillets tid">
             <div class="game-time-current">
                 <span id="gameYear">År 1</span>
                 <strong id="gameMonth">Januar</strong>
                 <span id="gameSeason">Vinter</span>
             </div>
-
             <button id="nextMonthButton" type="button" disabled>
                 Næste måned
             </button>
-
             <p id="gameTimeStatus" role="status" aria-live="polite">
                 Spillets tid indlæses …
             </p>
         </section>
     </nav>
-
     <header class="page-header">
         <p class="eyebrow">DIT EGET HESTEUNIVERS</p>
         <h1>Velkommen til Hestespillet</h1>
@@ -84,28 +72,22 @@
             Træd ind i en verden fuld af heste, gårde og nye muligheder.
         </p>
     </header>
-
     <main>
         <section class="panel player-panel"
                  id="playerWelcome"
                  aria-labelledby="playerHeading">
-
             <div class="welcome-layout">
                 <div class="welcome-content">
                     <p class="eyebrow">VELKOMMEN TIL GÅRDEN</p>
-
                     <h2 id="playerHeading">Velkommen!</h2>
-
                     <p id="welcomeMessage">
                         Gør dig klar til at udforske hesteverdenen,
                         møde hestene og skabe dit eget hesteliv.
                     </p>
-
                     <a class="back-link" href="player.html">
                         Se spillerprofil →
                     </a>
                 </div>
-
                 <img
                     class="welcome-horse-image"
                     src="Horse-illustration.JPEG"
@@ -113,9 +95,8 @@
             </div>
         </section>
     </main>
-
-    <script src="index.js"></script>
-    <script src="game-time.js"></script>
-	<script src="navigation.js"></script>
+    <script src="index.js?v=2"></script>
+    <script src="game-time.js?v=2"></script>
+    <script src="navigation.js?v=2"></script>
 </body>
 </html>
