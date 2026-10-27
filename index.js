@@ -109,107 +109,290 @@ function formatMoney(amount) {
     return Number(amount).toLocaleString("da-DK") + " kr.";
 }
 // ========================================
-// INDLÆS SPILLET
+// OPRET NY SPILTILSTAND
+// ========================================
+function createNewGameState() {
+    horses = [];
+    nextHorseId = 1;
+    player = {
+        id: "P-000001",
+        name: ""
+    };
+    nextPlayerId = 2;
+    gameCalendar = {
+        year: 1,
+        month: 1
+    };
+    economy = {
+        balance: STARTING_BALANCE,
+        lastIncome: 0,
+        lastExpenses: 0,
+        lastNet: 0,
+        transactions: [],
+        nextTransactionId: 1
+    };
+}
+// ========================================
+// SIKKERHEDSKOPI AF UGYLDIGE DATA
+// ========================================
+function backupCorruptGameData(rawData) {
+    if (typeof rawData !== "string" || rawData.length === 0) {
+        return false;
+    }
+    try {
+        const backupKey =
+            STORAGE_KEY + "_backup_" +
+            new Date().toISOString().replace(/[:.]/g, "-");
+        localStorage.setItem(backupKey, rawData);
+        console.warn(
+            "En sikkerhedskopi af de ugyldige spildata blev gemt som:",
+            backupKey
+        );
+        return true;
+    } catch (error) {
+        console.error(
+            "Kunne ikke sikkerhedskopiere de ugyldige spildata:",
+            error
+        );
+        return false;
+    }
+}
+// ========================================
+// INDLÆS, REPARÉR ELLER OPRET SPILLET
 // ========================================
 function loadHorses() {
     try {
         const savedData = localStorage.getItem(STORAGE_KEY);
-        if (savedData !== null) {
-            const data = JSON.parse(savedData);
-            if (
-                !data ||
-                !Array.isArray(data.horses) ||
-                !data.calendar ||
-                !data.economy ||
-                !data.player
-            ) {
-                throw new Error("Spildata har et ugyldigt format.");
-            }
-            horses = data.horses;
-            nextHorseId = Number.isInteger(data.nextHorseId)
-                ? data.nextHorseId
-                : 1;
-            gameCalendar = {
-                year: Number.isInteger(data.calendar.year)
-                    ? data.calendar.year
-                    : 1,
-                month: Number.isInteger(data.calendar.month)
-                    ? data.calendar.month
-                    : 1
-            };
-            economy = {
-                balance: Number.isFinite(data.economy.balance)
-                    ? data.economy.balance
-                    : STARTING_BALANCE,
-                lastIncome: Number(data.economy.lastIncome) || 0,
-                lastExpenses: Number(data.economy.lastExpenses) || 0,
-                lastNet: Number(data.economy.lastNet) || 0,
-                transactions: Array.isArray(data.economy.transactions)
-                    ? data.economy.transactions
-                    : [],
-                nextTransactionId:
-                    Number.isInteger(data.economy.nextTransactionId) &&
-                    data.economy.nextTransactionId > 0
-                        ? data.economy.nextTransactionId
-                        : 1
-            };
-            // Kontrollér, om spillerens ID mangler eller er ugyldigt.
-            const playerIdWasMissing =
-                typeof data.player.id !== "string" ||
-                !data.player.id.trim();
-            player = {
-                id: playerIdWasMissing
-                    ? "P-000001"
-                    : data.player.id,
-                name: typeof data.player.name === "string"
-                    ? data.player.name
-                    : ""
-            };
-            const nextPlayerIdWasMissing =
-                !Number.isInteger(data.nextPlayerId) ||
-                data.nextPlayerId < 1;
-            nextPlayerId = nextPlayerIdWasMissing
-                ? 2
-                : data.nextPlayerId;
-            // Gem ID'et og de korrigerede spillerdata med det samme.
-            // Det gør, at player.js kan finde spiller-ID'et bagefter.
-            if (playerIdWasMissing || nextPlayerIdWasMissing) {
-                if (!saveHorses()) {
-                    throw new Error(
-                        "Spillerens ID kunne ikke gemmes i browseren."
-                    );
-                }
+        // ------------------------------------
+        // 1. Ingen gemte data: opret nyt spil.
+        // ------------------------------------
+        if (savedData === null) {
+            createNewGameState();
+            if (!saveHorses()) {
+                throw new Error("Det nye spil kunne ikke gemmes.");
             }
             return;
         }
-        // Opret en ny spiltilstand, når der ikke findes gemte data.
-        horses = [];
-        nextHorseId = 1;
-        player = {
-            id: "P-000001",
-            name: ""
-        };
-        nextPlayerId = 2;
+        let data;
+        // ------------------------------------
+        // 2. Kontrollér, om data er gyldig JSON.
+        // ------------------------------------
+        try {
+            data = JSON.parse(savedData);
+        } catch (parseError) {
+            backupCorruptGameData(savedData);
+            createNewGameState();
+            if (!saveHorses()) {
+                throw new Error(
+                    "Et nyt spil kunne ikke gemmes efter ugyldige data."
+                );
+            }
+            console.error(
+                "De gemte spildata var ikke gyldig JSON:",
+                parseError
+            );
+            alert(
+                "De gemte spildata kunne ikke læses. " +
+                "En sikkerhedskopi blev forsøgt gemt, " +
+                "og spillet er startet forfra."
+            );
+            return;
+        }
+        // ------------------------------------
+        // 3. Kontrollér den overordnede struktur.
+        // ------------------------------------
+        if (
+            !data ||
+            typeof data !== "object" ||
+            Array.isArray(data)
+        ) {
+            backupCorruptGameData(savedData);
+            createNewGameState();
+            if (!saveHorses()) {
+                throw new Error(
+                    "Et nyt spil kunne ikke gemmes efter ugyldige data."
+                );
+            }
+            alert(
+                "De gemte spildata havde et ugyldigt format. " +
+                "Spillet er startet forfra."
+            );
+            return;
+        }
+        let wasRepaired = false;
+        // ------------------------------------
+        // 4. Heste.
+        // Bevar listen, hvis den er gyldig.
+        // ------------------------------------
+        if (Array.isArray(data.horses)) {
+            horses = data.horses;
+        } else {
+            horses = [];
+            wasRepaired = true;
+        }
+        nextHorseId =
+            Number.isInteger(data.nextHorseId) &&
+            data.nextHorseId > 0
+                ? data.nextHorseId
+                : 1;
+        if (nextHorseId !== data.nextHorseId) {
+            wasRepaired = true;
+        }
+        // ------------------------------------
+        // 5. Kalender.
+        // Bevar gyldigt år og måned.
+        // ------------------------------------
+        const sourceCalendar =
+            data.calendar &&
+            typeof data.calendar === "object" &&
+            !Array.isArray(data.calendar)
+                ? data.calendar
+                : {};
+        if (
+            !data.calendar ||
+            typeof data.calendar !== "object" ||
+            Array.isArray(data.calendar)
+        ) {
+            wasRepaired = true;
+        }
         gameCalendar = {
-            year: 1,
-            month: 1
+            year:
+                Number.isInteger(sourceCalendar.year) &&
+                sourceCalendar.year > 0
+                    ? sourceCalendar.year
+                    : 1,
+            month:
+                Number.isInteger(sourceCalendar.month) &&
+                sourceCalendar.month >= 1 &&
+                sourceCalendar.month <= 12
+                    ? sourceCalendar.month
+                    : 1
         };
+        if (
+            gameCalendar.year !== sourceCalendar.year ||
+            gameCalendar.month !== sourceCalendar.month
+        ) {
+            wasRepaired = true;
+        }
+        // ------------------------------------
+        // 6. Økonomi.
+        // Bevar saldoen, hvis den er gyldig.
+        // ------------------------------------
+        const sourceEconomy =
+            data.economy &&
+            typeof data.economy === "object" &&
+            !Array.isArray(data.economy)
+                ? data.economy
+                : {};
+        if (
+            !data.economy ||
+            typeof data.economy !== "object" ||
+            Array.isArray(data.economy)
+        ) {
+            wasRepaired = true;
+        }
         economy = {
-            balance: STARTING_BALANCE,
-            lastIncome: 0,
-            lastExpenses: 0,
-            lastNet: 0,
-            transactions: [],
-            nextTransactionId: 1
+            balance: Number.isFinite(sourceEconomy.balance)
+                ? sourceEconomy.balance
+                : STARTING_BALANCE,
+            lastIncome:
+                Number.isFinite(Number(sourceEconomy.lastIncome))
+                    ? Number(sourceEconomy.lastIncome)
+                    : 0,
+            lastExpenses:
+                Number.isFinite(Number(sourceEconomy.lastExpenses))
+                    ? Number(sourceEconomy.lastExpenses)
+                    : 0,
+            lastNet:
+                Number.isFinite(Number(sourceEconomy.lastNet))
+                    ? Number(sourceEconomy.lastNet)
+                    : 0,
+            transactions:
+                Array.isArray(sourceEconomy.transactions)
+                    ? sourceEconomy.transactions
+                    : [],
+            nextTransactionId:
+                Number.isInteger(sourceEconomy.nextTransactionId) &&
+                sourceEconomy.nextTransactionId > 0
+                    ? sourceEconomy.nextTransactionId
+                    : 1
         };
-        if (!saveHorses()) {
-            throw new Error("Den nye spiltilstand kunne ikke gemmes.");
+        if (
+            economy.balance !== sourceEconomy.balance ||
+            economy.lastIncome !== Number(sourceEconomy.lastIncome || 0) ||
+            economy.lastExpenses !== Number(sourceEconomy.lastExpenses || 0) ||
+            economy.lastNet !== Number(sourceEconomy.lastNet || 0) ||
+            !Array.isArray(sourceEconomy.transactions) ||
+            economy.nextTransactionId !== sourceEconomy.nextTransactionId
+        ) {
+            wasRepaired = true;
+        }
+        // ------------------------------------
+        // 7. Spillerprofil og spiller-ID.
+        // ------------------------------------
+        const sourcePlayer =
+            data.player &&
+            typeof data.player === "object" &&
+            !Array.isArray(data.player)
+                ? data.player
+                : {};
+        if (
+            !data.player ||
+            typeof data.player !== "object" ||
+            Array.isArray(data.player)
+        ) {
+            wasRepaired = true;
+        }
+        player = {
+            id:
+                typeof sourcePlayer.id === "string" &&
+                sourcePlayer.id.trim()
+                    ? sourcePlayer.id
+                    : "P-000001",
+            name:
+                typeof sourcePlayer.name === "string"
+                    ? sourcePlayer.name
+                    : ""
+        };
+        if (
+            player.id !== sourcePlayer.id ||
+            player.name !== sourcePlayer.name
+        ) {
+            wasRepaired = true;
+        }
+        nextPlayerId =
+            Number.isInteger(data.nextPlayerId) &&
+            data.nextPlayerId > 0
+                ? data.nextPlayerId
+                : 2;
+        if (nextPlayerId !== data.nextPlayerId) {
+            wasRepaired = true;
+        }
+        // ------------------------------------
+        // 8. Gem kun, hvis data er blevet repareret.
+        // ------------------------------------
+        if (wasRepaired) {
+            if (!saveHorses()) {
+                throw new Error(
+                    "De reparerede spildata kunne ikke gemmes."
+                );
+            }
+            const recoveryMessage =
+                "Nogle gemte spildata manglede eller var ugyldige. " +
+                "Spillet har repareret det, det kunne, " +
+                "og bevaret gyldige data.";
+            console.warn(recoveryMessage);
+            alert(recoveryMessage);
         }
     } catch (error) {
-        console.error("Fejl ved indlæsning af spillet:", error);
+        console.error(
+            "Fejl ved indlæsning eller reparation af spillet:",
+            error
+        );
         alert(
-            "Spillet kunne ikke indlæses korrekt. " +
-            "Se fejlmeddelelsen i browserens konsol."
+            "Spillet kunne ikke gemme eller reparere dataene. " +
+            "Kontrollér browserens lagerplads, og prøv at genindlæse siden. " +
+            "Data er ikke med vilje blevet nulstillet i denne fejlbehandling."
         );
     }
 }
