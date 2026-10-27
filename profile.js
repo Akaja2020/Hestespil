@@ -50,7 +50,9 @@ function formatMoney(value) {
 }
 function setText(id, value) {
     const element = document.getElementById(id);
-    if (element) element.textContent = value;
+    if (element) {
+        element.textContent = value;
+    }
 }
 function displayValue(value, fallback = "Ikke registreret") {
     if (value === null || value === undefined || value === "") {
@@ -65,7 +67,9 @@ function showError(message) {
         errorBox.textContent = message;
         errorBox.hidden = false;
     }
-    if (content) content.hidden = true;
+    if (content) {
+        content.hidden = true;
+    }
 }
 function showStatus(message) {
     setText("profileStatus", message);
@@ -112,6 +116,29 @@ function loadGameData() {
         return false;
     }
 }
+/*
+ * Viser hestens eget billede.
+ * Hvis billedet mangler eller ikke kan indlæses, bruges reservebilledet.
+ * Denne funktion ændrer ikke de gemte hestedata.
+ */
+function renderHorseImage() {
+    if (!currentHorse) return;
+    const imageElement = document.getElementById("profileHorseImage");
+    if (!imageElement) return;
+    const fallbackImage = "Horse-illustration.JPEG";
+    const horseImage =
+        typeof currentHorse.image === "string" &&
+        currentHorse.image.trim() !== ""
+            ? currentHorse.image.trim()
+            : fallbackImage;
+    imageElement.onerror = function () {
+        imageElement.onerror = null;
+        imageElement.src = fallbackImage;
+    };
+    imageElement.alt =
+        "Billede af " + (currentHorse.name || "hesten");
+    imageElement.src = horseImage;
+}
 function saveHorseField(fieldName) {
     try {
         const rawData = localStorage.getItem(STORAGE_KEY);
@@ -156,7 +183,9 @@ function findCurrentHorse() {
     const parameters = new URLSearchParams(window.location.search);
     const horseId = parameters.get("id");
     if (!horseId) return null;
-    return horses.find(horse => horse && horse.id === horseId) || null;
+    return horses.find(
+        horse => horse && horse.id === horseId
+    ) || null;
 }
 function renderProfile() {
     if (!currentHorse) {
@@ -169,16 +198,41 @@ function renderProfile() {
     const content = document.getElementById("profileContent");
     if (errorBox) errorBox.hidden = true;
     if (content) content.hidden = false;
-    setText("profileName", "Profil for " + (currentHorse.name || "hesten"));
-    setText("profileId", displayValue(currentHorse.id));
+    renderHorseImage();
+    setText(
+        "profileName",
+        "Profil for " + (currentHorse.name || "hesten")
+    );
+    setText(
+        "profileDisplayName",
+        currentHorse.name || "Hesten"
+    );
+    setText(
+        "profileImageSubtitle",
+        displayValue(currentHorse.breed) + " · " +
+        displayValue(currentHorse.sex)
+    );
+    setText(
+        "profileId",
+        displayValue(currentHorse.id)
+    );
     setText(
         "profileSubtitle",
         displayValue(currentHorse.breed) + " · " +
         displayValue(currentHorse.sex)
     );
-    setText("profileBreed", displayValue(currentHorse.breed));
-    setText("profileSex", displayValue(currentHorse.sex));
-    setText("profileAge", formatAge(currentHorse));
+    setText(
+        "profileBreed",
+        displayValue(currentHorse.breed)
+    );
+    setText(
+        "profileSex",
+        displayValue(currentHorse.sex)
+    );
+    setText(
+        "profileAge",
+        formatAge(currentHorse)
+    );
     const birthYear = Number(currentHorse.birthYear);
     const birthMonth = Number(currentHorse.birthMonth);
     const birthDate =
@@ -195,7 +249,10 @@ function renderProfile() {
             ? MONTH_NAMES[birthMonth - 1] + " år " + birthYear
             : "Ikke registreret";
     setText("profileBirthDate", birthDate);
-    setText("profileBreeder", displayValue(currentHorse.breeder));
+    setText(
+        "profileBreeder",
+        displayValue(currentHorse.breeder)
+    );
     setText(
         "profileOwner",
         displayValue(
@@ -204,17 +261,32 @@ function renderProfile() {
         )
     );
     // Udseende og personlighed.
-    setText("profileColor", displayValue(currentHorse.color));
-    setText("profileMarkings", displayValue(currentHorse.markings));
-    setText("profileManeTail", displayValue(currentHorse.maneTailColor));
+    setText(
+        "profileColor",
+        displayValue(currentHorse.color)
+    );
+    setText(
+        "profileMarkings",
+        displayValue(currentHorse.markings)
+    );
+    setText(
+        "profileManeTail",
+        displayValue(currentHorse.maneTailColor)
+    );
     setText(
         "profileHeight",
         currentHorse.heightCm
             ? currentHorse.heightCm + " cm"
             : "Ikke registreret"
     );
-    setText("profilePersonality", displayValue(currentHorse.personality));
-    setText("profileTemperament", displayValue(currentHorse.temperament));
+    setText(
+        "profilePersonality",
+        displayValue(currentHorse.personality)
+    );
+    setText(
+        "profileTemperament",
+        displayValue(currentHorse.temperament)
+    );
     // Kendt genetik og spillerens gæt holdes adskilt.
     setText(
         "profileKnownGenetics",
@@ -225,15 +297,27 @@ function renderProfile() {
     );
     setText(
         "profileGeneticGuesses",
-        displayValue(currentHorse.geneticGuesses, "Ingen gæt registreret.")
+        displayValue(
+            currentHorse.geneticGuesses,
+            "Ingen gæt registreret."
+        )
     );
     // Stamtavle og avl.
-    setText("profileFather", displayValue(currentHorse.fatherName));
-    setText("profileMother", displayValue(currentHorse.motherName));
+    setText(
+        "profileFather",
+        displayValue(currentHorse.fatherName)
+    );
+    setText(
+        "profileMother",
+        displayValue(currentHorse.motherName)
+    );
     const offspringCount = Array.isArray(currentHorse.offspringIds)
         ? currentHorse.offspringIds.length
         : 0;
-    setText("profileOffspring", offspringCount + " registreret");
+    setText(
+        "profileOffspring",
+        offspringCount + " registreret"
+    );
     setText(
         "profileApproval",
         displayValue(currentHorse.breedingApproval, "Ikke opnået")
@@ -247,29 +331,50 @@ function renderProfile() {
         "profileCompetitionLevel",
         displayValue(currentHorse.competitionLevel, "Ikke startet")
     );
-    setText("profileStarts", displayValue(currentHorse.competitionStarts, "0"));
-    setText("profileWins", displayValue(currentHorse.competitionWins, "0"));
+    setText(
+        "profileStarts",
+        displayValue(currentHorse.competitionStarts, "0")
+    );
+    setText(
+        "profileWins",
+        displayValue(currentHorse.competitionWins, "0")
+    );
     setText(
         "profileBestResult",
         displayValue(currentHorse.bestCompetitionResult, "Ingen resultater")
     );
     // Økonomi og udstyr.
-    setText("profilePurchasePrice", formatMoney(currentHorse.purchasePrice));
+    setText(
+        "profilePurchasePrice",
+        formatMoney(currentHorse.purchasePrice)
+    );
     setText(
         "profileMarketValue",
         currentHorse.marketValue === undefined
             ? "Ikke beregnet"
             : formatMoney(currentHorse.marketValue)
     );
-    setText("profileInsurance", displayValue(currentHorse.insurance));
-    setText("profileEquipment", displayValue(currentHorse.equipment));
+    setText(
+        "profileInsurance",
+        displayValue(currentHorse.insurance)
+    );
+    setText(
+        "profileEquipment",
+        displayValue(currentHorse.equipment)
+    );
     // Sundhed og historik.
-    setText("profileHealth", displayValue(currentHorse.healthStatus));
+    setText(
+        "profileHealth",
+        displayValue(currentHorse.healthStatus)
+    );
     setText(
         "profileInjuries",
         displayValue(currentHorse.injuries, "Ingen registreret")
     );
-    setText("profileLastActivity", displayValue(currentHorse.lastActivity));
+    setText(
+        "profileLastActivity",
+        displayValue(currentHorse.lastActivity)
+    );
     renderHistory();
     document.title =
         displayValue(currentHorse.name, "Hesteprofil") + " | Hestespillet";
@@ -308,7 +413,10 @@ function openNameEditor() {
     if (!input || !form) return;
     input.value = currentHorse.name || "";
     form.hidden = false;
-    form.scrollIntoView({ behavior: "smooth", block: "center" });
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 }
 function saveName(event) {
     event.preventDefault();
@@ -326,7 +434,8 @@ function saveName(event) {
         currentHorse.name = oldName;
         return;
     }
-    document.getElementById("editProfileSection").hidden = true;
+    const form = document.getElementById("editProfileSection");
+    if (form) form.hidden = true;
     renderProfile();
     showStatus("Hestens navn er gemt.");
 }
@@ -340,7 +449,10 @@ function openGeneticsEditor() {
             ? currentHorse.geneticGuesses
             : "";
     form.hidden = false;
-    form.scrollIntoView({ behavior: "smooth", block: "center" });
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 }
 function saveGeneticGuesses(event) {
     event.preventDefault();
@@ -354,17 +466,22 @@ function saveGeneticGuesses(event) {
         currentHorse.geneticGuesses = oldGuesses;
         return;
     }
-    document.getElementById("editGeneticsSection").hidden = true;
+    const form = document.getElementById("editGeneticsSection");
+    if (form) form.hidden = true;
     renderProfile();
     showStatus("Dine genetiske gæt er gemt.");
 }
 function connectButton(id, handler) {
     const button = document.getElementById(id);
-    if (button) button.addEventListener("click", handler);
+    if (button) {
+        button.addEventListener("click", handler);
+    }
 }
 function connectForm(id, handler) {
     const form = document.getElementById(id);
-    if (form) form.addEventListener("submit", handler);
+    if (form) {
+        form.addEventListener("submit", handler);
+    }
 }
 connectButton("editProfileButton", openNameEditor);
 connectForm("editProfileSection", saveName);
