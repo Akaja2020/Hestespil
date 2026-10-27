@@ -1460,3 +1460,40 @@ details.profile-card > summary {
         padding: 1rem;
     }
 }
+
+
+/* ========================================
+   AKTIVT PRIMÆRT MENUPUNKT
+   ======================================== */
+
+/* Aktivt link, fx Forside */
+.main-nav .nav-link.active,
+.main-nav .nav-link[aria-current="page"] {
+    background: var(--brown);
+    border: 1px solid var(--brown);
+    color: var(--surface);
+}
+
+/* Aktiv rullemenu, fx Profil og Min gård */
+.main-nav .nav-dropdown.active > summary,
+.main-nav .nav-dropdown[aria-current="page"] > summary {
+    background: var(--brown);
+    border: 1px solid var(--brown);
+    color: var(--surface);
+}
+
+/* Bevar tydelig markering, når man holder musen over */
+.main-nav .nav-link.active:hover,
+.main-nav .nav-dropdown.active > summary:hover {
+    background: #59351f;
+    border-color: #59351f;
+    color: #fffdf8;
+}
+
+/* Aktivt link inde i en rullemenu */
+.main-nav .dropdown-panel a.active,
+.main-nav .dropdown-panel a[aria-current="page"] {
+    background: #f2e7df;
+    color: var(--brown);
+    font-weight: bold;
+}

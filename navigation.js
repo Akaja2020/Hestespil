@@ -6,14 +6,35 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.pathname.split("/").pop() || "index.html"
     ).toLowerCase();
 
+    // Find det primære menupunkt, som den aktuelle side hører under.
+    const pageSections = {
+        "index.html": "forside",
+
+        "player.html": "profil",
+        "economy.html": "profil",
+
+        "stable.html": "marked",
+
+        "boarding.html": "gaard",
+        "horses.html": "gaard",
+
+        "calendar.html": "aktiviteter"
+    };
+
+    const activeSection = pageSections[currentPage] || "";
+
     const menu = `
         <nav class="main-nav" aria-label="Hovedmenu">
             <a class="nav-brand" href="index.html">🐴 Horsedreams Online</a>
 
             <div class="nav-links" aria-label="Spillets sektioner">
-                <a class="nav-link" href="index.html">Forside</a>
+                <a
+                    class="nav-link primary-nav-link"
+                    data-section="forside"
+                    href="index.html"
+                >Forside</a>
 
-                <details class="nav-dropdown">
+                <details class="nav-dropdown" data-section="profil">
                     <summary>Profil</summary>
                     <div class="dropdown-panel">
                         <a href="player.html">Spillerprofil</a>
@@ -21,16 +42,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </details>
 
-                <details class="nav-dropdown">
+                <details class="nav-dropdown" data-section="marked">
                     <summary>Marked</summary>
                     <div class="dropdown-panel">
-                        <a href="stable.html">Lejehestegården</a>
+                        <a href="stable.html">Æblelundens udlejningsstald</a>
                         <span class="dropdown-coming">Hestemarked (kommer senere)</span>
                         <span class="dropdown-coming">Udstyr (kommer senere)</span>
                     </div>
                 </details>
 
-                <details class="nav-dropdown">
+                <details class="nav-dropdown" data-section="gaard">
                     <summary>Min gård</summary>
                     <div class="dropdown-panel">
                         <a href="boarding.html">Opstaldningsgårde</a>
@@ -39,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </details>
 
-                <details class="nav-dropdown">
+                <details class="nav-dropdown" data-section="aktiviteter">
                     <summary>Aktiviteter</summary>
                     <div class="dropdown-panel">
                         <a href="calendar.html">Kalender</a>
@@ -48,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </details>
 
-                <details class="nav-dropdown">
+                <details class="nav-dropdown" data-section="hestesundhed">
                     <summary>Hestesundhed</summary>
                     <div class="dropdown-panel">
                         <span class="dropdown-coming">Dyrlæge (kommer senere)</span>
@@ -82,14 +103,34 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.insertAdjacentHTML("afterbegin", menu);
     }
 
-    document.querySelectorAll(".main-nav a.nav-link[href]").forEach(function (link) {
-        const targetPage = link.getAttribute("href").toLowerCase();
+    // Markér det aktive primære menupunkt.
+    document.querySelectorAll(".primary-nav-link, .nav-dropdown").forEach(
+        function (item) {
+            const isActive = item.dataset.section === activeSection;
 
-        if (targetPage === currentPage) {
-            link.setAttribute("aria-current", "page");
+            if (isActive) {
+                item.classList.add("active");
+                item.setAttribute("aria-current", "page");
+            } else {
+                item.classList.remove("active");
+                item.removeAttribute("aria-current");
+            }
         }
-    });
+    );
 
+    // Markér også det konkrete link i undermenuen.
+    document.querySelectorAll(".dropdown-panel a[href]").forEach(
+        function (link) {
+            const targetPage = link.getAttribute("href").toLowerCase();
+
+            if (targetPage === currentPage) {
+                link.classList.add("active");
+                link.setAttribute("aria-current", "page");
+            }
+        }
+    );
+
+    // Sørg for, at kun én rullemenu er åben ad gangen.
     const dropdowns = document.querySelectorAll(".nav-dropdown");
 
     dropdowns.forEach(function (dropdown) {
@@ -104,6 +145,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Fortæl tidsstyringen, at menuen og månedsknappen er blevet oprettet igen.
+    // Fortæl tidsstyringen, at menuen og månedsknappen er oprettet.
     document.dispatchEvent(new Event("game-navigation-ready"));
 });
