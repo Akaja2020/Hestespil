@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Opstaldningsgårde – Horsedreams Online</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
-
 <body>
     <nav class="main-nav" aria-label="Hovedmenu">
         <a class="nav-brand" href="index.html">🐴 Horsedreams Online</a>
-
         <div class="nav-links" aria-label="Spillets sektioner">
             <a class="nav-link" href="index.html">Forside</a>
-
             <details class="nav-dropdown">
                 <summary>Profil</summary>
                 <div class="dropdown-panel">
@@ -22,7 +18,6 @@
                     <a href="economy.html">Økonomi</a>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Marked</summary>
                 <div class="dropdown-panel">
@@ -31,7 +26,6 @@
                     <span class="dropdown-coming">Udstyr (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Min gård</summary>
                 <div class="dropdown-panel">
@@ -40,7 +34,6 @@
                     <span class="dropdown-coming">Faciliteter (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Aktiviteter</summary>
                 <div class="dropdown-panel">
@@ -49,7 +42,6 @@
                     <span class="dropdown-coming">Kåringer (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Hestesundhed</summary>
                 <div class="dropdown-panel">
@@ -59,7 +51,6 @@
                 </div>
             </details>
         </div>
-
         <section class="game-time-bar" aria-label="Spillets tid">
             <div class="game-time-current">
                 <span id="gameYear">År 1</span>
@@ -74,7 +65,6 @@
             </p>
         </section>
     </nav>
-
     <header class="page-header">
         <p class="eyebrow">OPSTALDNING</p>
         <h1>Opstaldningsgårde</h1>
@@ -83,7 +73,6 @@
             Foder er inkluderet i alle opstaldningspriser.
         </p>
     </header>
-
     <main>
         <section class="panel" aria-labelledby="boardingHeading">
             <h2 id="boardingHeading">Vælg opstaldningsgård</h2>
@@ -92,16 +81,17 @@
                 Dit valg gemmes, så du kan se din valgte gård,
                 når du vender tilbage til siden.
             </p>
-            <p class="boarding-status notice" id="boardingStatus"
-               role="status" aria-live="polite">
+            <p class="boarding-status notice"
+               id="boardingStatus"
+               role="status"
+               aria-live="polite">
                 Dine opstaldningsgårde indlæses …
             </p>
         </section>
-
         <section class="boarding-grid" aria-label="Opstaldningsgårde">
-
             <article class="boarding-card">
-                <div class="boarding-art art-meadow" role="img"
+                <div class="boarding-art art-meadow"
+                     role="img"
                      aria-label="Grønne marker ved Enggården">
                     🌿 🐴 🌳
                 </div>
@@ -137,9 +127,9 @@
                     <button type="button">Vælg gård</button>
                 </div>
             </article>
-
             <article class="boarding-card">
-                <div class="boarding-art art-forest" role="img"
+                <div class="boarding-art art-forest"
+                     role="img"
                      aria-label="Skov og grønne folde ved Skovly">
                     🌲 🐴 🌲
                 </div>
@@ -179,9 +169,9 @@
                     <button type="button">Vælg gård</button>
                 </div>
             </article>
-
             <article class="boarding-card">
-                <div class="boarding-art art-arena" role="img"
+                <div class="boarding-art art-arena"
+                     role="img"
                      aria-label="Ridecenter med træningsfaciliteter">
                     🏇 🐴 🏇
                 </div>
@@ -225,24 +215,20 @@
                     <button type="button">Vælg gård</button>
                 </div>
             </article>
-
         </section>
-
         <p class="small-note">
             Gårdvalget gemmes i din browser. Den månedlige betaling
             skal håndteres af spillets fælles månedssystem.
         </p>
-
         <p>
             <a class="back-link" href="stable.html">
                 ← Tilbage til lejehestegården
             </a>
         </p>
     </main>
-
-    <script src="stable.js"></script>
-	<script src="boarding.js"></script>
-	<script src="game-time.js"></script>
-	<script src="navigation.js"></script>
+    <script src="stable.js?v=3"></script>
+    <script src="boarding.js?v=3"></script>
+    <script src="game-time.js?v=3"></script>
+    <script src="navigation.js?v=3"></script>
 </body>
 </html>

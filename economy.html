@@ -4,43 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Økonomi – Hestespillet</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
-<nav class="main-nav" aria-label="Hovedmenu">
-    <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-    <div class="nav-links" aria-label="Spillets sektioner">
-        <a class="nav-link " href="index.html">Forside</a>
-        <details class="nav-dropdown">
-            <summary>Profil</summary>
-            <div class="dropdown-panel">
-                <a href="player.html">Spillerprofil</a>
-                <a href="economy.html">Økonomi</a>
+    <nav class="main-nav" aria-label="Hovedmenu">
+        <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
+        <div class="nav-links" aria-label="Spillets sektioner">
+            <a class="nav-link" href="index.html">Forside</a>
+            <details class="nav-dropdown">
+                <summary>Profil</summary>
+                <div class="dropdown-panel">
+                    <a href="player.html">Spillerprofil</a>
+                    <a href="economy.html">Økonomi</a>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Marked</summary>
+                <div class="dropdown-panel">
+                    <span class="dropdown-coming">Hestemarked (kommer senere)</span>
+                    <span class="dropdown-coming">Udstyr (kommer senere)</span>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Min gård</summary>
+                <div class="dropdown-panel">
+                    <a href="horses.html">Hesteoversigt</a>
+                    <span class="dropdown-coming">Faciliteter (kommer senere)</span>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Aktiviteter</summary>
+                <div class="dropdown-panel">
+                    <a href="calendar.html">Kalender</a>
+                    <span class="dropdown-coming">Konkurrencer (kommer senere)</span>
+                    <span class="dropdown-coming">Kåringer (kommer senere)</span>
+                </div>
+            </details>
+            <details class="nav-dropdown">
+                <summary>Hestesundhed</summary>
+                <div class="dropdown-panel">
+                    <span class="dropdown-coming">Dyrlæge (kommer senere)</span>
+                    <span class="dropdown-coming">Smed (kommer senere)</span>
+                    <span class="dropdown-coming">Sundhed og behandling (kommer senere)</span>
+                </div>
+            </details>
+        </div>
+        <section class="game-time-bar" aria-label="Spillets tid">
+            <div class="game-time-current">
+                <span id="gameYear">År 1</span>
+                <strong id="gameMonth">Januar</strong>
+                <span id="gameSeason">Vinter</span>
             </div>
-        </details>
-        <details class="nav-dropdown">
-            <summary>Marked</summary>
-            <div class="dropdown-panel"><span class="dropdown-coming">Hestemarked (kommer senere)</span><span class="dropdown-coming">Udstyr (kommer senere)</span></div>
-        </details>
-        <details class="nav-dropdown">
-            <summary>Min gård</summary>
-            <div class="dropdown-panel"><a href="horses.html">Hesteoversigt</a><span class="dropdown-coming">Faciliteter (kommer senere)</span></div>
-        </details>
-        <details class="nav-dropdown" >
-            <summary>Aktiviteter</summary>
-            <div class="dropdown-panel"><a href="calendar.html">Kalender</a><span class="dropdown-coming">Konkurrencer (kommer senere)</span><span class="dropdown-coming">Kåringer (kommer senere)</span></div>
-        </details>
-        <details class="nav-dropdown">
-            <summary>Hestesundhed</summary>
-            <div class="dropdown-panel"><span class="dropdown-coming">Dyrlæge (kommer senere)</span><span class="dropdown-coming">Smed (kommer senere)</span><span class="dropdown-coming">Sundhed og behandling (kommer senere)</span></div>
-        </details>
-    </div>
-    <section class="game-time-bar" aria-label="Spillets tid">
-        <div class="game-time-current"><span id="gameYear">År 1</span><strong id="gameMonth">Januar</strong><span id="gameSeason">Vinter</span></div>
-        <button id="nextMonthButton" type="button" disabled>Næste måned</button>
-        <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
-    </section>
-</nav>
+            <button id="nextMonthButton" type="button" disabled>Næste måned</button>
+            <p id="gameTimeStatus" role="status" aria-live="polite">Spillets tid indlæses …</p>
+        </section>
+    </nav>
     <header class="page-header">
         <p class="eyebrow">DIT HESTEUNIVERS</p>
         <h1>Økonomi</h1>
@@ -48,7 +66,8 @@
     </header>
     <main>
         <section class="panel" aria-labelledby="balanceHeading">
-            <p class="eyebrow">DIN PRIVATØKONOMI</p><h2 id="balanceHeading">Din saldo</h2>
+            <p class="eyebrow">DIN PRIVATØKONOMI</p>
+            <h2 id="balanceHeading">Din saldo</h2>
             <p class="economy-page-balance" id="moneyBalance">30.000 kr.</p>
             <div class="economy-details">
                 <p><span>Fast månedsløn</span><strong id="monthlySalary">20.000 kr.</strong></p>
@@ -57,29 +76,49 @@
                 <p><span>Seneste måneds udgifter</span><strong id="lastExpenses">0 kr.</strong></p>
                 <p class="economy-total"><span>Seneste måneds resultat</span><strong id="monthlyNet">0 kr.</strong></p>
             </div>
-            <p class="calendar-note">Løn udbetales, og leveomkostninger trækkes, når du går videre til næste måned i tidsbjælken.</p>
-            <p id="economyMessage" class="calendar-note" role="status"></p>
+            <p class="calendar-note">
+                Løn udbetales, og leveomkostninger trækkes, når du går videre til næste måned i tidsbjælken.
+            </p>
+            <p id="economyMessage" class="calendar-note" role="status" aria-live="polite"></p>
         </section>
         <section class="panel ledger-panel" aria-labelledby="ledgerHeading">
-            <p class="eyebrow">DIN ØKONOMISKE HISTORIK</p><h2 id="ledgerHeading">Økonomibog</h2>
+            <p class="eyebrow">DIN ØKONOMISKE HISTORIK</p>
+            <h2 id="ledgerHeading">Økonomibog</h2>
             <p class="calendar-note">Her kan du følge alle indtægter og udgifter i spillet.</p>
             <div class="ledger-filters">
-                <label for="ledgerYear">År</label><select id="ledgerYear"><option value="all">Alle år</option></select>
+                <label for="ledgerYear">År</label>
+                <select id="ledgerYear">
+                    <option value="all">Alle år</option>
+                </select>
                 <label for="ledgerMonth">Måned</label>
                 <select id="ledgerMonth">
-                    <option value="all">Alle måneder</option><option value="1">Januar</option><option value="2">Februar</option>
-                    <option value="3">Marts</option><option value="4">April</option><option value="5">Maj</option><option value="6">Juni</option>
-                    <option value="7">Juli</option><option value="8">August</option><option value="9">September</option><option value="10">Oktober</option>
-                    <option value="11">November</option><option value="12">December</option>
+                    <option value="all">Alle måneder</option>
+                    <option value="1">Januar</option>
+                    <option value="2">Februar</option>
+                    <option value="3">Marts</option>
+                    <option value="4">April</option>
+                    <option value="5">Maj</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
                 </select>
-                <label for="ledgerCategory">Kategori</label><select id="ledgerCategory"><option value="all">Alle kategorier</option></select>
+                <label for="ledgerCategory">Kategori</label>
+                <select id="ledgerCategory">
+                    <option value="all">Alle kategorier</option>
+                </select>
             </div>
             <div id="ledgerEntries" class="ledger-entries"></div>
-            <p id="ledgerEmptyMessage" class="empty-message" hidden>Der er ingen transaktioner, der passer til dine filtre.</p>
+            <p id="ledgerEmptyMessage" class="empty-message" hidden>
+                Der er ingen transaktioner, der passer til dine filtre.
+            </p>
         </section>
     </main>
-    <script src="economy.js"></script>
-    <script src="game-time.js"></script>
-	<script src="navigation.js"></script>
+    <script src="economy.js?v=3"></script>
+    <script src="game-time.js?v=3"></script>
+    <script src="navigation.js?v=3"></script>
 </body>
 </html>

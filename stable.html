@@ -1,21 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Æblelundens udlejningsstald – Horsedreams Online</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
-
     <nav class="main-nav" aria-label="Hovedmenu">
         <a class="nav-brand" href="index.html">🐴 Hestespillet</a>
-
         <div class="nav-links" aria-label="Spillets sektioner">
-
             <a class="nav-link" href="index.html">Forside</a>
-
             <details class="nav-dropdown">
                 <summary>Profil</summary>
                 <div class="dropdown-panel">
@@ -23,7 +18,6 @@
                     <a href="economy.html">Økonomi</a>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Marked</summary>
                 <div class="dropdown-panel">
@@ -32,7 +26,6 @@
                     <span class="dropdown-coming">Udstyr (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Min gård</summary>
                 <div class="dropdown-panel">
@@ -41,7 +34,6 @@
                     <span class="dropdown-coming">Faciliteter (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Aktiviteter</summary>
                 <div class="dropdown-panel">
@@ -50,7 +42,6 @@
                     <span class="dropdown-coming">Kåringer (kommer senere)</span>
                 </div>
             </details>
-
             <details class="nav-dropdown">
                 <summary>Hestesundhed</summary>
                 <div class="dropdown-panel">
@@ -59,63 +50,51 @@
                     <span class="dropdown-coming">Sundhed og behandling (kommer senere)</span>
                 </div>
             </details>
-
         </div>
-
         <section class="game-time-bar" aria-label="Spillets tid">
             <div class="game-time-current">
                 <span id="gameYear">År 1</span>
                 <strong id="gameMonth">Januar</strong>
                 <span id="gameSeason">Vinter</span>
             </div>
-
             <button id="nextMonthButton" type="button" disabled>
                 Næste måned
             </button>
-
             <p id="gameTimeStatus" role="status" aria-live="polite">
                 Spillets tid indlæses …
             </p>
         </section>
     </nav>
-
     <header class="page-header">
-    <p class="eyebrow">ÆBLELUNDENS UDLEJNINGSSTALD</p>
-    <h1>Velkommen til Æblelundens udlejningsstald</h1>
-    <p class="intro">
-        Her kan du møde hestene, læse om deres egenskaber
-        og vælge den hest, du gerne vil leje.
-    </p>
-	</header>
-
+        <p class="eyebrow">ÆBLELUNDENS UDLEJNINGSSTALD</p>
+        <h1>Velkommen til Æblelundens udlejningsstald</h1>
+        <p class="intro">
+            Her kan du møde hestene, læse om deres egenskaber
+            og vælge den hest, du gerne vil leje.
+        </p>
+    </header>
     <main>
         <section class="panel" aria-labelledby="stableHeading">
             <div class="section-heading">
                 <h2 id="stableHeading">Heste til leje</h2>
                 <span class="count-label" id="stableHorseCount">6 heste</span>
             </div>
-
             <div id="stableHorseCards" class="horse-grid" aria-live="polite"></div>
-
             <p id="stableEmptyMessage" class="empty-message" hidden>
                 Der er ingen heste på gården lige nu.
             </p>
-
             <p class="profile-note">
                 Lejeprisen og selve lejesystemet bliver tilføjet senere.
                 Der trækkes ikke penge, når du besøger denne side.
             </p>
         </section>
-
         <p>
             <a class="back-link" href="index.html">← Tilbage til forsiden</a>
         </p>
     </main>
-
-    
-	<script src="horse-genetics.js"></script>
-	<script src="stable.js"></script>
-    <script src="game-time.js"></script>
-	<script src="navigation.js"></script>
+    <script src="horse-genetics.js?v=3"></script>
+    <script src="stable.js?v=3"></script>
+    <script src="game-time.js?v=3"></script>
+    <script src="navigation.js?v=3"></script>
 </body>
 </html>
