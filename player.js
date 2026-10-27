@@ -1,99 +1,190 @@
+
+"use strict";
+
 // ========================================
 // SPILLERPROFIL
 // ========================================
 const STORAGE_KEY = "hestespil_horses_v1";
+
 const playerIdElement = document.getElementById("playerId");
 const playerNameInput = document.getElementById("playerName");
 const saveButton = document.getElementById("savePlayerButton");
 const message = document.getElementById("playerMessage");
+
 let playerData = null;
+
+function showMessage(text) {
+    if (message) {
+        message.textContent = text;
+    }
+}
+
 function loadPlayer() {
     try {
         const savedData = localStorage.getItem(STORAGE_KEY);
+
         if (!savedData) {
-            playerIdElement.textContent =
-                "Spildata blev ikke fundet. Gå til forsiden først.";
-            saveButton.disabled = true;
+            if (playerIdElement) {
+                playerIdElement.textContent =
+                    "Spildata blev ikke fundet. Gå til forsiden først.";
+            }
+
+            if (saveButton) saveButton.disabled = true;
+            showMessage("");
             return;
         }
+
         const data = JSON.parse(savedData);
-        if (!data || typeof data !== "object") {
+
+        if (!data || typeof data !== "object" || Array.isArray(data)) {
             throw new Error("Spildata har et ugyldigt format.");
         }
-        // Opret spillerdata, hvis de mangler.
-        if (!data.player || typeof data.player !== "object") {
-            data.player = {
-                id: "P-000001",
-                name: ""
-            };
-        }
-        // Gendan spiller-ID, hvis det mangler.
+
+        // Indlæs kun eksisterende spillerdata.
+        // Denne funktion må ikke ændre eller gemme spildata.
         if (
+            !data.player ||
+            typeof data.player !== "object" ||
+            Array.isArray(data.player) ||
             typeof data.player.id !== "string" ||
-            !data.player.id.trim()
+            !data.player.id.trim() ||
+            typeof data.player.name !== "string"
         ) {
-            data.player.id = "P-000001";
+            playerData = null;
+
+            if (playerIdElement) {
+                playerIdElement.textContent =
+                    "Spillerdata mangler eller er ugyldige. " +
+                    "Dine gemte data er ikke ændret.";
+            }
+
+            if (playerNameInput) playerNameInput.value = "";
+            if (saveButton) saveButton.disabled = true;
+
+            showMessage("");
+            return;
         }
-        if (typeof data.player.name !== "string") {
-            data.player.name = "";
+
+        playerData = {
+            id: data.player.id,
+            name: data.player.name
+        };
+
+        if (playerIdElement) {
+            playerIdElement.textContent =
+                "Spiller-ID: " + playerData.id;
         }
-        // Gem de reparerede data.
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        playerData = data.player;
-        playerIdElement.textContent =
-            "Spiller-ID: " + playerData.id;
-        playerNameInput.value = playerData.name;
-        saveButton.disabled = false;
-        message.textContent = "";
+
+        if (playerNameInput) {
+            playerNameInput.value = playerData.name;
+        }
+
+        if (saveButton) saveButton.disabled = false;
+
+        showMessage("");
     } catch (error) {
-        console.error("Fejl ved indlæsning af spillerprofil:", error);
-        playerIdElement.textContent =
-            "Spillerprofilen kunne ikke indlæses.";
-        saveButton.disabled = true;
+        console.error(
+            "Fejl ved indlæsning af spillerprofil:",
+            error
+        );
+
+        playerData = null;
+
+        if (playerIdElement) {
+            playerIdElement.textContent =
+                "Spillerprofilen kunne ikke indlæses. " +
+                "Dine gemte data er ikke ændret.";
+        }
+
+        if (saveButton) saveButton.disabled = true;
+
+        showMessage("");
     }
 }
+
 function savePlayer() {
     if (!playerData) {
-        message.textContent = "Spillerdata blev ikke fundet.";
+        showMessage("Spillerdata blev ikke fundet. Genindlæs siden.");
         return;
     }
+
+    if (!playerNameInput) {
+        showMessage("Feltet til spillernavnet blev ikke fundet.");
+        return;
+    }
+
     const newName = playerNameInput.value.trim();
+
     if (!newName) {
-        message.textContent = "Skriv et spillernavn først.";
+        showMessage("Skriv et spillernavn først.");
         return;
     }
+
     if (newName.length > 40) {
-        message.textContent = "Navnet må højst være 40 tegn.";
+        showMessage("Navnet må højst være 40 tegn.");
         return;
     }
+
     try {
         const savedData = localStorage.getItem(STORAGE_KEY);
+
         if (!savedData) {
-            message.textContent =
-                "Spillet blev ikke fundet. Gå til forsiden først.";
+            showMessage(
+                "Spillet blev ikke fundet. Gå til forsiden først."
+            );
             return;
         }
+
         const data = JSON.parse(savedData);
-        if (!data.player || data.player.id !== playerData.id) {
-            message.textContent =
-                "Spillerdata har ændret sig. Genindlæs siden.";
+
+        if (
+            !data ||
+            typeof data !== "object" ||
+            Array.isArray(data) ||
+            !data.player ||
+            typeof data.player !== "object" ||
+            Array.isArray(data.player) ||
+            data.player.id !== playerData.id ||
+            typeof data.player.name !== "string"
+        ) {
+            showMessage(
+                "Spillerdata har ændret sig eller er ugyldige. " +
+                "Genindlæs siden."
+            );
             return;
         }
+
+        // Opdater kun spillerens navn.
+        // Alle øvrige gemte spiloplysninger bevares.
         data.player.name = newName;
+
         localStorage.setItem(
             STORAGE_KEY,
             JSON.stringify(data)
         );
-        playerData = data.player;
+
+        playerData.name = newName;
         playerNameInput.value = newName;
-        message.textContent = "Spillernavnet er gemt.";
+
+        showMessage("Spillernavnet er gemt.");
     } catch (error) {
-        console.error("Fejl ved gemning af spillerprofil:", error);
-        message.textContent = "Spillernavnet kunne ikke gemmes.";
+        console.error(
+            "Fejl ved gemning af spillerprofil:",
+            error
+        );
+
+        showMessage("Spillernavnet kunne ikke gemmes.");
     }
 }
-playerNameInput.addEventListener("input", function () {
-    message.textContent = "";
-});
-saveButton.addEventListener("click", savePlayer);
+
+if (playerNameInput) {
+    playerNameInput.addEventListener("input", function () {
+        showMessage("");
+    });
+}
+
+if (saveButton) {
+    saveButton.addEventListener("click", savePlayer);
+}
+
 loadPlayer();
