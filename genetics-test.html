@@ -32,6 +32,12 @@
       line-height: 1.6;
     }
 
+    .coat-color {
+      font-size: 18px;
+      font-weight: bold;
+      color: #4b3929;
+    }
+
     .success {
       color: #216b3a;
       font-weight: bold;
@@ -103,10 +109,42 @@
     const results = document.getElementById("results");
     const ageSelect = document.getElementById("age");
 
-    function addLine(parent, label, value) {
+    function addLine(parent, label, value, className = "") {
       const p = document.createElement("p");
       p.textContent = label + ": " + value;
+
+      if (className) {
+        p.className = className;
+      }
+
       parent.appendChild(p);
+    }
+
+    // Oversætter motorens interne engelske værdier til danske navne.
+    function getDanishColorName(color) {
+      const colorNames = {
+        red: "Rød",
+        bay: "Brun",
+        black: "Sort",
+        palomino: "Palomino",
+        buckskin: "Bukset",
+        smoky_black: "Røgsvart",
+        cremello: "Cremello",
+        perlino: "Perlino",
+        smoky_cream: "Røgcremello"
+      };
+
+      return colorNames[color] || color || "Ukendt";
+    }
+
+    function getDanishCoatType(coatType) {
+      const coatTypes = {
+        solid: "Ensfarvet grundpels",
+        gray: "Skimmel",
+        roan: "Roan / skimmelblandet pels"
+      };
+
+      return coatTypes[coatType] || coatType || "Ukendt";
     }
 
     function render() {
@@ -138,8 +176,15 @@
           addLine(card, "ID", horse.id);
           addLine(
             card,
-            "Grundfarve",
-            appearance.baseColor
+            "Grundfarve før farvemodifikatorer",
+            getDanishColorName(appearance.baseColor)
+          );
+
+          addLine(
+            card,
+            "Beregnet pelsfarve",
+            getDanishColorName(appearance.color),
+            "coat-color"
           );
           addLine(
             card,
@@ -154,7 +199,7 @@
           addLine(
             card,
             "Pelsberegning",
-            appearance.coatType
+            getDanishCoatType(appearance.coatType)
           );
 
           if (appearance.gray) {
