@@ -1,80 +1,28 @@
-
 <!DOCTYPE html>
 <html lang="da">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test af hestegenetik</title>
-
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 18px;
-      background: #f5f1e9;
-      color: #302a24;
-    }
-
+    body { font-family: Arial, sans-serif; margin: 0; padding: 18px; background: #f5f1e9; color: #302a24; }
     h1 { font-size: 25px; }
-
-    .horse {
-      background: white;
-      padding: 15px;
-      margin: 14px 0;
-      border-radius: 12px;
-      overflow-wrap: anywhere;
-    }
-
+    .horse { background: white; padding: 15px; margin: 14px 0; border-radius: 12px; overflow-wrap: anywhere; }
     .horse h2 { margin-top: 0; }
-
-    .result {
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .coat-color {
-      font-size: 18px;
-      font-weight: bold;
-      color: #4b3929;
-    }
-
-    .success {
-      color: #216b3a;
-      font-weight: bold;
-    }
-
-    .error {
-      color: #a12626;
-      font-weight: bold;
-    }
-
-    select {
-      font-size: 16px;
-      padding: 8px;
-      border-radius: 8px;
-      max-width: 100%;
-    }
-
-    .note {
-      font-size: 13px;
-      color: #62584d;
-      line-height: 1.5;
-    }
+    .result { font-size: 14px; line-height: 1.6; }
+    .success { color: #216b3a; font-weight: bold; }
+    .error { color: #a12626; font-weight: bold; }
+    select { font-size: 16px; padding: 8px; border-radius: 8px; max-width: 100%; }
+    .note { font-size: 13px; color: #62584d; line-height: 1.5; }
+    .coat-color { font-size: 17px; font-weight: bold; color: #6a482b; }
+    .dun-mark { color: #216b3a; font-weight: bold; }
   </style>
 </head>
-
 <body>
   <h1>🐴 Test af hestegenetik</h1>
+  <p>Her tester vi grundfarve, Cream, Dun, skimmel, roan og primitive aftegn.</p>
 
-  <p>
-    Her tester vi grundfarve, skimmel, roan
-    og skimmelens forenklede aldersudvikling.
-  </p>
-
-  <label for="age">
-    <strong>Test skimmel ved denne alder:</strong>
-  </label>
-
+  <label for="age"><strong>Test skimmel ved denne alder:</strong></label>
   <p>
     <select id="age">
       <option value="0">Føl (0 år)</option>
@@ -83,18 +31,12 @@
       <option value="10">10 år</option>
     </select>
   </p>
-
-  <p class="note">
-    Aldersstadierne er en forenkling til spillets
-    første prototype. Virkelige skimler udvikler
-    sig forskelligt.
-  </p>
+  <p class="note">Skimmelstadierne er en forenkling. Dun-genet vises her som en forenklet fænotype med primitive aftegn; de præcise variationer modelleres senere.</p>
 
   <div id="status">Tester genetiksystemet...</div>
   <div id="results"></div>
 
   <script src="horse-genetics.js"></script>
-
   <script>
     const horses = [
       { id: "S-000001", name: "Stjerneskud" },
@@ -111,61 +53,20 @@
 
     function addLine(parent, label, value, className = "") {
       const p = document.createElement("p");
+      if (className) p.className = className;
       p.textContent = label + ": " + value;
-
-      if (className) {
-        p.className = className;
-      }
-
       parent.appendChild(p);
-    }
-
-    // Oversætter motorens interne engelske værdier til danske navne.
-    function getDanishColorName(color) {
-      const colorNames = {
-        red: "Rød",
-        bay: "Brun",
-        black: "Sort",
-        palomino: "Palomino",
-        buckskin: "Bukset",
-        smoky_black: "Røgsvart",
-        cremello: "Cremello",
-        perlino: "Perlino",
-        smoky_cream: "Røgcremello"
-      };
-
-      return colorNames[color] || color || "Ukendt";
-    }
-
-    function getDanishCoatType(coatType) {
-      const coatTypes = {
-        solid: "Ensfarvet grundpels",
-        gray: "Skimmel",
-        roan: "Roan / skimmelblandet pels"
-      };
-
-      return coatTypes[coatType] || coatType || "Ukendt";
     }
 
     function render() {
       results.replaceChildren();
-
       try {
-        if (!window.HorseGenetics) {
-          throw new Error(
-            "horse-genetics.js blev ikke indlæst."
-          );
-        }
-
+        if (!window.HorseGenetics) throw new Error("horse-genetics.js blev ikke indlæst.");
         const age = Number(ageSelect.value);
 
         horses.forEach(horse => {
-          const genes =
-            HorseGenetics.getGenotype(horse.id);
-
-          const appearance =
-            HorseGenetics.getCoatAppearance(genes, age);
-
+          const genes = HorseGenetics.getGenotype(horse.id);
+          const appearance = HorseGenetics.getCoatAppearance(genes, age);
           const card = document.createElement("section");
           card.className = "horse";
 
@@ -174,59 +75,29 @@
           card.appendChild(heading);
 
           addLine(card, "ID", horse.id);
-          addLine(
-            card,
-            "Grundfarve før farvemodifikatorer",
-            getDanishColorName(appearance.baseColor)
-          );
+          addLine(card, "Grundfarve før modifikatorer", HorseGenetics.getBaseColor(genes));
+          addLine(card, "Beregnet pelsfarve", appearance.colorLabel, "coat-color");
+          addLine(card, "Dun-gen", appearance.dun ? "Ja" : "Nej");
+          addLine(card, "Dun-genotype", appearance.dunAlleles);
+          addLine(card, "Primitive aftegn i denne model", appearance.primitiveMarkings ? "Forventes" : "Ikke forventet");
+          addLine(card, "Skimmelgen", appearance.gray ? "Ja" : "Nej");
+          addLine(card, "Roan-gen", appearance.roan ? "Ja" : "Nej");
+          addLine(card, "Pelsberegning", appearance.coatType);
 
-          addLine(
-            card,
-            "Beregnet pelsfarve",
-            getDanishColorName(appearance.color),
-            "coat-color"
-          );
-          addLine(
-            card,
-            "Skimmelgen",
-            appearance.gray ? "Ja" : "Nej"
-          );
-          addLine(
-            card,
-            "Roan-gen",
-            appearance.roan ? "Ja" : "Nej"
-          );
-          addLine(
-            card,
-            "Pelsberegning",
-            getDanishCoatType(appearance.coatType)
-          );
-
-          if (appearance.gray) {
-            addLine(
-              card,
-              "Skimmelstadium",
-              appearance.grayStageLabel
-            );
-          }
+          if (appearance.gray) addLine(card, "Skimmelstadium", appearance.grayStageLabel);
 
           const genotype = document.createElement("p");
           genotype.className = "note";
-          genotype.textContent =
-            "Skjulte gener: " + JSON.stringify(genes);
-
+          genotype.textContent = "Skjulte gener: " + JSON.stringify(genes);
           card.appendChild(genotype);
           results.appendChild(card);
         });
 
         status.className = "success";
-        status.textContent =
-          "✓ Genetiksystemet virker! Vælg en alder for at teste igen.";
-
+        status.textContent = "✓ Genetiksystemet virker! Vælg en alder for at teste skimmel igen.";
       } catch (error) {
         status.className = "error";
-        status.textContent =
-          "Fejl: " + error.message;
+        status.textContent = "Fejl: " + error.message;
       }
     }
 
